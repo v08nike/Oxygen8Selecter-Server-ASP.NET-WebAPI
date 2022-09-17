@@ -243,8 +243,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AuthController.cs" />
-    <Compile Include="Controllers\ClsRequest.cs" />
-    <Compile Include="Controllers\ClsReturn.cs" />
+    <Compile Include="Models\ClsRequest.cs" />
+    <Compile Include="Models\ClsReturn.cs" />
     <Compile Include="Controllers\JobController.cs" />
     <Compile Include="Controllers\JobsController.cs" />
     <Compile Include="Controllers\UnitsController.cs" />
@@ -257,8 +257,11 @@
     <Compile Include="Models\ClsDB.cs" />
     <Compile Include="Models\ClsDBT.cs" />
     <Compile Include="Models\ClsDBTC.cs" />
+    <Compile Include="Models\ClsFormula.cs" />
     <Compile Include="Models\ClsID.cs" />
     <Compile Include="Models\ClsLayoutOpt.cs" />
+    <Compile Include="Models\ClsProjectInfo.cs" />
+    <Compile Include="Models\ClsPsyCalc.cs" />
     <Compile Include="Models\JobsModel.cs" />
     <Compile Include="Models\UnitsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

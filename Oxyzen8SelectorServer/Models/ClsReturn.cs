@@ -49,4 +49,15 @@ namespace Oxyzen8SelectorServer.Models
         public string isTestNewPrice { get; set; }
     }
 
+    public class ClsInitailJobInfoReturn
+    {
+        public string createdDate { get; set; }
+        public string revisedDate { get; set; }
+        public DataTable baseOfDesign { get; set; }
+        public DataTable UoM { get; set; }
+        public DataTable country { get; set; }
+        public DataTable designCondition { get; set; }
+        public DataTable companyInfo { get; set; }
+
+    }
 }
