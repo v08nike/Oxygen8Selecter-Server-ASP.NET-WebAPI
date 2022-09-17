@@ -13,14 +13,21 @@ namespace Oxyzen8SelectorServer.Controllers
         [HttpPost]
         [ActionName("Update")]
         // POST api/job/update
-        public ClsReturn getJobs([FromBody]ClsSaveJobParams reqeustInfo)
+        public ClsReturn UpdateJob([FromBody]ClsSaveJobParams reqeustInfo)
         {
 
             ClsReturn returnResult = new ClsReturn();
-            returnResult.data = JobsModel.UpdateJob();
+            returnResult.data = JobsModel.UpdateJob(reqeustInfo);
             return returnResult;
         }
 
+        [HttpPost]
+        [ActionName("Get")]
+        // POSt api/job/get/:id
+        public ClsJobInfoReturn GetJobInfoByJobId(int id)
+        {
+            return JobsModel.GetJobInfoByJobId(id);
+        }
 
         // GET api/<controller>
         public IEnumerable<string> Get()

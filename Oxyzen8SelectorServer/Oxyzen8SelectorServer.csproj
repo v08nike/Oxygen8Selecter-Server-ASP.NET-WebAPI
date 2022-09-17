@@ -245,6 +245,7 @@
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\ClsRequest.cs" />
     <Compile Include="Controllers\ClsReturn.cs" />
+    <Compile Include="Controllers\JobController.cs" />
     <Compile Include="Controllers\JobsController.cs" />
     <Compile Include="Controllers\UnitsController.cs" />
     <Compile Include="Global.asax.cs">

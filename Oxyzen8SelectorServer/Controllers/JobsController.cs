@@ -13,7 +13,7 @@ namespace Oxyzen8SelectorServer.Controllers
         [HttpPost]
         [ActionName("Get")]
         // POST api/jobs/get
-        public ClsReturn getJobs([FromBody]ClsGetJobsParams reqeustInfo)
+        public ClsReturn GetJobs([FromBody]ClsGetJobsParams reqeustInfo)
         {
             int userId = reqeustInfo.userId;
             string action = reqeustInfo.action;
