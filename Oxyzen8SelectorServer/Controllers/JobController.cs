@@ -23,6 +23,14 @@ namespace Oxyzen8SelectorServer.Controllers
 
         [HttpPost]
         [ActionName("Get")]
+        // Post api/job/get
+        public ClsInitailJobInfoReturn GetInitialJobInfo()
+        {
+            return JobsModel.GetInitialJobInfo();
+        }
+
+        [HttpPost]
+        [ActionName("Get")]
         // POSt api/job/get/:id
         public ClsJobInfoReturn GetJobInfoByJobId(int id)
         {

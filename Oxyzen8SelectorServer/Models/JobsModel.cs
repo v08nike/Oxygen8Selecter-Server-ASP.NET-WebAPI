@@ -23,12 +23,28 @@ namespace Oxyzen8SelectorServer.Models
             return ClsDB.get_dtLive(ClsDBT.strSavJob, " ORDER BY id DESC");
         }
 
+        public static ClsInitailJobInfoReturn GetInitialJobInfo()
+        {
+            ClsInitailJobInfoReturn jobInfo = new ClsInitailJobInfoReturn();
+
+            jobInfo.createdDate = DateTime.Now.ToString("yyyy-MM-dd");
+            jobInfo.revisedDate = DateTime.Now.ToString("yyyy-MM-dd");
+            jobInfo.baseOfDesign = ClsDB.get_dtLive(ClsDBT.strSelBasisOfDesign);
+            jobInfo.UoM = ClsDB.get_dtLive(ClsDBT.strSelUOM);
+            jobInfo.country = ClsDB.get_dtLive(ClsDBT.strSelCountry);
+            jobInfo.designCondition = ClsDB.get_dtLive(ClsDBT.strSelWeatherDesignConditions);
+            jobInfo.companyInfo = ClsDB.get_dtLive(ClsDBT.strSavCustomer);
+
+            return jobInfo;
+        }
+
         public static ClsJobInfoReturn GetJobInfoByJobId(int jobId)
         {
             ClsJobInfoReturn jobInfo = new ClsJobInfoReturn();
             ClsProjectInfo objJobInfo = new ClsProjectInfo(Convert.ToInt32(jobId));
 
             jobInfo.jobId = jobId.ToString();
+            jobInfo.createdUserId = objJobInfo.intCreatedUserID.ToString();
             jobInfo.revisedUserId = objJobInfo.intRevisedUserID.ToString();
             jobInfo.jobName = objJobInfo.strJobName;
             jobInfo.referenceNo = objJobInfo.strReferenceNo;
