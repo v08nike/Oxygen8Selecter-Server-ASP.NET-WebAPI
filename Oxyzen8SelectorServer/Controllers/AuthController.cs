@@ -6,7 +6,9 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 using System.Web.Http;
+using System.Web.SessionState;
 using Oxyzen8SelectorServer.Models;
 
 namespace Oxyzen8SelectorServer.Controllers
@@ -14,13 +16,22 @@ namespace Oxyzen8SelectorServer.Controllers
     public class AuthController : ApiController
     {
 
+        [HttpGet]
+        [ActionName("SessionValue")]
+        public string SessionValue()
+        {
+            var Session = HttpContext.Current.Session;
+            return Session["userId"].ToString();
+        }
+
         [HttpPost]
         [ActionName("Login")]
         // POST api/auth/login
-        public ClsReturn Login([FromBody]ClsLoginParams info)
+        public object Login([FromBody]ClsLoginParams info)
         {
             DataTable dt = AuthModel.GetUserByEmail(info.email);
-            ClsReturn returnLoginInfo = new ClsReturn();
+
+            var Session = HttpContext.Current.Session;
 
             if (dt.Rows.Count > 0)
             {
@@ -28,23 +39,22 @@ namespace Oxyzen8SelectorServer.Controllers
                 {
                     if (CalculateMD5Hash(info.password).ToUpper() == dt.Rows[0]["password"].ToString().ToUpper())
                     {
-                        returnLoginInfo.action = "success";
-                        returnLoginInfo.data = dt;
-                        return returnLoginInfo;
+                        Session["userId"] = Convert.ToInt32(dt.Rows[0]["id"]);
+                        Session["UAL"] = Convert.ToInt32(dt.Rows[0]["access_level"]);
+                        Session["representativeID"] = Convert.ToInt32(dt.Rows[0]["customer_id"]);
+
+                        return new { action = "success", data = dt };
                     } else
                     {
-                        returnLoginInfo.action = "incorrect_password";
-                        return returnLoginInfo;
+                        return new { action = "incorrect_password"};
                     }
                 } else
                 {
-                    returnLoginInfo.action = "no_user_access";
-                    return returnLoginInfo;
+                    return new { action = "no_user_access" };
                 }
             } else
             {
-                returnLoginInfo.action = "no_user_exist";
-                return returnLoginInfo;
+                return new { action = "no_user_exist" };
             }
         }
 
