@@ -22,6 +22,12 @@ namespace Oxyzen8SelectorServer.Models
         public int jobId { get; set; }
     }
 
+    public class ClsJobUnitId
+    {
+        public int jobId { get; set; }
+        public int unitId { get; set; }
+    }
+
     public class ClsSaveJobParams
     {
         public string jobId { get; set; }

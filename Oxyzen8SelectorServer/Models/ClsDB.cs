@@ -3503,7 +3503,6 @@ namespace Oxyzen8SelectorServer.Models
                 Comm.ExecuteNonQuery();
                 adp.Fill(ds, ClsDBT.strSavCompOption);
 
-
                 //DataTable dtOption = ds.Tables[ClsDBT.strSavCompOption];
                 DataRow drOption = ds.Tables[ClsDBT.strSavCompOption].Rows[0];
                 Comm.CommandText = "SELECT * FROM `" + ClsDBT.strSavCompOptionCustom + "` tbl_sav_opt_cust WHERE `tbl_sav_opt_cust`.job_id=@JobID AND `tbl_sav_opt_cust`.unit_no=@UnitNo";
@@ -3906,6 +3905,8 @@ namespace Oxyzen8SelectorServer.Models
             }
             catch (Exception e)
             {
+                System.Diagnostics.Debug.WriteLine("==================================================");
+                System.Diagnostics.Debug.WriteLine(e);
                 return null;
             }
             finally

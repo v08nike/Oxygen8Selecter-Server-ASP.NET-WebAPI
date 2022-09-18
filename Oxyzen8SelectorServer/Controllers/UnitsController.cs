@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Dynamic;
 using Oxyzen8SelectorServer.Models;
 
 namespace Oxyzen8SelectorServer.Controllers
@@ -20,6 +21,13 @@ namespace Oxyzen8SelectorServer.Controllers
             ClsReturn returnResult = new ClsReturn();
             returnResult.data = UnitsModel.getUnitListByJobId(jobId);
             return returnResult;
+        }
+
+        [HttpPost]
+        [ActionName("GetUnitInfo")]
+        public dynamic GetUnitInfo([FromBody] ClsJobUnitId requestInfo)
+        {
+            return UnitsModel.GetUnitInfo(requestInfo.jobId, requestInfo.unitId);
         }
 
         // GET api/<controller>

@@ -9,12 +9,18 @@ namespace Oxyzen8SelectorServer.Models
 {
     public class UnitsModel
     {
-        public dynamic GetUnitInfo(int jobId, int unitId)
+        public static dynamic GetUnitInfo(int jobId, int unitId)
         {
             dynamic unitInfo = new ExpandoObject();
             DataTable dtJob = ClsDB.GetSavedJob(Convert.ToInt32(jobId));
+            var Session = HttpContext.Current.Session;
 
             ClsProjectInfo objProjectInfo = new ClsProjectInfo(Convert.ToInt32(jobId));
+            ClsGeneral objGeneral = new ClsGeneral(jobId, unitId);
+            ClsAirFlowData objAirFlowData = new ClsAirFlowData(jobId, unitId);
+            ClsComponentItems objCompItems = new ClsComponentItems(jobId, unitId);
+            ClsLayout objLayout = new ClsLayout(jobId, unitId);
+
             unitInfo.altitude = objProjectInfo.intAltitude.ToString();
 
             unitInfo.summerOutdoorAirDB = objProjectInfo.dblSummerOutdoorAirDB.ToString();
@@ -33,17 +39,13 @@ namespace Oxyzen8SelectorServer.Models
             unitInfo.winterReturnAirWB = objProjectInfo.dblWinterReturnAirWB.ToString();
             unitInfo.winterReturnAirRH = objProjectInfo.dblWinterReturnAirRH.ToString();
 
-            ClsGeneral objGeneral = new ClsGeneral(jobId, unitId);
-            ClsAirFlowData objAirFlowData = new ClsAirFlowData(jobId, unitId);
-            ClsComponentItems objCompItems = new ClsComponentItems(jobId, unitId);
-            ClsLayout objLayout = new ClsLayout(jobId, unitId);
 
             if (objGeneral != null)
             {
                 unitInfo.tag = objGeneral.strTag;
                 unitInfo.qty = objGeneral.intQty.ToString();
 
-                unitInfo.productTypeId = objGeneral.intProductTypeID.ToString();
+                unitInfo.productTypeId = objGeneral.intProductTypeID;
                 unitInfo.unitTypeID = objGeneral.intUnitTypeID;
                 unitInfo.unitTypeName = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitType, objGeneral.intUnitTypeID);
                 unitInfo.locationID = objGeneral.intLocationID;
@@ -159,10 +161,60 @@ namespace Oxyzen8SelectorServer.Models
             {
                 dtControls = dtControls.Select("[id]='" + ClsID.intControlPrefByOthersID.ToString() + "'").CopyToDataTable();
             }
-            //else if (Convert.ToInt32(hfUAL.Value) == ClsID.intUAL_External || Convert.ToInt32(hfUAL.Value) == ClsID.intUAL_ExternalSpecial)
-            //{
-            //    dtControls = dtControls.Select("[id]<>'" + ClsID.intControlPrefByOthersID.ToString() + "'").CopyToDataTable();
-            //}
+            else if (Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_External || Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_ExternalSpecial)
+            {
+                dtControls = dtControls.Select("[id]<>'" + ClsID.intControlPrefByOthersID.ToString() + "'").CopyToDataTable();
+            }
+
+            unitInfo.controlsPreference = dtControls;
+            unitInfo.damperAndActuator = ClsDB.get_dtLiveEnabled(ClsDBT.strSelDamperActuator, unitInfo.damperActuatorID);
+
+            switch (Convert.ToInt32(unitInfo.productTypeId))
+            {
+                case ClsID.intProdTypeNovaID:
+                    //lblHanding.Text = "Fan Placement";
+                    if (Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_External)
+                    {
+                        unitInfo.BypassVisible = false;
+                        unitInfo.BypassChecked = false;
+                    }
+                    else
+                    {
+                        unitInfo.BypassVisible = true;
+                    }
+
+                    unitInfo.voltageSPPChecked = false;
+                    unitInfo.voltageSPPVisible = false;
+                    break;
+                case ClsID.intProdTypeVentumID:
+                    //lblHanding.Text = "Control Panel Placement";
+                    unitInfo.BypassChecked = true; //Bypass is checked by default for Ventum
+                    unitInfo.voltageSPPChecked = false;
+                    unitInfo.voltageSPPVisible = false;
+                    break;
+                case ClsID.intProdTypeVentumLiteID:
+                    //lblHanding.Text = "Control Panel Placement";
+                    unitInfo.BypassVisible = false;
+                    unitInfo.BypassChecked = false;
+                    unitInfo.voltageSPPChecked = false;
+                    unitInfo.voltageSPPVisible = false;
+                    break;
+                case ClsID.intProdTypeTerraID:
+                    //lblHanding.Text = "Control Panel Placement";
+                    unitInfo.BypassVisible = false;
+                    unitInfo.BypassChecked = false;
+                    unitInfo.voltageSPPVisible = true;
+                    break;
+                default:
+                    break;
+            }
+
+            unitInfo.handing = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.handingID);
+            unitInfo.preheatHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.preheatCoilHandingID);
+            unitInfo.coolingCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.coolingCoilHandingID);
+            unitInfo.heatingCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.heatingCoilHandingID);
+            unitInfo.valueType = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.valveTypeID);
+
 
             return unitInfo;
         }
