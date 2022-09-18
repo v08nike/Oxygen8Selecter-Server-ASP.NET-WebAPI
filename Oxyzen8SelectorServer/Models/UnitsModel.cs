@@ -172,7 +172,7 @@ namespace Oxyzen8SelectorServer.Models
             switch (Convert.ToInt32(unitInfo.productTypeId))
             {
                 case ClsID.intProdTypeNovaID:
-                    //lblHanding.Text = "Fan Placement";
+                    //lblHanding = "Fan Placement";
                     if (Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_External)
                     {
                         unitInfo.BypassVisible = false;
@@ -187,20 +187,20 @@ namespace Oxyzen8SelectorServer.Models
                     unitInfo.voltageSPPVisible = false;
                     break;
                 case ClsID.intProdTypeVentumID:
-                    //lblHanding.Text = "Control Panel Placement";
+                    //lblHanding = "Control Panel Placement";
                     unitInfo.BypassChecked = true; //Bypass is checked by default for Ventum
                     unitInfo.voltageSPPChecked = false;
                     unitInfo.voltageSPPVisible = false;
                     break;
                 case ClsID.intProdTypeVentumLiteID:
-                    //lblHanding.Text = "Control Panel Placement";
+                    //lblHanding = "Control Panel Placement";
                     unitInfo.BypassVisible = false;
                     unitInfo.BypassChecked = false;
                     unitInfo.voltageSPPChecked = false;
                     unitInfo.voltageSPPVisible = false;
                     break;
                 case ClsID.intProdTypeTerraID:
-                    //lblHanding.Text = "Control Panel Placement";
+                    //lblHanding = "Control Panel Placement";
                     unitInfo.BypassVisible = false;
                     unitInfo.BypassChecked = false;
                     unitInfo.voltageSPPVisible = true;
@@ -213,10 +213,168 @@ namespace Oxyzen8SelectorServer.Models
             unitInfo.preheatHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.preheatCoilHandingID);
             unitInfo.coolingCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.coolingCoilHandingID);
             unitInfo.heatingCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.heatingCoilHandingID);
-            unitInfo.valueType = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.valveTypeID);
+            unitInfo.valueType = ClsDB.get_dtLiveEnabled(ClsDBT.strSelValveType, unitInfo.valveTypeID);
 
 
             return unitInfo;
+        }
+
+        public static dynamic GetInitUnitInfo(int jobId, int unitModelId, int productTypeId)
+        {
+            dynamic initUnitInfo = new ExpandoObject();
+            var Session = HttpContext.Current.Session;
+
+            DataTable dtJob = ClsDB.GetSavedJob(jobId);
+
+            ClsProjectInfo objProjectInfo = new ClsProjectInfo(jobId);
+            initUnitInfo.altitude = objProjectInfo.intAltitude.ToString();
+
+            initUnitInfo.summerOutdoorAirDB = objProjectInfo.dblSummerOutdoorAirDB.ToString();
+            initUnitInfo.summerOutdoorAirWB = objProjectInfo.dblSummerOutdoorAirWB.ToString();
+            initUnitInfo.summerOutdoorAirRH = objProjectInfo.dblSummerOutdoorAirRH.ToString();
+
+            initUnitInfo.winterOutdoorAirDB = objProjectInfo.dblWinterOutdoorAirDB.ToString();
+            initUnitInfo.winterOutdoorAirWB = objProjectInfo.dblWinterOutdoorAirWB.ToString();
+            initUnitInfo.winterOutdoorAirRH = objProjectInfo.dblWinterOutdoorAirRH.ToString();
+
+            initUnitInfo.summerReturnAirDB = objProjectInfo.dblSummerReturnAirDB.ToString();
+            initUnitInfo.summerReturnAirWB = objProjectInfo.dblSummerReturnAirWB.ToString();
+            initUnitInfo.summerReturnAirRH = objProjectInfo.dblSummerReturnAirRH.ToString();
+
+            initUnitInfo.winterReturnAirDB = objProjectInfo.dblWinterReturnAirDB.ToString();
+            initUnitInfo.winterReturnAirDB = objProjectInfo.dblWinterReturnAirDB.ToString();
+            initUnitInfo.winterReturnAirWB = objProjectInfo.dblWinterReturnAirWB.ToString();
+            initUnitInfo.winterReturnAirRH = objProjectInfo.dblWinterReturnAirRH.ToString();
+
+            initUnitInfo.location = ClsDB.get_dtLiveEnabled(ClsDBT.strSelGeneralLocation);
+            initUnitInfo.orientation = ClsDB.get_dtLiveEnabled(ClsDBT.strSelGeneralOrientation);
+            initUnitInfo.unitType = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitType);
+            initUnitInfo.controlsPreference = ClsDB.get_dtLiveEnabled(ClsDBT.strSelControlsPreference);
+            initUnitInfo.qaFilter = ClsDB.get_dtLiveEnabled(ClsDBT.strSelFilterModel, "outdoor_air", "1");
+            initUnitInfo.raFilter = ClsDB.get_dtLiveEnabled(ClsDBT.strSelFilterModel, "return_air", "1");
+
+            initUnitInfo.preheatComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating);
+            initUnitInfo.heatExchComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitHeatExchanger);
+            initUnitInfo.coolingComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating);
+            initUnitInfo.heatingComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating);
+            initUnitInfo.reheatComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating);
+
+
+            initUnitInfo.damperActuator = ClsDB.get_dtLiveEnabled(ClsDBT.strSelDamperActuator);
+            initUnitInfo.elecHeaderVoltage = ClsDB.get_dtLiveEnabled(ClsDBT.strSelElectricalVoltage);
+            initUnitInfo.elecHeaderInstallation = ClsDB.get_dtLiveEnabled(ClsDBT.strSelElectricHeaterInstallation);
+
+            switch (productTypeId)
+            {
+                case ClsID.intProdTypeNovaID:
+                    //lblHanding = "Fan Placement";
+                    if (Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_External)
+                    {
+                        initUnitInfo.BypassVisible = false;
+                        initUnitInfo.BypassChecked = false;
+                    }
+                    else
+                    {
+                        initUnitInfo.BypassVisible = true;
+                    }
+
+                    initUnitInfo.voltageSPPChecked = false;
+                    initUnitInfo.voltageSPPVisible = false;
+                    break;
+                case ClsID.intProdTypeVentumID:
+                    //lblHanding = "Control Panel Placement";
+                    initUnitInfo.BypassChecked = true; //Bypass is checked by default for Ventum
+                    initUnitInfo.voltageSPPChecked = false;
+                    initUnitInfo.voltageSPPVisible = false;
+                    break;
+                case ClsID.intProdTypeVentumLiteID:
+                    //lblHanding = "Control Panel Placement";
+                    initUnitInfo.BypassVisible = false;
+                    initUnitInfo.BypassChecked = false;
+                    initUnitInfo.voltageSPPChecked = false;
+                    initUnitInfo.voltageSPPVisible = false;
+                    break;
+                case ClsID.intProdTypeTerraID:
+                    //lblHanding = "Control Panel Placement";
+                    initUnitInfo.BypassVisible = false;
+                    initUnitInfo.BypassChecked = false;
+                    initUnitInfo.voltageSPPVisible = true;
+                    break;
+                default:
+                    break;
+            }
+
+
+            //initUnitInfo.unitModel = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitModel); unitModelId
+
+            string strModelVoltageLinkTable = "";
+
+            switch (productTypeId)
+            {
+                case ClsID.intProdTypeNovaID:
+                    strModelVoltageLinkTable = ClsDBT.strSelNovaUnitModelVoltageLink;
+                    break;
+                default:
+                    break;
+            }
+
+
+            DataTable dtVoltage = ClsDB.get_dtLiveEnabled(ClsDBT.strSelElectricalVoltage);
+            DataTable dtLink = ClsDB.get_dtLive(strModelVoltageLinkTable, "unit_model_id", unitModelId);
+
+            if (productTypeId == ClsID.intProdTypeNovaID && (Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_External || Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_ExternalSpecial))
+            {
+                if (unitModelId == ClsID.intNovaUnitModelID_B20IN || unitModelId == ClsID.intNovaUnitModelID_B22OU)
+                {
+                    dtVoltage = dtVoltage.Select("[id] <> '" + ClsID.intElectricVoltage_208V_1Ph_60HzID.ToString() + "'").CopyToDataTable();
+                }
+            }
+            else if (productTypeId == ClsID.intProdTypeTerraID )
+            {
+                dtVoltage = dtVoltage.Select("[terra_2] = '1'").CopyToDataTable();
+            }
+
+            DataTable dt = ClsTS.get_dtSortedASC(dtVoltage, "id");
+            dtLink = ClsTS.get_dtSortedASC(dtLink, "voltage_id");
+            int intID = 0;
+            int intLinkID = 0;
+
+            DataTable dtSelected = new DataTable();
+            dtSelected.Columns.Add("id", typeof(int));
+            dtSelected.Columns.Add("items", typeof(string));
+
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                intID = Convert.ToInt32(dt.Rows[i]["id"]);
+                for (int j = 0; j < dtLink.Rows.Count; j++)
+                {
+                    intLinkID = Convert.ToInt32(dtLink.Rows[j]["voltage_id"]);
+
+                    if (intID == intLinkID)
+                    {
+                        DataRow dr = dtSelected.NewRow();
+                        dr["id"] = Convert.ToInt32(dt.Rows[i]["id"]);
+                        dr["items"] = dt.Rows[i]["items"].ToString();
+
+                        dtSelected.Rows.Add(dr);
+                        break;
+                    }
+
+                    if (intLinkID > intID)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            initUnitInfo.voltage = dtSelected;
+            initUnitInfo.preheatCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding);
+            initUnitInfo.coolingCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding);
+            initUnitInfo.heatingCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding);
+            initUnitInfo.valueType = ClsDB.get_dtLiveEnabled(ClsDBT.strSelValveType);
+
+            return initUnitInfo;
         }
 
         public static DataTable getUnitListByJobId(int jobID)

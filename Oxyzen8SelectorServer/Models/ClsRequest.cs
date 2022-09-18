@@ -28,6 +28,13 @@ namespace Oxyzen8SelectorServer.Models
         public int unitId { get; set; }
     }
 
+    public class ClsGetInitUnitInfoParams
+    {
+        public int jobId { get; set; }
+        public int unitModelId { get; set; }
+        public int productTypeId { get; set; }
+    }
+
     public class ClsSaveJobParams
     {
         public string jobId { get; set; }

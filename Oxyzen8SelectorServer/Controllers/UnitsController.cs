@@ -30,6 +30,13 @@ namespace Oxyzen8SelectorServer.Controllers
             return UnitsModel.GetUnitInfo(requestInfo.jobId, requestInfo.unitId);
         }
 
+        [HttpPost]
+        [ActionName("GetInitUnitInfo")]
+        public dynamic GetInitUnitInfo([FromBody]ClsGetInitUnitInfoParams request)
+        {
+            return UnitsModel.GetInitUnitInfo(request.jobId, request.unitModelId, request.productTypeId);
+        }
+
         // GET api/<controller>
         public IEnumerable<string> Get()
         {
