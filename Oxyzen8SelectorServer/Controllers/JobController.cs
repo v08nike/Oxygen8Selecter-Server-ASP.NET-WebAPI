@@ -15,7 +15,6 @@ namespace Oxyzen8SelectorServer.Controllers
         // POST api/job/update
         public ClsReturn UpdateJob([FromBody]ClsSaveJobParams reqeustInfo)
         {
-
             ClsReturn returnResult = new ClsReturn();
             returnResult.data = JobsModel.UpdateJob(reqeustInfo);
             return returnResult;
