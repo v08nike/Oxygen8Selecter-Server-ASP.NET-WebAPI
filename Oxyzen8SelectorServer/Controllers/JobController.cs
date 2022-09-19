@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Oxyzen8SelectorServer.Models;
 
 namespace Oxyzen8SelectorServer.Controllers
@@ -12,6 +13,7 @@ namespace Oxyzen8SelectorServer.Controllers
     {
         [HttpPost]
         [ActionName("Delete")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public bool DeleteProjectBy([FromBody]dynamic info)
         {
             return JobsModel.DeleteProjectByJobId(Convert.ToInt32(info.jobId));
@@ -20,6 +22,7 @@ namespace Oxyzen8SelectorServer.Controllers
 
         [HttpPost]
         [ActionName("Update")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         // POST api/job/update
         public ClsReturn UpdateJob([FromBody]ClsSaveJobParams reqeustInfo)
         {
@@ -30,6 +33,7 @@ namespace Oxyzen8SelectorServer.Controllers
 
         [HttpPost]
         [ActionName("Get")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         // Post api/job/get
         public ClsInitailJobInfoReturn GetInitialJobInfo()
         {
@@ -38,6 +42,7 @@ namespace Oxyzen8SelectorServer.Controllers
 
         [HttpPost]
         [ActionName("Get")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         // POSt api/job/get/:id
         public ClsJobInfoReturn GetJobInfoByJobId(int id)
         {

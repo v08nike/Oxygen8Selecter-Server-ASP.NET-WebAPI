@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
+using System.Data;
 using Oxyzen8SelectorServer.Models;
 
 namespace Oxyzen8SelectorServer.Controllers
@@ -12,29 +14,11 @@ namespace Oxyzen8SelectorServer.Controllers
     {
         [HttpPost]
         [ActionName("Get")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         // POST api/jobs/get
-        public ClsReturn GetJobs([FromBody]ClsGetJobsParams reqeustInfo)
+        public DataTable GetJobs()
         {
-            int userId = reqeustInfo.userId;
-            string action = reqeustInfo.action;
-
-            ClsReturn returnResult = new ClsReturn();
-
-            if (action == "all")
-            {
-                returnResult.data = JobsModel.GetJobList();
-                return returnResult;
-            }
-            else if (action == "not")
-            {
-                returnResult.data = JobsModel.getJobListByOthers(userId);
-                return returnResult;
-            }
-            else
-            {
-                returnResult.data = JobsModel.getJobListByCreatedUserId(userId);
-                return returnResult;
-            }
+            return JobsModel.GetJobList();
         }
 
         // GET api/<controller>

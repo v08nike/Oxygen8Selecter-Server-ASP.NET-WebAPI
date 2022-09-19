@@ -21,6 +21,8 @@ namespace Oxyzen8SelectorServer
 
             // Web API routes
             config.MapHttpAttributeRoutes();
+            // Web API enable CORS
+            config.EnableCors();
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",

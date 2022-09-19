@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.SessionState;
 using Oxyzen8SelectorServer.Models;
 
@@ -18,6 +19,7 @@ namespace Oxyzen8SelectorServer.Controllers
 
         [HttpGet]
         [ActionName("SessionValue")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public string SessionValue()
         {
             var Session = HttpContext.Current.Session;
@@ -26,6 +28,7 @@ namespace Oxyzen8SelectorServer.Controllers
 
         [HttpPost]
         [ActionName("Login")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         // POST api/auth/login
         public object Login([FromBody]ClsLoginParams info)
         {
@@ -43,7 +46,9 @@ namespace Oxyzen8SelectorServer.Controllers
                         Session["UAL"] = Convert.ToInt32(dt.Rows[0]["access_level"]);
                         Session["representativeID"] = Convert.ToInt32(dt.Rows[0]["customer_id"]);
 
-                        return new { action = "success", data = dt };
+                        long expiredTime = DateTime.Now.Millisecond + 5184000000L;
+
+                        return new { action = "success", data = dt, accessToken = JwtManager.GenerateToken(Newtonsoft.Json.JsonConvert.SerializeObject(new { exp = expiredTime  })) };
                     } else
                     {
                         return new { action = "incorrect_password"};

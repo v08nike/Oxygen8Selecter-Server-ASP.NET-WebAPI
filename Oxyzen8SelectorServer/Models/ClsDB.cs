@@ -3323,6 +3323,44 @@ namespace Oxyzen8SelectorServer.Models
         }
         #endregion
 
+        #region GetSavedJob
+        public static DataTable GetSavedJob()
+        {
+            DataSet ds = new DataSet();
+            MySqlDataAdapter adp = new MySqlDataAdapter();
+            var Comm = adp.SelectCommand = new MySqlCommand();
+            var Conn = adp.SelectCommand.Connection = new MySqlConnection(get_strConnection());
+
+            string strQuery = "SELECT *, tbl_customer.name Customer_Name, CONCAT(tbl_created_user.first_name, \" \", tbl_created_user.last_name) Created_User_Full_Name, " +
+                            "CONCAT(tbl_revised_user.first_name, \" \", tbl_revised_user.last_name) Revised_User_Full_Name " +
+                            "FROM `" + ClsDBT.strSavJob + "` tbl_job " +
+                            "LEFT JOIN `" + ClsDBT.strSavUsers + "` tbl_created_user ON tbl_created_user.id = tbl_job.created_user_id " +
+                            "LEFT JOIN `" + ClsDBT.strSavUsers + "` tbl_revised_user ON tbl_revised_user.id = tbl_job.revised_user_id " +
+                            "LEFT JOIN `" + ClsDBT.strSavCustomer + "` tbl_customer ON tbl_customer.id = tbl_created_user.customer_id ";
+            try
+            {
+                Comm.CommandType = CommandType.Text;
+                Comm.CommandText = strQuery;
+                Comm.Parameters.Clear();
+                Conn.Open();
+
+                ds = new DataSet();
+                //MySqlDataAdapter adp = new MySqlDataAdapter();
+                adp.Fill(ds, "tblJobs");
+
+                return ds.Tables[0];
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+
+        #endregion
 
         #region GetSavedJob
         public static DataTable GetSavedJob(int _intJobID)

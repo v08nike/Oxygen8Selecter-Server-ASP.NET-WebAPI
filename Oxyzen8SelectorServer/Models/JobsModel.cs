@@ -25,7 +25,7 @@ namespace Oxyzen8SelectorServer.Models
 
         public static DataTable GetJobList()
         {
-            return ClsDB.get_dtLive(ClsDBT.strSavJob, " ORDER BY id DESC");
+            return ClsDB.GetSavedJob();
         }
 
         public static ClsInitailJobInfoReturn GetInitialJobInfo()

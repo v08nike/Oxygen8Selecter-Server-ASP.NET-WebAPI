@@ -11,7 +11,7 @@ namespace Oxyzen8SelectorServer.Models
         public static string UpdatePassword(dynamic userInfo)
         {
             int userId = Convert.ToInt32(userInfo.userId);
-            string currentPassword = userInfo.currenctPassword.ToString();
+            string currentPassword = userInfo.currentPassword.ToString();
             string updatedPassword = userInfo.updatedPassword.ToString();
 
             DataTable dt = ClsDB.GetUser(userId);

@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Dynamic;
 using Oxyzen8SelectorServer.Models;
+using System.Web.Http.Cors;
 
 namespace Oxyzen8SelectorServer.Controllers
 {
@@ -13,6 +14,7 @@ namespace Oxyzen8SelectorServer.Controllers
     {
         [HttpPost]
         [ActionName("Get")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         // POST api/units/get
         public ClsReturn GetUnits([FromBody]ClsGetUnitsParams reqeustInfo)
         {
@@ -25,6 +27,7 @@ namespace Oxyzen8SelectorServer.Controllers
 
         [HttpPost]
         [ActionName("Save")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public bool SaveUnitInfo([FromBody]dynamic unitInfo)
         {
             return UnitsModel.SaveUnitInfo(unitInfo);
@@ -40,6 +43,7 @@ namespace Oxyzen8SelectorServer.Controllers
 
         [HttpPost]
         [ActionName("GetUnitInfo")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public dynamic GetUnitInfo([FromBody] ClsJobUnitId requestInfo)
         {
             return UnitsModel.GetUnitInfo(requestInfo.jobId, requestInfo.unitId);
@@ -47,6 +51,7 @@ namespace Oxyzen8SelectorServer.Controllers
 
         [HttpPost]
         [ActionName("GetInitUnitInfo")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public dynamic GetInitUnitInfo([FromBody]ClsGetInitUnitInfoParams request)
         {
             return UnitsModel.GetInitUnitInfo(request.jobId, request.unitModelId, request.productTypeId);
