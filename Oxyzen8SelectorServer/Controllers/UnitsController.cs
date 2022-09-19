@@ -29,6 +29,14 @@ namespace Oxyzen8SelectorServer.Controllers
         {
             return UnitsModel.SaveUnitInfo(unitInfo);
         }
+        [HttpPost]
+        [ActionName("Delete")]
+        public bool DeleteUnitById([FromBody]dynamic unitInfo)
+        {
+            int jobId = Convert.ToInt32(unitInfo.jobId);
+            int unitId = Convert.ToInt32(unitInfo.unitId);
+            return UnitsModel.DeleteUnitById(jobId, unitId);
+        }
 
         [HttpPost]
         [ActionName("GetUnitInfo")]

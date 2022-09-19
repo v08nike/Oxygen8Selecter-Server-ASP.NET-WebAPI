@@ -9,6 +9,12 @@ namespace Oxyzen8SelectorServer.Models
 {
     public class UnitsModel
     {
+        public static bool DeleteUnitById(int jobId, int unitId)
+        {
+            return ClsDB.DeleteUnit(jobId, unitId);
+        }
+
+
         public static bool SaveUnitInfo(dynamic unitInfo)
         {
             DataTable dt = ClsDB.SaveGeneral(Convert.ToInt32(unitInfo.jobId),

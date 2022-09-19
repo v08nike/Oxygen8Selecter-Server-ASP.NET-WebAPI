@@ -8,6 +8,11 @@ namespace Oxyzen8SelectorServer.Models
 {
     public class JobsModel
     {
+        public static bool DeleteProjectByJobId(int jobId)
+        {
+            return ClsDB.DeleteProject(jobId);
+        }
+
         public static DataTable getJobListByCreatedUserId(int createdUserId)
         {
             return ClsDB.get_dtLive(ClsDBT.strSavJob, " WHERE created_user_id = '" + createdUserId + "' ORDER BY id DESC");

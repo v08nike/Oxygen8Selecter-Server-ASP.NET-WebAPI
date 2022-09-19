@@ -11,6 +11,14 @@ namespace Oxyzen8SelectorServer.Controllers
     public class JobController : ApiController
     {
         [HttpPost]
+        [ActionName("Delete")]
+        public bool DeleteProjectBy([FromBody]dynamic info)
+        {
+            return JobsModel.DeleteProjectByJobId(Convert.ToInt32(info.jobId));
+        }
+
+
+        [HttpPost]
         [ActionName("Update")]
         // POST api/job/update
         public ClsReturn UpdateJob([FromBody]ClsSaveJobParams reqeustInfo)
