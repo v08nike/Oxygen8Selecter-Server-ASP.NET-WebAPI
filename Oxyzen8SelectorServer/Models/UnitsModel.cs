@@ -9,6 +9,176 @@ namespace Oxyzen8SelectorServer.Models
 {
     public class UnitsModel
     {
+        public static bool SaveUnitInfo(dynamic unitInfo)
+        {
+            DataTable dt = ClsDB.SaveGeneral(Convert.ToInt32(unitInfo.jobId),
+                                            Convert.ToInt32(unitInfo.unitId),
+                                            Convert.ToInt32(unitInfo.tag.ToUpper()),
+                                            Convert.ToInt32(unitInfo.qty),
+                                            Convert.ToInt32(unitInfo.productTypeId),
+                                            Convert.ToInt32(unitInfo.unitTypeId),
+                                            Convert.ToInt32(unitInfo.byPassId),
+                                            Convert.ToInt32(unitInfo.unitModelId),
+                                            Convert.ToInt32(unitInfo.selectionTypeId),
+                                            Convert.ToInt32(unitInfo.locationId),
+                                            Convert.ToInt32(unitInfo.downshotId),
+                                            Convert.ToInt32(unitInfo.OrientationId),
+                                            Convert.ToInt32(unitInfo.controlsPreferenceId),
+                                            Convert.ToDouble(unitInfo.unitHeight),
+                                            Convert.ToDouble(unitInfo.unitWidth),
+                                            Convert.ToDouble(unitInfo.unitLength),
+                                            Convert.ToDouble(unitInfo.unitWeight),
+                                            Convert.ToInt32(unitInfo.unitVoltageId),
+                                            Convert.ToInt32(unitInfo.voltageSPPId),
+                                            Convert.ToInt32(unitInfo.attUnitModelSelectedId),
+                                            0d);
+
+            unitInfo.unitId = dt.Rows[0]["UnitNo"].ToString();
+
+            ClsDB.SaveAirFlow(Convert.ToInt32(unitInfo.jobId),
+                                Convert.ToInt32(unitInfo.unitId),
+                                Convert.ToInt32(unitInfo.altitude),
+                                Convert.ToInt32(unitInfo.summerSupplyAirCFM),
+                                Convert.ToInt32(unitInfo.summerReturnAirCFM),
+                                Convert.ToInt32(unitInfo.summerSupplyAirCFM),
+                                Convert.ToInt32(unitInfo.summerReturnAirCFM),
+                                Math.Round(Convert.ToDouble(unitInfo.summerOutdoorAirDB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.summerOutdoorAirWB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.summerOutdoorAirRH), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.winterOutdoorAirDB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.winterOutdoorAirWB), 3),
+                                Math.Round(Convert.ToDouble(unitInfo.winterOutdoorAirRH), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.summerReturnAirDB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.summerReturnAirWB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.summerReturnAirRH), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.winterReturnAirDB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.winterReturnAirWB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.winterReturnAirRH), 1),
+                                Convert.ToDouble(unitInfo.winterPreheatSetpointDB),
+                                Convert.ToDouble(unitInfo.winterHeatingSetpointDB),
+                                Convert.ToDouble(unitInfo.summerCoolingSetpointDB),
+                                Convert.ToDouble(unitInfo.summerCoolingSetpointWB),
+                                Convert.ToDouble(unitInfo.summerReheatSetpointDB),
+                                Convert.ToDouble(unitInfo.supplyAirESP),
+                                Convert.ToDouble(unitInfo.exhaustAirESP));
+
+            ClsCompOpt objCompOpt = new ClsCompOpt
+            {
+                intJobID = Convert.ToInt32(unitInfo.jobId),
+                intUnitNo = Convert.ToInt32(unitInfo.unitId),
+                intUnitTypeID = Convert.ToInt32(unitInfo.unitTypeId),
+                //intUnitModelID = Convert.ToInt32(id_list.Attributes[clsID.strAttUnitModelID]),
+                //intVoltageID = Convert.ToInt32(id_list.Attributes[clsID.strAttUnitVoltageID]),
+                intUnitModelID = Convert.ToInt32(unitInfo.unitModelId),
+                intVoltageID = Convert.ToInt32(unitInfo.unitVoltageId),
+                intOA_FilterModelID = Convert.ToInt32(unitInfo.OA_FilterModelId),
+                intSA_FinalFilterModelID = 0,
+                intRA_FilterModelID = Convert.ToInt32(unitInfo.RA_FilterModelId),
+                intHeatExchCompID = Convert.ToInt32(unitInfo.heatExchCompId),
+                intPreheatCompID = Convert.ToInt32(unitInfo.preheatCompId),
+                intCoolingCompID = Convert.ToInt32(unitInfo.coolingCompId),
+                intHeatingCompID = Convert.ToInt32(unitInfo.heatingCompId),
+                intReheatCompID = Convert.ToInt32(unitInfo.reheatCompId),
+                intIsHeatPump = unitInfo.heatPump,
+                intIsDehumidification = unitInfo.dehumidification,
+                intElecHeaterVoltageID = Convert.ToInt32(unitInfo.elecHeaterVoltageId),
+                intPreheatElecHeaterInstallationID = Convert.ToInt32(unitInfo.preheatElecHeaterInstallationId),
+                intHeatElecHeaterInstallationID = Convert.ToInt32(unitInfo.heatElecHeaterInstallationId),
+                intDamperAndActuatorID = Convert.ToInt32(unitInfo.damperAndActuatorId),
+                intIsValveAndActuatorIncluded = unitInfo.valveAndActuator,
+                intValveTypeID = Convert.ToInt32(unitInfo.valveTypeId),
+                intIsDrainPan = unitInfo.drainPan,
+                dblOA_FilterPD = Convert.ToDouble(unitInfo.OA_FilterPD),
+                dblRA_FilterPD = Convert.ToDouble(unitInfo.RA_FilterPD),
+                dblPreheatSetpointDB = Convert.ToDouble(unitInfo.preheatSetpointDB),
+                dblCoolingSetpointDB = Convert.ToDouble(unitInfo.coolingSetpointDB),
+                dblCoolingSetpointWB = Convert.ToDouble(unitInfo.coolingSetpointWB),
+                dblHeatingSetpointDB = Convert.ToDouble(unitInfo.heatingSetpointDB),
+                dblReheatSetpointDB = Convert.ToDouble(unitInfo.reheatSetpointDB),
+                intCoolingFluidTypeID = Convert.ToInt32(unitInfo.coolingFluidType),
+                intCoolingFluidConcentID = Convert.ToInt32(unitInfo.coolingFluidConcentration),
+                dblCoolingFluidEntTemp = Convert.ToDouble(unitInfo.coolingFluidEntTemp),
+                dblCoolingFluidLvgTemp = Convert.ToDouble(unitInfo.coolingFluidLvgTemp),
+                intHeatingFluidTypeID = Convert.ToInt32(unitInfo.heatingFluidType),
+                intHeatingFluidConcentID = Convert.ToInt32(unitInfo.heatingFluidConcentration),
+                dblHeatingFluidEntTemp = Convert.ToDouble(unitInfo.heatingFluidEntTemp),
+                dblHeatingFluidLvgTemp = Convert.ToDouble(unitInfo.heatingFluidLvgTemp),
+                dblRefrigSuctionTemp = Convert.ToDouble(unitInfo.refrigSuctionTemp),
+                dblRefrigLiquidTemp = Convert.ToDouble(unitInfo.refrigLiquidTemp),
+                dblRefrigSuperheatTemp = Convert.ToDouble(unitInfo.refrigSuperheatTemp),
+                dblRefrigCondensingTemp = Convert.ToDouble(unitInfo.refrigCondensingTemp),
+                dblRefrigVaporTemp = Convert.ToDouble(unitInfo.refrigVaporTemp),
+                dblRefrigSubcoolingTemp = Convert.ToDouble(unitInfo.refrigSubcoolingTemp),
+                intPreheatValveAndActuatorID = 0,
+                intCoolingValveAndActuatorID = 0,
+                intHeatingValveAndActuatorID = 0,
+                intReheatValveAndActuatorID = 0,
+                intPreheatElecHeaterStdCoilNo = 0,
+                intHeatingElecHeaterStdCoilNo = 0,
+                intReheatElecHeaterStdCoilNo = 0,
+                intIsHeatExchEA_Warning = 0,
+            };
+
+            //objCompOpt = new clsComponentItems(objCompOptData);
+            ClsDB.SaveCompOpt(objCompOpt);
+            var Session = HttpContext.Current.Session;
+
+
+            if (Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_Admin ||
+                Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_IntAdmin ||
+                Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_IntLvl_1 ||
+                Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_IntLvl_2)
+            {
+
+                ClsCompOptCustom objCompOptCustom = new ClsCompOptCustom
+                {
+                    intJobID = Convert.ToInt32(unitInfo.uobId),
+                    intUnitNo = Convert.ToInt32(unitInfo.unitId),
+                    intIsPreheatHWC_UseCap = unitInfo.preheatHWC_UseCap,
+                    dblPreheatHWC_Cap = Convert.ToDouble(unitInfo.preheatHWC_Cap),
+                    intIsPreheatHWC_UseFlowRate = unitInfo.preheatHWC_UseFlowRate,
+                    dblPreheatHWC_FlowRate = Convert.ToDouble(unitInfo.preheatHWC_FlowRate),
+                    intIsCoolingCWC_UseCap = unitInfo.coolingCWC_UseCap,
+                    dblCoolingCWC_Cap = Convert.ToDouble(unitInfo.coolingCWC_Cap),
+                    intIsCoolingCWC_UseFlowRate = unitInfo.coolingCWC_UseFlowRate,
+                    dblCoolingCWC_FlowRate = Convert.ToDouble(unitInfo.coolingCWC_FlowRate),
+                    intIsHeatingHWC_UseCap = unitInfo.heatingHWC_UseCap,
+                    dblHeatingHWC_Cap = Convert.ToDouble(unitInfo.heatingHWC_Cap),
+                    intIsHeatingHWC_UseFlowRate = unitInfo.heatingHWC_UseFlowRate,
+                    dblHeatingHWC_FlowRate = Convert.ToDouble(unitInfo.heatingHWC_FlowRate),
+                    intIsReheatHWC_UseCap = unitInfo.reheatHWC_UseCap,
+                    dblReheatHWC_Cap = Convert.ToDouble(unitInfo.reheatHWC_Cap),
+                    intIsReheatHWC_UseFlowRate = unitInfo.reheatHWC_UseFlowRate,
+                    dblReheatHWC_FlowRate = Convert.ToDouble(unitInfo.reheatHWC_FlowRate),
+                };
+
+                ClsDB.SaveCompOptCustom(objCompOptCustom);
+            }
+
+            ClsLayoutOpt objLayoutOpt = new ClsLayoutOpt
+            {
+                intJobID = Convert.ToInt32(unitInfo.jobId),
+                intUnitNo = Convert.ToInt32(unitInfo.unitNo),
+                intProductTypeID = Convert.ToInt32(unitInfo.productTypeId),
+                intUnitTypeID = Convert.ToInt32(unitInfo.unitTypeId),
+                intHandingID = Convert.ToInt32(unitInfo.handing),
+                intPreheatCoilHandingID = Convert.ToInt32(unitInfo.preheatCoilHandingId),
+                intCoolingCoilHandingID = Convert.ToInt32(unitInfo.coolingCoilHandingId),
+                intHeatingCoilHandingID = Convert.ToInt32(unitInfo.heatingCoilHandingId),
+                intSupplyAirOpeningID = Convert.ToInt32(unitInfo.supplyAirOpeningId),
+                strSupplyAirOpening = unitInfo.supplyAirOpening,
+                intExhaustAirOpeningID = Convert.ToInt32(unitInfo.exhaustAirOpeningId),
+                strExhaustAirOpening = unitInfo.exhaustAirOpening,
+                intOutdoorAirOpeningID = Convert.ToInt32(unitInfo.outdoorAirOpeningId),
+                strOutdoorAirOpening = unitInfo.outdoorAirOpening,
+                intReturnAirOpeningID = Convert.ToInt32(unitInfo.returnAirOpening),
+                strReturnAirOpening = unitInfo.returnAirOpening
+            };
+
+            ClsDB.SaveLayout(objLayoutOpt);
+
+            return true;
+        }
         public static dynamic GetUnitInfo(int jobId, int unitId)
         {
             dynamic unitInfo = new ExpandoObject();

@@ -14,13 +14,20 @@ namespace Oxyzen8SelectorServer.Controllers
         [HttpPost]
         [ActionName("Get")]
         // POST api/units/get
-        public ClsReturn getUnits([FromBody]ClsGetUnitsParams reqeustInfo)
+        public ClsReturn GetUnits([FromBody]ClsGetUnitsParams reqeustInfo)
         {
             int jobId = reqeustInfo.jobId;
 
             ClsReturn returnResult = new ClsReturn();
             returnResult.data = UnitsModel.getUnitListByJobId(jobId);
             return returnResult;
+        }
+
+        [HttpPost]
+        [ActionName("Save")]
+        public bool SaveUnitInfo([FromBody]dynamic unitInfo)
+        {
+            return UnitsModel.SaveUnitInfo(unitInfo);
         }
 
         [HttpPost]
