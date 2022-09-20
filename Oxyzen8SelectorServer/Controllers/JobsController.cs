@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Data;
+using System.Dynamic;
 using Oxyzen8SelectorServer.Models;
 
 namespace Oxyzen8SelectorServer.Controllers
@@ -16,9 +17,12 @@ namespace Oxyzen8SelectorServer.Controllers
         [ActionName("Get")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         // POST api/jobs/get
-        public DataTable GetJobs()
+        public dynamic GetJobs()
         {
-            return JobsModel.GetJobList();
+            dynamic returnData = new ExpandoObject();
+            returnData.jobInitInfo = JobsModel.GetInitialJobInfo();
+            returnData.jobList = JobsModel.GetJobList();
+            return returnData;
         }
 
         // GET api/<controller>

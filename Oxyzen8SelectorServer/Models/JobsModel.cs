@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Dynamic;
 using System.Linq;
 using System.Web;
 
@@ -28,21 +29,84 @@ namespace Oxyzen8SelectorServer.Models
             return ClsDB.GetSavedJob();
         }
 
-        public static ClsInitailJobInfoReturn GetInitialJobInfo()
+        public static dynamic GetInitialJobInfo()
         {
-            ClsInitailJobInfoReturn jobInfo = new ClsInitailJobInfoReturn();
+            dynamic jobInfo = new ExpandoObject();
 
             jobInfo.createdDate = DateTime.Now.ToString("yyyy-MM-dd");
             jobInfo.revisedDate = DateTime.Now.ToString("yyyy-MM-dd");
             jobInfo.baseOfDesign = ClsDB.get_dtLive(ClsDBT.strSelBasisOfDesign);
             jobInfo.UoM = ClsDB.get_dtLive(ClsDBT.strSelUOM);
+            jobInfo.applications = ClsDB.get_dtLive(ClsDBT.strSelGeneralApplication);
             jobInfo.country = ClsDB.get_dtLive(ClsDBT.strSelCountry);
+            jobInfo.provState = ClsDB.get_dtByQuery("SELECT * FROM `" + ClsDBT.strSelWeatherData + "` GROUP BY `prov_state` ORDER BY `prov_state`");
+            jobInfo.weatherData = ClsDB.get_dtLive(ClsDBT.strSelWeatherData);
             jobInfo.designCondition = ClsDB.get_dtLive(ClsDBT.strSelWeatherDesignConditions);
             jobInfo.companyInfo = ClsDB.get_dtLive(ClsDBT.strSavCustomer);
+            jobInfo.designDataCooling = new { designDataCooling_010_Heating_990_ID = ClsID.intDesignDataCooling_010_Heating_990_ID, designDataCooling_004_Heating_996_ID = ClsID.intDesignDataCooling_004_Heating_996_ID };
 
             return jobInfo;
         }
 
+        public static dynamic GetAllOutdoorInfo(string country, int cityId, int designCondition)
+        {
+            dynamic returnInfo = new ExpandoObject();
+            DataTable dt = ClsDB.get_dtLive(ClsDBT.strSelWeatherData, cityId);
+
+            if (dt.Rows.Count > 0)
+            {
+                returnInfo.altitude = dt.Rows[0]["elevation_foot"].ToString();
+                if (designCondition == ClsID.intDesignDataCooling_010_Heating_990_ID)
+                {
+                    returnInfo.summerOutdoorAirDB = Math.Round(ClsFormula.get_dblFarenheit(Convert.ToDouble(dt.Rows[0]["cooling_db010"])), 1).ToString();
+                    returnInfo.summerOutdoorAirWB = Math.Round(ClsFormula.get_dblFarenheit(Convert.ToDouble(dt.Rows[0]["cooling_wb_db010"])), 1).ToString();
+                    returnInfo.winterOutdoorAirDB = Math.Round(ClsFormula.get_dblFarenheit(Convert.ToDouble(dt.Rows[0]["heating_db990"])), 1).ToString();
+                }
+                else if (designCondition == ClsID.intDesignDataCooling_004_Heating_996_ID)
+                {
+                    returnInfo.summerOutdoorAirDB = Math.Round(ClsFormula.get_dblFarenheit(Convert.ToDouble(dt.Rows[0]["cooling_db004"])), 1).ToString();
+                    returnInfo.summerOutdoorAirWB = Math.Round(ClsFormula.get_dblFarenheit(Convert.ToDouble(dt.Rows[0]["cooling_wb_db004"])), 1).ToString();
+                    returnInfo.winterOutdoorAirDB = Math.Round(ClsFormula.get_dblFarenheit(Convert.ToDouble(dt.Rows[0]["heating_db996"])), 1).ToString();
+                }
+
+                if (country == "CAN")
+                {
+                    returnInfo.winterOutdoorAirWB = Math.Round((Convert.ToDouble(returnInfo.winterOutdoorAirDB) - 2d), 2).ToString();
+                }
+                else
+                {
+                    returnInfo.winterOutdoorAirWB = Math.Round(Convert.ToDouble(returnInfo.winterOutdoorAirDB) - 0.1d, 2).ToString();
+                }
+
+                returnInfo.summerOutdoorAirRH = GetRH_By_DB_WB(new { first = returnInfo.summerOutdoorAirDB, second = returnInfo.summerOutdoorAirWB, altitude = returnInfo.altitude });
+                returnInfo.winterOutdoorAirRH = GetRH_By_DB_WB(new { first = returnInfo.winterOutdoorAirDB, second= returnInfo.winterOutdoorAirWB, altitude = returnInfo.altitude });
+
+                return returnInfo;
+            }
+            return returnInfo;
+        }
+        public static float GetRH_By_DB_WB(dynamic info)
+        {
+            float first = (float)Convert.ToDouble(info.first);
+            float second = (float)Convert.ToDouble(info.second);
+            if (first < -40f)
+            {
+                first = -40.0f;
+            } 
+
+            if (second < -40.5f)
+            {
+                second = -40.5f;
+            }
+            return (float)Math.Round(ClsPsyCalc.get_fltRH_ByDB_WB((float)Convert.ToDouble(info.first), (float)Convert.ToDouble(info.second), Convert.ToInt32(info.altitude)), 1);
+        }
+
+        public static float GetWB_By_DB_RH(dynamic info)
+        {
+            return (float)Math.Round(ClsPsyCalc.get_fltWB_ByDB_RH((float)Convert.ToDouble(info.first), (float)Convert.ToDouble(info.second), Convert.ToInt32(info.altitude)), 1);
+        }
+
+        
         public static ClsJobInfoReturn GetJobInfoByJobId(int jobId)
         {
             ClsJobInfoReturn jobInfo = new ClsJobInfoReturn();

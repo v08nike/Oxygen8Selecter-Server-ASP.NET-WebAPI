@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+using System.Dynamic;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Oxyzen8SelectorServer.Models;
@@ -19,6 +17,32 @@ namespace Oxyzen8SelectorServer.Controllers
             return JobsModel.DeleteProjectByJobId(Convert.ToInt32(info.jobId));
         }
 
+        [HttpPost]
+        [ActionName("GetOutdoorInfo")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic GetOutdoorInfo([FromBody]dynamic info)
+        {
+            switch (info.action.ToString())
+            {
+                case "GET_ALL_DATA":
+                    {
+                        return JobsModel.GetAllOutdoorInfo(info.country.ToString(), Convert.ToInt32(info.cityId), Convert.ToInt32(info.designCondition));
+                    }
+                case "GET_HR_BY_DB_WB":
+                    {
+                        return JobsModel.GetRH_By_DB_WB(info);
+                    }
+                case "GET_WB_BY_DB_HR":
+                    {
+                        return JobsModel.GetWB_By_DB_RH(info);
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+            return JobsModel.DeleteProjectByJobId(Convert.ToInt32(info.jobId));
+        }
 
         [HttpPost]
         [ActionName("Update")]
@@ -35,7 +59,7 @@ namespace Oxyzen8SelectorServer.Controllers
         [ActionName("Get")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         // Post api/job/get
-        public ClsInitailJobInfoReturn GetInitialJobInfo()
+        public dynamic GetInitialJobInfo()
         {
             return JobsModel.GetInitialJobInfo();
         }
