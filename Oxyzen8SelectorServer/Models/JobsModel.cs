@@ -43,7 +43,7 @@ namespace Oxyzen8SelectorServer.Models
             jobInfo.weatherData = ClsDB.get_dtLive(ClsDBT.strSelWeatherData);
             jobInfo.designCondition = ClsDB.get_dtLive(ClsDBT.strSelWeatherDesignConditions);
             jobInfo.companyInfo = ClsDB.get_dtLive(ClsDBT.strSavCustomer);
-            jobInfo.designDataCooling = new { designDataCooling_010_Heating_990_ID = ClsID.intDesignDataCooling_010_Heating_990_ID, designDataCooling_004_Heating_996_ID = ClsID.intDesignDataCooling_004_Heating_996_ID };
+            jobInfo.usersInfo = ClsDB.get_dtLive(ClsDBT.strSavUsers);
 
             return jobInfo;
         }
@@ -87,26 +87,40 @@ namespace Oxyzen8SelectorServer.Models
         }
         public static float GetRH_By_DB_WB(dynamic info)
         {
-            float first = (float)Convert.ToDouble(info.first);
-            float second = (float)Convert.ToDouble(info.second);
-            if (first < -40f)
+            if (ClsNumber.IsNumber(info.first.ToString()) && ClsNumber.IsNumber(info.second.ToString()) && ClsNumber.IsNumber(info.altitude.ToString()))
             {
-                first = -40.0f;
-            } 
+                float first = (float)Convert.ToDouble(info.first);
+                float second = (float)Convert.ToDouble(info.second);
+                if (first < -40f)
+                {
+                    first = -40.0f;
+                }
 
-            if (second < -40.5f)
-            {
-                second = -40.5f;
+                if (second < -40.5f)
+                {
+                    second = -40.5f;
+                }
+                return (float)Math.Round(ClsPsyCalc.get_fltRH_ByDB_WB((float)Convert.ToDouble(info.first), (float)Convert.ToDouble(info.second), Convert.ToInt32(info.altitude)), 1);
             }
-            return (float)Math.Round(ClsPsyCalc.get_fltRH_ByDB_WB((float)Convert.ToDouble(info.first), (float)Convert.ToDouble(info.second), Convert.ToInt32(info.altitude)), 1);
+            return 0;
         }
 
         public static float GetWB_By_DB_RH(dynamic info)
         {
-            return (float)Math.Round(ClsPsyCalc.get_fltWB_ByDB_RH((float)Convert.ToDouble(info.first), (float)Convert.ToDouble(info.second), Convert.ToInt32(info.altitude)), 1);
+            if (ClsNumber.IsNumber(info.first.ToString()) && ClsNumber.IsNumber(info.second.ToString()) && ClsNumber.IsNumber(info.altitude.ToString()))
+            {
+                return (float)Math.Round(ClsPsyCalc.get_fltWB_ByDB_RH((float)Convert.ToDouble(info.first), (float)Convert.ToDouble(info.second), Convert.ToInt32(info.altitude)), 1);
+            }
+
+            return 0;
         }
 
-        
+        public static dynamic GetUserPerCompany(dynamic info)
+        {
+            DataTable dtUserPerRep = ClsDB.GetUserPerCustomer(Convert.ToInt32(info.companyNameId));
+            return dtUserPerRep;
+        }
+
         public static ClsJobInfoReturn GetJobInfoByJobId(int jobId)
         {
             ClsJobInfoReturn jobInfo = new ClsJobInfoReturn();
@@ -151,42 +165,42 @@ namespace Oxyzen8SelectorServer.Models
             return jobInfo;
         }
         
-        public static DataTable UpdateJob(ClsSaveJobParams jobInfo)
+        public static DataTable UpdateJob(dynamic jobInfo)
         {
             return ClsDB.SaveJob(Convert.ToInt32(jobInfo.jobId),
                                 Convert.ToInt32(jobInfo.createdUserId),
                                 Convert.ToInt32(jobInfo.revisedUserId),
-                                jobInfo.jobName,
-                                jobInfo.referenceNo,
-                                Convert.ToInt32(jobInfo.revisionNo),
-                                jobInfo.companyName,
-                                jobInfo.contactName,
+                                jobInfo.jobName.ToString(),
+                                jobInfo.referenceNo.ToString(),
+                                Convert.ToInt32(jobInfo.revision),
+                                jobInfo.companyName.ToString(),
+                                jobInfo.contactName.ToString(),
                                 Convert.ToInt32(jobInfo.companyNameId),
                                 Convert.ToInt32(jobInfo.contactNameId),
-                                Convert.ToInt32(jobInfo.applicationId),
-                                jobInfo.applicationOther,
-                                Convert.ToInt32(jobInfo.basisOfDesignId),
-                                Convert.ToInt32(jobInfo.UOMId),
-                                jobInfo.country,
-                                jobInfo.provState,
-                                Convert.ToInt32(jobInfo.cityId),
-                                Convert.ToInt32(jobInfo.designConditionId),
+                                Convert.ToInt32(jobInfo.application),
+                                jobInfo.applicationOther.ToString(),
+                                Convert.ToInt32(jobInfo.basisOfDesign),
+                                Convert.ToInt32(jobInfo.uom),
+                                jobInfo.country.ToString(),
+                                jobInfo.state.ToString(),
+                                Convert.ToInt32(jobInfo.city),
+                                Convert.ToInt32(jobInfo.ashareDesignConditions),
                                 Convert.ToInt32(jobInfo.altitude),
-                                Math.Round(Convert.ToDouble(jobInfo.summerOutdoorAirDB), 1),
-                                Math.Round(Convert.ToDouble(jobInfo.summerOutdoorAirWB), 1),
-                                Math.Round(Convert.ToDouble(jobInfo.summerOutdoorAirRH), 1),
-                                Math.Round(Convert.ToDouble(jobInfo.winterOutdoorAirDB), 1),
-                                Math.Round(Convert.ToDouble(jobInfo.winterOutdoorAirWB), 3),
-                                Math.Round(Convert.ToDouble(jobInfo.winterOutdoorAirRH), 1),
-                                Math.Round(Convert.ToDouble(jobInfo.summerReturnAirDB), 1),
-                                Math.Round(Convert.ToDouble(jobInfo.summerReturnAirWB), 1),
-                                Math.Round(Convert.ToDouble(jobInfo.summerReturnAirRH), 1),
-                                Math.Round(Convert.ToDouble(jobInfo.winterReturnAirDB), 1),
-                                Math.Round(Convert.ToDouble(jobInfo.winterReturnAirWB), 3),
-                                Math.Round(Convert.ToDouble(jobInfo.winterReturnAirRH), 1),
-                                jobInfo.createdDate,
-                                jobInfo.revisedDate,
-                                Convert.ToInt32(jobInfo.isTestNewPrice));
+                                Math.Round(Convert.ToDouble(jobInfo.summer_air_db), 1),
+                                Math.Round(Convert.ToDouble(jobInfo.summer_air_wb), 1),
+                                Math.Round(Convert.ToDouble(jobInfo.summer_air_rh), 1),
+                                Math.Round(Convert.ToDouble(jobInfo.winter_air_db), 1),
+                                Math.Round(Convert.ToDouble(jobInfo.winter_air_wb), 3),
+                                Math.Round(Convert.ToDouble(jobInfo.winter_air_rh), 1),
+                                Math.Round(Convert.ToDouble(jobInfo.summer_return_db), 1),
+                                Math.Round(Convert.ToDouble(jobInfo.summer_return_wb), 1),
+                                Math.Round(Convert.ToDouble(jobInfo.summer_return_rh), 1),
+                                Math.Round(Convert.ToDouble(jobInfo.winter_return_db), 1),
+                                Math.Round(Convert.ToDouble(jobInfo.winter_return_wb), 3),
+                                Math.Round(Convert.ToDouble(jobInfo.winter_return_rh), 1),
+                                jobInfo.createdDate.ToString(),
+                                jobInfo.revisedDate.ToString(),
+                                Convert.ToInt32(jobInfo.testNewPrice));
         }
     }
 }

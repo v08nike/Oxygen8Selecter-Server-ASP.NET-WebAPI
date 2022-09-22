@@ -28,7 +28,7 @@ namespace Oxyzen8SelectorServer.Controllers
                     {
                         return JobsModel.GetAllOutdoorInfo(info.country.ToString(), Convert.ToInt32(info.cityId), Convert.ToInt32(info.designCondition));
                     }
-                case "GET_HR_BY_DB_WB":
+                case "GET_RH_BY_DB_WB":
                     {
                         return JobsModel.GetRH_By_DB_WB(info);
                     }
@@ -36,12 +36,25 @@ namespace Oxyzen8SelectorServer.Controllers
                     {
                         return JobsModel.GetWB_By_DB_RH(info);
                     }
+                case "GET_USER_PER_COMPANY":
+                    {
+                        return JobsModel.GetUserPerCompany(info);
+                    }
                 default:
                     {
                         break;
                     }
             }
             return JobsModel.DeleteProjectByJobId(Convert.ToInt32(info.jobId));
+        }
+
+        [HttpPost]
+        [ActionName("Add")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        // POST api/job/add
+        public dynamic AddNewJob([FromBody]dynamic reqeustInfo)
+        {
+            return JobsModel.UpdateJob(reqeustInfo);
         }
 
         [HttpPost]

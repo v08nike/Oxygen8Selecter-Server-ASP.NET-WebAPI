@@ -337,6 +337,7 @@
     <Compile Include="Models\ClsPsyCalc.cs" />
     <Compile Include="Models\ClsTS.cs" />
     <Compile Include="Models\JobsModel.cs" />
+    <Compile Include="Models\ClsNumber.cs" />
     <Compile Include="Models\UnitsModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
