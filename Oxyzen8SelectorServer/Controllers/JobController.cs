@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Data;
 using Oxyzen8SelectorServer.Models;
 
 namespace Oxyzen8SelectorServer.Controllers
@@ -61,11 +62,10 @@ namespace Oxyzen8SelectorServer.Controllers
         [ActionName("Update")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         // POST api/job/update
-        public ClsReturn UpdateJob([FromBody]ClsSaveJobParams reqeustInfo)
+        public DataTable UpdateJob([FromBody]dynamic reqeustInfo)
         {
-            ClsReturn returnResult = new ClsReturn();
-            returnResult.data = JobsModel.UpdateJob(reqeustInfo);
-            return returnResult;
+            JobsModel.UpdateJob(reqeustInfo);
+            return JobsModel.GetJobList(); 
         }
 
         [HttpPost]
@@ -84,6 +84,17 @@ namespace Oxyzen8SelectorServer.Controllers
         public ClsJobInfoReturn GetJobInfoByJobId(int id)
         {
             return JobsModel.GetJobInfoByJobId(id);
+        }
+
+        [HttpPost]
+        [ActionName("GetWithUnit")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic GetJobAndUnitInfo([FromBody]dynamic info)
+        {
+            dynamic returnInfo = new ExpandoObject();
+            returnInfo.jobInfo = ClsDB.GetSavedJob(Convert.ToInt32(info.jobId)); ;
+            returnInfo.unitList= UnitsModel.GetUnitListByJobId(Convert.ToInt32(info.jobId));
+            return returnInfo;
         }
 
         // GET api/<controller>

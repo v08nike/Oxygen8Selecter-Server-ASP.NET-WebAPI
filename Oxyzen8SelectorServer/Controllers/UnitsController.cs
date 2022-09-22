@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Data;
 using System.Dynamic;
 using Oxyzen8SelectorServer.Models;
 using System.Web.Http.Cors;
@@ -16,13 +17,9 @@ namespace Oxyzen8SelectorServer.Controllers
         [ActionName("Get")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         // POST api/units/get
-        public ClsReturn GetUnits([FromBody]ClsGetUnitsParams reqeustInfo)
+        public DataTable GetUnits([FromBody]dynamic reqeustInfo)
         {
-            int jobId = reqeustInfo.jobId;
-
-            ClsReturn returnResult = new ClsReturn();
-            returnResult.data = UnitsModel.getUnitListByJobId(jobId);
-            return returnResult;
+            return UnitsModel.GetUnitListByJobId(Convert.ToInt32(reqeustInfo.jobId));
         }
 
         [HttpPost]

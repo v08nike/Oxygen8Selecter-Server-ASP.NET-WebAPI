@@ -146,7 +146,7 @@ namespace Oxyzen8SelectorServer.Models
                 DataTable dtCompanyName = ClsDB.get_dtByID(ClsDBT.strSavCustomer, intCompanyNameID);
                 DataTable dtContactName = ClsDB.GetUser(intContactNameID);
                 strCompanyNameNew = dtCompanyName.Rows.Count > 0 ? dtCompanyName.Rows[0]["name"].ToString() : "";
-                strContactNameNew = dtCompanyName.Rows.Count > 0 ? dtContactName.Rows[0]["User_Full_name"].ToString() : "";
+                strContactNameNew = dtCompanyName.Rows.Count > 0 && intContactNameID != 0 ? dtContactName.Rows[0]["User_Full_name"].ToString() : "";
 
                 CalculateAirProperty();
                 //strApplication = ClsDBM.SelectById(ClsDBT.strSelGeneralApplication, intApplicationID).Rows[0]["items"].ToString(); ;

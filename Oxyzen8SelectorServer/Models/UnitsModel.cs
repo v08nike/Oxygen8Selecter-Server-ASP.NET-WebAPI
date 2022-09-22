@@ -553,7 +553,7 @@ namespace Oxyzen8SelectorServer.Models
             return initUnitInfo;
         }
 
-        public static DataTable getUnitListByJobId(int jobID)
+        public static DataTable GetUnitListByJobId(int jobID)
         {
             return get_dtUnitListFormated(ClsDB.GetSavedUnitsModel(jobID));
         }
