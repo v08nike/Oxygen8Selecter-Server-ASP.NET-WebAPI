@@ -14,6 +14,11 @@ namespace Oxyzen8SelectorServer.Models
             return ClsDB.DeleteProject(jobId);
         }
 
+        public static bool DeleteProjectByJobIds(dynamic idData)
+        {
+            return ClsDB.DeleteProjects(idData);
+        }
+
         public static DataTable getJobListByCreatedUserId(int createdUserId)
         {
             return ClsDB.get_dtLive(ClsDBT.strSavJob, " WHERE created_user_id = '" + createdUserId + "' ORDER BY id DESC");

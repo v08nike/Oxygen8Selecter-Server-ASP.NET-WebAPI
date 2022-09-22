@@ -13,9 +13,17 @@ namespace Oxyzen8SelectorServer.Controllers
         [HttpPost]
         [ActionName("Delete")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public bool DeleteProjectBy([FromBody]dynamic info)
+        public DataTable DeleteProjectBy([FromBody]dynamic info)
         {
-            return JobsModel.DeleteProjectByJobId(Convert.ToInt32(info.jobId));
+            if (info.action == "DELETE_ONE")
+            {
+                JobsModel.DeleteProjectByJobId(Convert.ToInt32(info.jobId));
+                return JobsModel.GetJobList();
+            } else
+            {
+                JobsModel.DeleteProjectByJobIds(info.jobIdData);
+                return JobsModel.GetJobList();
+            }
         }
 
         [HttpPost]

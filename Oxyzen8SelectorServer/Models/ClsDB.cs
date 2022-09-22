@@ -4758,6 +4758,68 @@ namespace Oxyzen8SelectorServer.Models
         }
         #endregion
 
+        #region Delete Projects
+        public static bool DeleteProjects(dynamic idInfo)
+        {
+            int[] temp = new int[idInfo.Count];
+
+            int i = 0;
+            foreach (int item in idInfo)
+            {
+                temp[i++] = item;
+            }
+
+            string tempIds = "" + temp[0];
+            for(i = 1; i < temp.Length; i++)
+            {
+                tempIds += (", " + temp[i]);
+            }
+
+            DataSet ds = new DataSet();
+            MySqlDataAdapter adp = new MySqlDataAdapter();
+            var Comm = adp.SelectCommand = new MySqlCommand();
+            var Conn = adp.SelectCommand.Connection = new MySqlConnection(get_strConnection());
+
+
+            try
+            {
+                Comm.CommandType = CommandType.Text;
+                Comm.Parameters.Clear();
+                Conn.Open();
+
+
+                Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavAirFlowData + "` WHERE `job_id` in (" + tempIds + ")";
+                Comm.ExecuteNonQuery();
+
+                Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavCompOption + "` WHERE `job_id` in (" + tempIds + ")";
+                Comm.ExecuteNonQuery();
+
+                Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavCompOptionCustom + "` WHERE `job_id` in (" + tempIds + ")";
+                Comm.ExecuteNonQuery();
+
+                Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavLayout + "` WHERE `job_id` in (" + tempIds + ")";
+                Comm.ExecuteNonQuery();
+
+
+                Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavGeneral + "` WHERE `job_id` in (" + tempIds + ")";
+                Comm.ExecuteNonQuery();
+
+                //Delete Job Table always last to prevent the job id not being deleted on above tables if the execution fails on any tables above.
+                Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavJob + "` WHERE `id` in (" + tempIds + ")";
+                Comm.ExecuteNonQuery();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        #endregion
 
         #region Delete Unit
         public static bool DeleteUnit(int _intJobID, int _intUnitNo)
