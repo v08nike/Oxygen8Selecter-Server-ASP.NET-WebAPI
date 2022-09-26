@@ -9,6 +9,53 @@ namespace Oxyzen8SelectorServer.Models
 {
     public class UnitsModel
     {
+        private double dblTempErrorValue = 0.000d;
+        //private bool bolErrorSummerWB = false;
+        //private bool bolErrorSummerRH = false;
+        //private bool bolErrorWinterWB = false;
+        //private bool bolErrorWinterRH = false;
+
+        private const int intNOVA_MIN_CFM = 325;
+        //private const int intNOVA_MAX_CFM = 8100;
+        private const int intNOVA_MAX_CFM = 9000;
+
+        private const int intNOVA_INT_USERS_MIN_CFM = 325;
+        private const int intNOVA_INT_USERS_MAX_CFM = 8100;
+        private const int intNOVA_HORIZONTAL_MAX_CFM = 3500;
+
+
+        private const int intVEN_MIN_CFM_NO_BYPASS = 325;
+        private const int intVEN_MAX_CFM_NO_BYPASS = 3000;
+        private const int intVEN_MIN_CFM_WITH_BYPASS = 325;
+        private const int intVEN_MAX_CFM_WITH_BYPASS = 3000;
+
+        private const int intVEN_INT_USERS_MIN_CFM_NO_BYPASS = 300;
+        private const int intVEN_INT_USERS_MAX_CFM_NO_BYPASS = 3048;
+        private const int intVEN_INT_USERS_MIN_CFM_WITH_BYPASS = 300;
+        private const int intVEN_INT_USERS_MAX_CFM_WITH_BYPASS = 3048;
+
+        private const int intVENLITE_MIN_CFM_NO_BYPASS = 200;
+        private const int intVENLITE_MAX_CFM_NO_BYPASS = 500;
+        private const int intVENLITE_MIN_CFM_WITH_BYPASS = 200;
+        private const int intVENLITE_MAX_CFM_WITH_BYPASS = 500;
+
+        private const int intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS = 170;
+        private const int intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS = 1200;
+        private const int intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS = 170;
+        private const int intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS = 1200;
+
+
+        private const int intTERA_MIN_CFM_NO_BYPASS = 450;
+        private const int intTERA_MAX_CFM_NO_BYPASS = 2400;
+        private const int intTERA_MIN_CFM_WITH_BYPASS = 450;
+        private const int intTERA_MAX_CFM_WITH_BYPASS = 500;
+
+        private const int intTERA_INT_USERS_MIN_CFM_NO_BYPASS = 400;
+        private const int intTERA_INT_USERS_MAX_CFM_NO_BYPASS = 2500;
+        private const int intTERA_INT_USERS_MIN_CFM_WITH_BYPASS = 400;
+        private const int intTERA_INT_USERS_MAX_CFM_WITH_BYPASS = 2500;
+
+
         public static bool DeleteUnitById(int jobId, int unitId)
         {
             return ClsDB.DeleteUnit(jobId, unitId);
@@ -73,8 +120,8 @@ namespace Oxyzen8SelectorServer.Models
                 intJobID = Convert.ToInt32(unitInfo.jobId),
                 intUnitNo = Convert.ToInt32(unitInfo.unitId),
                 intUnitTypeID = Convert.ToInt32(unitInfo.unitTypeId),
-                //intUnitModelID = Convert.ToInt32(id_list.Attributes[clsID.strAttUnitModelID]),
-                //intVoltageID = Convert.ToInt32(id_list.Attributes[clsID.strAttUnitVoltageID]),
+                //intUnitModelID = Convert.ToInt32(id_list.Attributes[ClsID.strAttUnitModelID]),
+                //intVoltageID = Convert.ToInt32(id_list.Attributes[ClsID.strAttUnitVoltageID]),
                 intUnitModelID = Convert.ToInt32(unitInfo.unitModelId),
                 intVoltageID = Convert.ToInt32(unitInfo.unitVoltageId),
                 intOA_FilterModelID = Convert.ToInt32(unitInfo.OA_FilterModelId),
@@ -125,7 +172,7 @@ namespace Oxyzen8SelectorServer.Models
                 intIsHeatExchEA_Warning = 0,
             };
 
-            //objCompOpt = new clsComponentItems(objCompOptData);
+            //objCompOpt = new ClsComponentItems(objCompOptData);
             ClsDB.SaveCompOpt(objCompOpt);
             var Session = HttpContext.Current.Session;
 
@@ -544,13 +591,27 @@ namespace Oxyzen8SelectorServer.Models
                 }
             }
 
+            DataTable dtUnitModelLink = ClsDB.get_dt(ClsDBT.strSelNovaUnitModelLocOriLink);
+
+
             initUnitInfo.voltage = dtSelected;
             initUnitInfo.preheatCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding);
             initUnitInfo.coolingCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding);
             initUnitInfo.heatingCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding);
             initUnitInfo.valueType = ClsDB.get_dtLiveEnabled(ClsDBT.strSelValveType);
+            initUnitInfo.unitModel = ClsDB.get_dt(ClsDBT.strSelNovaUnitModel);
+
 
             return initUnitInfo;
+        }
+
+        public static dynamic GetUnitTypeInfo()
+        {
+            dynamic unitTypInfo = new ExpandoObject();
+            unitTypInfo.productType = ClsDB.get_dtLiveEnabledInternal(ClsDBT.strSelProductType);
+            unitTypInfo.productTypeUnitTypeLink = ClsDB.get_dtLive(ClsDBT.strSelProductTypeUnitTypeLink);
+            unitTypInfo.unitType = ClsDB.get_dtLive(ClsDBT.strSelUnitType);
+            return unitTypInfo;
         }
 
         public static DataTable GetUnitListByJobId(int jobID)
@@ -632,5 +693,572 @@ namespace Oxyzen8SelectorServer.Models
             return dt;
         }
 
+        public static dynamic txbSummerSupplyAirCFM_Changed(dynamic fieldInfo)
+        {
+            var Session = HttpContext.Current.Session;
+
+            dynamic returnInfo = new ExpandoObject();
+
+            int intUAL = Convert.ToInt32(Session["UAL"]);
+            int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
+            String summerSupplyAirCFM = fieldInfo.summerSupplyAirCFM;
+            Boolean byPass = fieldInfo.byPass;
+
+            if (intProductTypeID == ClsID.intProdTypeNovaID)
+            {
+                if (intUAL == ClsID.intUAL_Admin || intUAL == ClsID.intUAL_IntAdmin || intUAL == ClsID.intUAL_IntLvl_2 || intUAL == ClsID.intUAL_IntLvl_1)
+                {
+                    if (Convert.ToInt32(summerSupplyAirCFM) < intNOVA_MIN_CFM)
+                    {
+                        summerSupplyAirCFM = intNOVA_MIN_CFM.ToString();
+                    }
+                    else if (Convert.ToInt32(summerSupplyAirCFM) > intNOVA_MAX_CFM)
+                    {
+                        summerSupplyAirCFM = intNOVA_MAX_CFM.ToString();
+                    }
+                }
+                else
+                {
+                    if (Convert.ToInt32(summerSupplyAirCFM) < intNOVA_INT_USERS_MIN_CFM)
+                    {
+                        summerSupplyAirCFM = intNOVA_INT_USERS_MIN_CFM.ToString();
+                    }
+                    else if (Convert.ToInt32(summerSupplyAirCFM) > intNOVA_INT_USERS_MAX_CFM)
+                    {
+                        summerSupplyAirCFM = intNOVA_INT_USERS_MAX_CFM.ToString();
+                    }
+                }
+            }
+            else if (intProductTypeID == ClsID.intProdTypeVentumID)
+            {
+                if (intUAL == ClsID.intUAL_Admin || intUAL == ClsID.intUAL_IntAdmin || intUAL == ClsID.intUAL_IntLvl_2 || intUAL == ClsID.intUAL_IntLvl_1)
+                {
+                    if (byPass)
+                    {
+                        if (Convert.ToInt32(summerSupplyAirCFM) < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerSupplyAirCFM) > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVEN_INT_USERS_MAX_CFM_WITH_BYPASS.ToString();
+                        }
+                    }
+                    else
+                    {
+                        if (Convert.ToInt32(summerSupplyAirCFM) < intVEN_INT_USERS_MIN_CFM_NO_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_NO_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerSupplyAirCFM) > intVEN_INT_USERS_MAX_CFM_NO_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVEN_INT_USERS_MAX_CFM_NO_BYPASS.ToString();
+                        }
+                    }
+                }
+                else
+                {
+                    if (byPass)
+                    {
+                        if (Convert.ToInt32(summerSupplyAirCFM) < intVEN_MIN_CFM_WITH_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVEN_MIN_CFM_WITH_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerSupplyAirCFM) > intVEN_MAX_CFM_WITH_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVEN_MAX_CFM_WITH_BYPASS.ToString();
+                        }
+                    }
+                    else
+                    {
+                        if (Convert.ToInt32(summerSupplyAirCFM) < intVEN_MIN_CFM_NO_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVEN_MIN_CFM_NO_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerSupplyAirCFM) > intVEN_MAX_CFM_NO_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVEN_MAX_CFM_NO_BYPASS.ToString();
+                        }
+                    }
+                }
+            }
+            else if (intProductTypeID == ClsID.intProdTypeVentumLiteID)
+            {
+                if (intUAL == ClsID.intUAL_Admin || intUAL == ClsID.intUAL_IntAdmin || intUAL == ClsID.intUAL_IntLvl_2 || intUAL == ClsID.intUAL_IntLvl_1)
+                {
+                    if (byPass)
+                    {
+                        if (Convert.ToInt32(summerSupplyAirCFM) < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerSupplyAirCFM) > intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS.ToString();
+                        }
+                    }
+                    else
+                    {
+                        if (Convert.ToInt32(summerSupplyAirCFM) < intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerSupplyAirCFM) > intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS.ToString();
+                        }
+                    }
+                }
+                else
+                {
+                    if (byPass)
+                    {
+                        if (Convert.ToInt32(summerSupplyAirCFM) < intVENLITE_MIN_CFM_WITH_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVENLITE_MIN_CFM_WITH_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerSupplyAirCFM) > intVENLITE_MAX_CFM_WITH_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVENLITE_MAX_CFM_WITH_BYPASS.ToString();
+                        }
+                    }
+                    else
+                    {
+                        if (Convert.ToInt32(summerSupplyAirCFM) < intVENLITE_MIN_CFM_NO_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVENLITE_MIN_CFM_NO_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerSupplyAirCFM) > intVENLITE_MAX_CFM_NO_BYPASS)
+                        {
+                            summerSupplyAirCFM = intVENLITE_MAX_CFM_NO_BYPASS.ToString();
+                        }
+                    }
+                }
+            }
+            else if (intProductTypeID == ClsID.intProdTypeTerraID)
+            {
+                if (intUAL == ClsID.intUAL_Admin || intUAL == ClsID.intUAL_IntAdmin || intUAL == ClsID.intUAL_IntLvl_2 || intUAL == ClsID.intUAL_IntLvl_1)
+                {
+                    if (byPass)
+                    {
+                        if (Convert.ToInt32(summerSupplyAirCFM) < intTERA_INT_USERS_MIN_CFM_WITH_BYPASS)
+                        {
+                            summerSupplyAirCFM = intTERA_INT_USERS_MIN_CFM_WITH_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerSupplyAirCFM) > intTERA_INT_USERS_MAX_CFM_WITH_BYPASS)
+                        {
+                            summerSupplyAirCFM = intTERA_INT_USERS_MAX_CFM_WITH_BYPASS.ToString();
+                        }
+                    }
+                    else
+                    {
+                        if (Convert.ToInt32(summerSupplyAirCFM) < intTERA_INT_USERS_MIN_CFM_NO_BYPASS)
+                        {
+                            summerSupplyAirCFM = intTERA_INT_USERS_MIN_CFM_NO_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerSupplyAirCFM) > intTERA_INT_USERS_MAX_CFM_NO_BYPASS)
+                        {
+                            summerSupplyAirCFM = intTERA_INT_USERS_MAX_CFM_NO_BYPASS.ToString();
+                        }
+                    }
+                }
+                else
+                {
+                    if (byPass)
+                    {
+                        if (Convert.ToInt32(summerSupplyAirCFM) < intTERA_MIN_CFM_WITH_BYPASS)
+                        {
+                            summerSupplyAirCFM = intTERA_MIN_CFM_WITH_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerSupplyAirCFM) > intTERA_MAX_CFM_WITH_BYPASS)
+                        {
+                            summerSupplyAirCFM = intTERA_MAX_CFM_WITH_BYPASS.ToString();
+                        }
+                    }
+                    else
+                    {
+                        if (Convert.ToInt32(summerSupplyAirCFM) < intTERA_MIN_CFM_NO_BYPASS)
+                        {
+                            summerSupplyAirCFM = intTERA_MIN_CFM_NO_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerSupplyAirCFM) > intTERA_MAX_CFM_NO_BYPASS)
+                        {
+                            summerSupplyAirCFM = intTERA_MAX_CFM_NO_BYPASS.ToString();
+                        }
+                    }
+                }
+            }
+
+            returnInfo.summerReturnAirCFM = summerSupplyAirCFM;
+            returnInfo.orientationInfoId = fieldInfo.orientation;
+            returnInfo.orientationInfo = getOrientation(fieldInfo);
+            returnInfo.modelInfo = getModel(fieldInfo);
+            returnInfo.supplyAirOpening = getSupplyAirOpening(fieldInfo);
+
+            return returnInfo;
+        }
+
+
+        public static dynamic txbSummerReturnAirCFM_Changed(dynamic fieldInfo)
+        {
+            var Session = HttpContext.Current.Session;
+
+            dynamic returnInfo = new ExpandoObject();
+
+
+            int intUAL = Convert.ToInt32(Session["UAL"]);
+            int orientationId = Convert.ToInt32(fieldInfo.orientation);
+            int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
+            int intUnitTypeID = Convert.ToInt32(fieldInfo.unitTypeId);
+            String summerReturnAirCFM = fieldInfo.summerReturnAirCFM;
+            String value = fieldInfo.value;
+            String summerSupplyAirCFM = value;
+            Boolean byPass = fieldInfo.byPass;
+
+            if (orientationId == ClsID.intOrientationHorizontalID && Convert.ToInt32(summerSupplyAirCFM) > intNOVA_HORIZONTAL_MAX_CFM)
+            {
+                returnInfo.summerReturnAirCFM = intNOVA_HORIZONTAL_MAX_CFM.ToString();
+            }
+
+            if (intProductTypeID == ClsID.intProdTypeNovaID)
+            {
+                if (Convert.ToInt32(summerReturnAirCFM) < intNOVA_MIN_CFM)
+                {
+                    returnInfo.summerReturnAirCFM = intNOVA_MIN_CFM.ToString();
+                }
+                else if (Convert.ToInt32(summerReturnAirCFM) > intNOVA_MAX_CFM)
+                {
+                    returnInfo.summerReturnAirCFM = intNOVA_MAX_CFM.ToString();
+                }
+            }
+            else if (intProductTypeID == ClsID.intProdTypeVentumID)
+            {
+                if (intUAL == ClsID.intUAL_Admin || intUAL == ClsID.intUAL_IntAdmin || intUAL == ClsID.intUAL_IntLvl_2 || intUAL == ClsID.intUAL_IntLvl_1)
+                {
+                    if (byPass)
+                    {
+                        if (Convert.ToInt32(summerReturnAirCFM) < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerReturnAirCFM) > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVEN_INT_USERS_MAX_CFM_WITH_BYPASS.ToString();
+                        }
+                    }
+                    else
+                    {
+                        if (Convert.ToInt32(summerReturnAirCFM) < intVEN_INT_USERS_MIN_CFM_NO_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVEN_INT_USERS_MIN_CFM_NO_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerReturnAirCFM) > intVEN_INT_USERS_MAX_CFM_NO_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVEN_INT_USERS_MAX_CFM_NO_BYPASS.ToString();
+                        }
+                    }
+                }
+                else
+                {
+                    if (byPass)
+                    {
+                        if (Convert.ToInt32(summerReturnAirCFM) < intVEN_MIN_CFM_WITH_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVEN_MIN_CFM_WITH_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerReturnAirCFM) > intVEN_MAX_CFM_WITH_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVEN_MAX_CFM_WITH_BYPASS.ToString();
+                        }
+                    }
+                    else
+                    {
+                        if (Convert.ToInt32(summerReturnAirCFM) < intVEN_MIN_CFM_NO_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVEN_MIN_CFM_NO_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerReturnAirCFM) > intVEN_MAX_CFM_NO_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVEN_MAX_CFM_NO_BYPASS.ToString();
+                        }
+                    }
+                }
+            }
+            else if (intProductTypeID == ClsID.intProdTypeVentumLiteID)
+            {
+                if (intUAL == ClsID.intUAL_Admin || intUAL == ClsID.intUAL_IntAdmin || intUAL == ClsID.intUAL_IntLvl_2 || intUAL == ClsID.intUAL_IntLvl_1)
+                {
+                    if (byPass)
+                    {
+                        if (Convert.ToInt32(summerReturnAirCFM) < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerReturnAirCFM) > intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS.ToString();
+                        }
+                    }
+                    else
+                    {
+                        if (Convert.ToInt32(summerReturnAirCFM) < intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerReturnAirCFM) > intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS.ToString();
+                        }
+                    }
+                }
+                else
+                {
+                    if (byPass)
+                    {
+                        if (Convert.ToInt32(summerReturnAirCFM) < intVENLITE_MIN_CFM_WITH_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVENLITE_MIN_CFM_WITH_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerReturnAirCFM) > intVENLITE_MAX_CFM_WITH_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVENLITE_MAX_CFM_WITH_BYPASS.ToString();
+                        }
+                    }
+                    else
+                    {
+                        if (Convert.ToInt32(summerReturnAirCFM) < intVENLITE_MIN_CFM_NO_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVENLITE_MIN_CFM_NO_BYPASS.ToString();
+                        }
+                        else if (Convert.ToInt32(summerReturnAirCFM) > intVENLITE_MAX_CFM_NO_BYPASS)
+                        {
+                            returnInfo.summerReturnAirCFM = intVENLITE_MAX_CFM_NO_BYPASS.ToString();
+                        }
+                    }
+                }
+            }
+
+
+            if ((intProductTypeID == ClsID.intProdTypeNovaID && intUnitTypeID == ClsID.intUnitTypeERV_ID) ||
+               ((intProductTypeID == ClsID.intProdTypeVentumID || intProductTypeID == ClsID.intProdTypeVentumLiteID) && intUnitTypeID == ClsID.intUnitTypeHRV_ID))
+            {
+                if (Convert.ToInt32(summerReturnAirCFM) < (Convert.ToInt32(summerSupplyAirCFM) * 0.5))
+                {
+                    returnInfo.summerReturnAirCFM = Math.Ceiling(Convert.ToDecimal(summerSupplyAirCFM) * 0.5m).ToString();
+                }
+                else if (Convert.ToInt32(summerReturnAirCFM) > (Convert.ToInt32(summerSupplyAirCFM) * 1.5m))
+                {
+                    returnInfo.summerReturnAirCFM = Math.Ceiling(Convert.ToDecimal(summerSupplyAirCFM) * 1.5m).ToString();
+                }
+            }
+            else if ((intProductTypeID == ClsID.intProdTypeVentumID || intProductTypeID == ClsID.intProdTypeVentumLiteID) && intUnitTypeID == ClsID.intUnitTypeERV_ID)
+            {
+                if (Convert.ToInt32(summerReturnAirCFM) < (Convert.ToInt32(summerSupplyAirCFM) * 0.8))
+                {
+                    returnInfo.summerReturnAirCFM = Math.Ceiling(Convert.ToDecimal(summerSupplyAirCFM) * 0.8m).ToString();
+                }
+                else if (Convert.ToInt32(summerReturnAirCFM) > (Convert.ToInt32(summerSupplyAirCFM) * 1.2))
+                {
+                    returnInfo.summerReturnAirCFM = Math.Ceiling(Convert.ToDecimal(summerSupplyAirCFM) * 1.2m).ToString();
+                }
+            }
+
+            return returnInfo;
+        }
+
+
+        public static dynamic txbSupplyAirESP_Changed(dynamic fieldInfo)
+        {
+            dynamic returnInfo = new ExpandoObject();
+
+            int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
+            int intUnitModelID = Convert.ToInt32(fieldInfo.unitModeldId);
+            String supplyAirESP = Convert.ToInt32(fieldInfo.supplyAirESP);
+
+            if (intProductTypeID == ClsID.intProdTypeNovaID)
+            {
+                if (intUnitModelID == ClsID.intNovaUnitModelID_A16IN || intUnitModelID == ClsID.intNovaUnitModelID_B20IN ||
+                    intUnitModelID == ClsID.intNovaUnitModelID_A18OU || intUnitModelID == ClsID.intNovaUnitModelID_B22OU)
+                {
+                    if (Convert.ToDouble(supplyAirESP) > 2.0d)
+                    {
+                        returnInfo.supplyAirESP = "2.0";
+                    }
+
+                }
+                else if (Convert.ToDouble(supplyAirESP) > 3.0d)
+                {
+                    returnInfo.supplyAirESP = "3.0";
+                }
+            }
+            return returnInfo;
+       }
+
+
+        public static dynamic txbExhaustAirESP_Changed(dynamic fieldInfo)
+        {
+            dynamic returnInfo = new ExpandoObject();
+
+            int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
+            int intUnitModelID = Convert.ToInt32(fieldInfo.unitModeldId);
+            String exhaustAirESP = Convert.ToInt32(fieldInfo.exhaustAirESP);
+
+            if (intProductTypeID == ClsID.intProdTypeNovaID)
+            {
+                if (intUnitModelID == ClsID.intNovaUnitModelID_A16IN || intUnitModelID == ClsID.intNovaUnitModelID_B20IN ||
+                    intUnitModelID == ClsID.intNovaUnitModelID_A18OU || intUnitModelID == ClsID.intNovaUnitModelID_B22OU)
+                {
+                    if (Convert.ToDouble(exhaustAirESP) > 2.0d)
+                    {
+                        returnInfo.exhaustAirESP = "2.0";
+                    }
+
+                }
+                else if (Convert.ToDouble(exhaustAirESP) > 3.0d)
+                {
+                    returnInfo.exhaustAirESP = "3.0";
+                }
+            }
+
+            return returnInfo;
+        }
+
+        private DataTable getOrientation(dynamic fieldInfo)
+        {
+            int productTypeId = Convert.ToInt32(fieldInfo.productType);
+            int unitTypeId = Convert.ToInt32(fieldInfo.unitType);
+            int locationId = Convert.ToInt32(fieldInfo.location);
+            int orientationId = Convert.ToInt32(fieldInfo.orientationId);
+            String summerSupplyAirCFM = fieldInfo.summerSupplyAirCFM.ToString();
+            DataTable dtLocOri = ClsDB.get_dtLive(ClsDBT.strSelLocOriLink);
+            dtLocOri = dtLocOri.Select("[product_type_id]=" + productTypeId).CopyToDataTable();
+            dtLocOri = dtLocOri.Select("[unit_type_id]=" + unitTypeId).CopyToDataTable();
+            dtLocOri = dtLocOri.Select("[location_id]=" + locationId).CopyToDataTable();
+
+            DataTable dtOrientation = ClsDB.get_dtLiveEnabled(ClsDBT.strSelGeneralOrientation, Convert.ToInt32(orientationId));
+            dtOrientation = ClsTS.get_dtFromLink(dtOrientation, "orientation_id", dtLocOri, "max_cfm");
+
+            if (productTypeId == ClsID.intProdTypeNovaID)
+            {
+                dtOrientation = dtOrientation.Select("[max_cfm] >= '" + summerSupplyAirCFM + "'").CopyToDataTable();
+            }
+
+            return dtOrientation;
+        }
+
+        private DataTable getModel(dynamic fieldInfo)
+        {
+            var Session = HttpContext.Current.Session;
+
+            int locationId = Convert.ToInt32(fieldInfo.location);
+            int orientationId = Convert.ToInt32(fieldInfo.orientation);
+            int intUnitModelID = Convert.ToInt32(fieldInfo.unitModelId);
+            int summerSupplyAirCFM = Convert.ToInt32(fieldInfo.cfm);
+            Boolean byPass = fieldInfo.byPass;
+
+            DataTable dtUnitModel = new DataTable();
+
+            if (locationId > -1 && orientationId > -1)
+            {
+                int intUAL = Convert.ToInt32(Session["UAL"]);
+
+                int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
+                
+                switch (intProductTypeID)
+                {
+                    case ClsID.intProdTypeNovaID:
+                        DataTable dtUnitModelLink = ClsDB.get_dt(ClsDBT.strSelNovaUnitModelLocOriLink);
+
+                        dtUnitModelLink = dtUnitModelLink.Select("[location_id]='" + locationId.ToString() + "'").CopyToDataTable();
+                        dtUnitModelLink = dtUnitModelLink.Select("[orientation_id]='" + orientationId.ToString() + "'").CopyToDataTable();
+
+                        if (intUAL == ClsID.intUAL_External || intUAL == ClsID.intUAL_ExternalSpecial)
+                        {
+                            dtUnitModel = dtUnitModel = ClsDB.get_dtByQuery("SELECT * FROM " + ClsDBT.strSelNovaUnitModel + " WHERE " + summerSupplyAirCFM + " >= cfm_min_ext_users AND " +
+                                            summerSupplyAirCFM + " <= cfm_max_ext_users OR id=" + intUnitModelID.ToString() + " ORDER BY cfm_max");
+                        }
+                        else
+                        {
+                            dtUnitModel = dtUnitModel = ClsDB.get_dtByQuery("SELECT * FROM " + ClsDBT.strSelNovaUnitModel + " WHERE " + summerSupplyAirCFM + " >= cfm_min AND " +
+                                            summerSupplyAirCFM + " <= cfm_max OR id=" + intUnitModelID.ToString() + " ORDER BY cfm_max");
+                        }
+
+
+                        if (intUAL == ClsID.intUAL_External || intUAL == ClsID.intUAL_ExternalSpecial)
+                        {
+                            dtUnitModel = dtUnitModel.Select("[enabled_ext_users]='1'").CopyToDataTable();
+                        }
+
+
+                        dtUnitModel = ClsTS.get_dtFromLink(dtUnitModel, "unit_model_id", dtUnitModelLink, "cfm_max");
+                        dtUnitModel = ClsTS.get_dtSortedASC(dtUnitModel, "cfm_max");
+
+                        if (byPass)
+                        {
+                            var drUnitModelBypass = dtUnitModel.AsEnumerable().Where(x => (Convert.ToInt32(x["bypass_exist"]) == 1));
+                            DataTable dtUnitModelBypass = drUnitModelBypass.Any() ? drUnitModelBypass.CopyToDataTable() : new DataTable();
+
+                            if (dtUnitModelBypass.Rows.Count > 0)
+                            {
+                                dtUnitModel = dtUnitModel.Select("[bypass_exist]='1'").CopyToDataTable();
+                                //divUnitBypass.Visible = true;
+
+                                if (orientationId == ClsID.intOrientationHorizontalID)
+                                {
+                                    var drUnitModelBypassHorUnit = dtUnitModel.AsEnumerable().Where(x => (Convert.ToInt32(x["bypass_exist_horizontal_unit"]) == 1));
+                                    DataTable dtUnitModelBypassHorUnit = drUnitModelBypassHorUnit.Any() ? drUnitModelBypassHorUnit.CopyToDataTable() : new DataTable();
+
+                                    if (dtUnitModelBypassHorUnit.Rows.Count > 0)
+                                    {
+                                        dtUnitModel = dtUnitModel.Select("[bypass_exist_horizontal_unit]='1'").CopyToDataTable();
+                                    }
+                                    else
+                                    {
+                                        byPass = false;
+                                    }
+                                }
+
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return dtUnitModel;
+        }
+        private DataTable getSupplyAirOpening(dynamic fieldInfo)
+        {
+            int intUnitTypeId = Convert.ToInt32(fieldInfo.unitType);
+            int intproductTypeId = Convert.ToInt32(fieldInfo.unitType);
+            int locationId = Convert.ToInt32(fieldInfo.location);
+            int orientationId = Convert.ToInt32(fieldInfo.orientation);
+            int coolingCompId = Convert.ToInt32(fieldInfo.coolingComp);
+            int heatingCompId = Convert.ToInt32(fieldInfo.heatingComp);
+            int reheatCompId = Convert.ToInt32(fieldInfo.reheatComp);
+            int intSupplyAirOpeningID = Convert.ToInt32(fieldInfo.supplyAirOpeningId);
+            String strSupplyAirOpening = fieldInfo.supplyAirOpening;
+
+            DataTable dtLink = new DataTable();
+
+            if (intUnitTypeId == ClsID.intUnitTypeERV_ID || intUnitTypeId == ClsID.intUnitTypeHRV_ID)
+            {
+                dtLink = ClsDB.get_dtLive(ClsDBT.strSelOrientOpeningsERV_SA_Link, "product_type_id", intproductTypeId).Copy();
+                dtLink = ClsTS.get_dtDataFromImportRows(dtLink, "location_id", locationId);
+                dtLink = ClsTS.get_dtDataFromImportRows(dtLink, "orientation_id", orientationId);
+
+                DataTable dtSelectionTable = ClsDB.get_dtLiveEnabled(ClsDBT.strSelOpeningsERV_SA, "items", strSupplyAirOpening).Copy();
+                dtSelectionTable = ClsTS.get_dtDataFromImportRows(dtSelectionTable, "product_type_id", intproductTypeId);
+
+
+                return dtSelectionTable;
+            }
+            else if (intUnitTypeId == ClsID.intUnitTypeAHU_ID)
+            {
+                return ClsDB.get_dtLiveEnabled(ClsDBT.strSelOpeningsFC_SA, intSupplyAirOpeningID);
+            }
+
+            return new DataTable();
+        }
     }
 }

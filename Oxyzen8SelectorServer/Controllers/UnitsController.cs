@@ -23,6 +23,14 @@ namespace Oxyzen8SelectorServer.Controllers
         }
 
         [HttpPost]
+        [ActionName("GetUnitTypeInfo")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic GetUnitTypeInfo()
+        {
+            return UnitsModel.GetUnitTypeInfo();
+        }
+
+        [HttpPost]
         [ActionName("Save")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public bool SaveUnitInfo([FromBody]dynamic unitInfo)
@@ -52,6 +60,39 @@ namespace Oxyzen8SelectorServer.Controllers
         public dynamic GetInitUnitInfo([FromBody]ClsGetInitUnitInfoParams request)
         {
             return UnitsModel.GetInitUnitInfo(request.jobId, request.unitModelId, request.productTypeId);
+        }
+
+        [HttpPost]
+        [ActionName("AirFlowDataChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic AirFlowDataChanged([FromBody]dynamic info)
+        {
+
+            switch (info.action.ToString())
+            {
+                case "SummerSupplyAirCFM_Changed":
+                    {
+                        return UnitsModel.txbSummerSupplyAirCFM_Changed(info);
+                    }
+                case "SummerReturnAirCFM_Changed":
+                    {
+                        return UnitsModel.txbSummerReturnAirCFM_Changed(info);
+                    }
+                case "SupplyAirESP":
+                    {
+                        return UnitsModel.txbSupplyAirESP_Changed(info);
+                    }
+                case "ExhaustAirESP":
+                    {
+                        return UnitsModel.txbExhaustAirESP_Changed(info);
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+
+            return new DataTable();
         }
 
         // GET api/<controller>

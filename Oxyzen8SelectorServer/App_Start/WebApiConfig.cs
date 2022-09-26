@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
-using System.Web.Http.Routing;
-using System.Web.Http.WebHost;
-using System.Web.Routing;
-using System.Web.SessionState;
+﻿using System.Web.Http;
+using Oxyzen8SelectorServer.App_Start;
 
 namespace Oxyzen8SelectorServer
 {
@@ -17,8 +10,8 @@ namespace Oxyzen8SelectorServer
 
         public static void Register(HttpConfiguration config)
         {
-            // Web API configuration and services
-
+            // Web API configuration and services  
+            //config.Filters.Add(new CustomRequireHttpsAttribute());
             // Web API routes
             config.MapHttpAttributeRoutes();
             // Web API enable CORS

@@ -26,7 +26,7 @@ namespace Oxyzen8SelectorServer.Models
             //database = "db_oxygen8_test";
             //uid = "unitdes_user_remote";
             //password = "heatAir_03";
-            //string strConnString = "Server=" + server + ";" + "Database=" + database + ";" + "Uid=" + uid + ";" + "Pwd=" + password;
+            //string strConnString = "Server=" + server + ";" + "Database=" + database + ";" + "Uid=" + uid + ";" + "Pwd=" + password + ";SslMode=None";
 
 
             server = "localhost";
