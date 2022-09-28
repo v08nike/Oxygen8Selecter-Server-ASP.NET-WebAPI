@@ -1123,11 +1123,7 @@ namespace Oxyzen8SelectorServer.Models
             return returnInfo;
         }
 
-<<<<<<< HEAD
         private static DataTable getOrientation(dynamic fieldInfo)
-=======
-        private DataTable getOrientation(dynamic fieldInfo)
->>>>>>> 5f20095b1b8a9b24870bc1f1889b9505284351df
         {
             int productTypeId = Convert.ToInt32(fieldInfo.productType);
             int unitTypeId = Convert.ToInt32(fieldInfo.unitType);
@@ -1150,11 +1146,7 @@ namespace Oxyzen8SelectorServer.Models
             return dtOrientation;
         }
 
-<<<<<<< HEAD
         private static DataTable getModel(dynamic fieldInfo)
-=======
-        private DataTable getModel(dynamic fieldInfo)
->>>>>>> 5f20095b1b8a9b24870bc1f1889b9505284351df
         {
             var Session = HttpContext.Current.Session;
 
@@ -1235,11 +1227,7 @@ namespace Oxyzen8SelectorServer.Models
             }
             return dtUnitModel;
         }
-<<<<<<< HEAD
         private static DataTable getSupplyAirOpening(dynamic fieldInfo)
-=======
-        private DataTable getSupplyAirOpening(dynamic fieldInfo)
->>>>>>> 5f20095b1b8a9b24870bc1f1889b9505284351df
         {
             int intUnitTypeId = Convert.ToInt32(fieldInfo.unitType);
             int intproductTypeId = Convert.ToInt32(fieldInfo.unitType);

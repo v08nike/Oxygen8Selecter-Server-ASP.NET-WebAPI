@@ -22,10 +22,6 @@ namespace Oxyzen8SelectorServer.Models
         #region MySQL
         private static string get_strConnection()
         {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:Oxyzen8SelectorServer/Models/ClsDB.cs
->>>>>>> 5f20095b1b8a9b24870bc1f1889b9505284351df
             //server = "173.248.135.23";
             //database = "db_oxygen8_test";
             //uid = "unitdes_user_remote";
@@ -34,12 +30,6 @@ namespace Oxyzen8SelectorServer.Models
 
 
             server = "localhost";
-<<<<<<< HEAD
-=======
-=======
-            server = "173.248.135.23";
->>>>>>> c388a971075de586b3d67589ac1dabe5a87254a1:Models/ClsDB.cs
->>>>>>> 5f20095b1b8a9b24870bc1f1889b9505284351df
             database = "db_oxygen8_test";
             uid = "unitdes_user_remote";
             password = "heatAir_03";
