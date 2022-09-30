@@ -918,7 +918,6 @@ namespace Oxyzen8SelectorServer.Models
             returnInfo.modelId = returnInfo.modelInfo.Rows[0]["id"];
             fieldInfo.unitModelId = returnInfo.modelId;
             returnInfo.voltageInfo = getVoltage(fieldInfo);
-            returnInfo.voltageId = returnInfo.voltageInfo.Rows[0]["id"];
             //returnInfo.supplyAirOpening = getSupplyAirOpening(fieldInfo);
 
             return returnInfo;
@@ -1262,14 +1261,7 @@ namespace Oxyzen8SelectorServer.Models
             }
 
 
-            if (intUnitVoltageID != 0)
-            {
-                returnInfo.selectedVoltageId = Convert.ToInt32(intUnitVoltageID);
-            } else
-            {
-                returnInfo.selectedVoltageId = dtSelected.Rows[0]["id"];
-            }
-
+            returnInfo.selectedVoltageId = dtSelected.Rows[0]["id"];
             returnInfo.data = dtSelected;
 
             return returnInfo;
