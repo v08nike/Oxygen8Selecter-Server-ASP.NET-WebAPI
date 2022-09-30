@@ -59,7 +59,7 @@ namespace Oxyzen8SelectorServer.Controllers
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public dynamic GetInitUnitInfo([FromBody]ClsGetInitUnitInfoParams request)
         {
-            return UnitsModel.GetInitUnitInfo(request.jobId, request.unitModelId, request.productTypeId);
+            return UnitsModel.GetInitUnitInfo(request.jobId, request.unitModelId, Convert.ToInt32(request.productTypeId), Convert.ToInt32(request.UAL));
         }
 
         [HttpPost]

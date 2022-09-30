@@ -101,7 +101,7 @@ namespace Oxyzen8SelectorServer.Controllers
         {
             dynamic returnInfo = new ExpandoObject();
             returnInfo.jobInfo = ClsDB.GetSavedJob(Convert.ToInt32(info.jobId)); ;
-            returnInfo.unitList= UnitsModel.GetUnitListByJobId(Convert.ToInt32(info.jobId));
+            returnInfo.unitList = UnitsModel.GetUnitListByJobId(Convert.ToInt32(info.jobId));
             return returnInfo;
         }
 

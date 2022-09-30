@@ -19,7 +19,7 @@ namespace Oxyzen8SelectorServer
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
-            config.Filters.Add(new CustomRequireHttpsAttribute());
+            //config.Filters.Add(new CustomRequireHttpsAttribute());
             // Web API routes
             config.MapHttpAttributeRoutes();
             // Web API enable CORS

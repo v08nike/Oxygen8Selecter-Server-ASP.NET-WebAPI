@@ -32,7 +32,8 @@ namespace Oxyzen8SelectorServer.Models
     {
         public int jobId { get; set; }
         public int unitModelId { get; set; }
-        public int productTypeId { get; set; }
+        public String productTypeId { get; set; }
+        public String UAL { get; set; }
     }
 
     public class ClsSaveJobParams

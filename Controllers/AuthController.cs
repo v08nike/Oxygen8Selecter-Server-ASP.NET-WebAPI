@@ -23,7 +23,7 @@ namespace Oxyzen8SelectorServer.Controllers
         public string SessionValue()
         {
             var Session = HttpContext.Current.Session;
-            return Session["userId"].ToString();
+            return Session["UAL"].ToString();
         }
 
         [HttpPost]

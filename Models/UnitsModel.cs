@@ -442,7 +442,7 @@ namespace Oxyzen8SelectorServer.Models
             return unitInfo;
         }
 
-        public static dynamic GetInitUnitInfo(int jobId, int unitModelId, int productTypeId)
+        public static dynamic GetInitUnitInfo(int jobId, int unitModelId, int productTypeId, int intUAL)
         {
             dynamic initUnitInfo = new ExpandoObject();
             var Session = HttpContext.Current.Session;
@@ -470,9 +470,13 @@ namespace Oxyzen8SelectorServer.Models
             initUnitInfo.winterReturnAirRH = objProjectInfo.dblWinterReturnAirRH.ToString();
 
             initUnitInfo.location = ClsDB.get_dtLiveEnabled(ClsDBT.strSelGeneralLocation);
+            initUnitInfo.locationId = initUnitInfo.location.Rows[0]["id"];
             initUnitInfo.orientation = ClsDB.get_dtLiveEnabled(ClsDBT.strSelGeneralOrientation);
+            initUnitInfo.orientationId = initUnitInfo.orientation.Rows[0]["id"];
             initUnitInfo.unitType = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitType);
+            initUnitInfo.unitTypeId = initUnitInfo.unitType.Rows[0]["id"];
             initUnitInfo.controlsPreference = ClsDB.get_dtLiveEnabled(ClsDBT.strSelControlsPreference);
+            initUnitInfo.controlsPreferenceId = initUnitInfo.controlsPreference.Rows[0]["id"];
             initUnitInfo.qaFilter = ClsDB.get_dtLiveEnabled(ClsDBT.strSelFilterModel, "outdoor_air", "1");
             initUnitInfo.raFilter = ClsDB.get_dtLiveEnabled(ClsDBT.strSelFilterModel, "return_air", "1");
 
@@ -491,7 +495,7 @@ namespace Oxyzen8SelectorServer.Models
             {
                 case ClsID.intProdTypeNovaID:
                     //lblHanding = "Fan Placement";
-                    if (Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_External)
+                    if (intUAL == ClsID.intUAL_External)
                     {
                         initUnitInfo.BypassVisible = false;
                         initUnitInfo.BypassChecked = false;
@@ -545,7 +549,7 @@ namespace Oxyzen8SelectorServer.Models
             DataTable dtVoltage = ClsDB.get_dtLiveEnabled(ClsDBT.strSelElectricalVoltage);
             DataTable dtLink = ClsDB.get_dtLive(strModelVoltageLinkTable, "unit_model_id", unitModelId);
 
-            if (productTypeId == ClsID.intProdTypeNovaID && (Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_External || Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_ExternalSpecial))
+            if (productTypeId == ClsID.intProdTypeNovaID && (intUAL == ClsID.intUAL_External || intUAL == ClsID.intUAL_ExternalSpecial))
             {
                 if (unitModelId == ClsID.intNovaUnitModelID_B20IN || unitModelId == ClsID.intNovaUnitModelID_B22OU)
                 {
@@ -593,14 +597,27 @@ namespace Oxyzen8SelectorServer.Models
 
             DataTable dtUnitModelLink = ClsDB.get_dt(ClsDBT.strSelNovaUnitModelLocOriLink);
 
-
             initUnitInfo.voltage = dtSelected;
             initUnitInfo.preheatCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding);
             initUnitInfo.coolingCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding);
             initUnitInfo.heatingCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding);
             initUnitInfo.valueType = ClsDB.get_dtLiveEnabled(ClsDBT.strSelValveType);
             initUnitInfo.unitModel = ClsDB.get_dt(ClsDBT.strSelNovaUnitModel);
+            dynamic initFieldData = new ExpandoObject();
+            initFieldData.UAL = intUAL;
+            initFieldData.location = initUnitInfo.location.Rows[0]["id"];
+            initFieldData.orientation = initUnitInfo.orientation.Rows[0]["id"];
+            initFieldData.unitTypeId = initUnitInfo.location.Rows[0]["id"];
+            initFieldData.productTypeId = productTypeId;
+            initFieldData.unitModelId = initUnitInfo.unitModel.Rows[0]["id"];
+            initFieldData.summerSupplyAirCFM = "325";
+            initFieldData.summerReturnAirCFM = "325";
+            initFieldData.supplyAirESP = "0.75";
+            initFieldData.exhaustAirESP = "0.75";
+            initFieldData.byPass = false;
+            initFieldData.voltageId = 0;
 
+            initUnitInfo.mainInitData = txbSummerSupplyAirCFM_Changed(initFieldData);
 
             return initUnitInfo;
         }
@@ -695,11 +712,13 @@ namespace Oxyzen8SelectorServer.Models
 
         public static dynamic txbSummerSupplyAirCFM_Changed(dynamic fieldInfo)
         {
-            var Session = HttpContext.Current.Session;
+           if (!ClsNumber.IsNumber(fieldInfo.summerSupplyAirCFM.ToString()))
+            {
+                return 0;
+            }
 
             dynamic returnInfo = new ExpandoObject();
-
-            int intUAL = Convert.ToInt32(Session["UAL"]);
+            int intUAL = Convert.ToInt32(fieldInfo.UAL);
             int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
             String summerSupplyAirCFM = fieldInfo.summerSupplyAirCFM;
             Boolean byPass = fieldInfo.byPass;
@@ -888,12 +907,19 @@ namespace Oxyzen8SelectorServer.Models
                     }
                 }
             }
-
+            fieldInfo.summerSupplyAirCFM = summerSupplyAirCFM;
+            fieldInfo.summerReturnAirCFM = summerSupplyAirCFM;
+            returnInfo.summerSupplyAirCFM = summerSupplyAirCFM;
             returnInfo.summerReturnAirCFM = summerSupplyAirCFM;
-            returnInfo.orientationInfoId = fieldInfo.orientation;
             returnInfo.orientationInfo = getOrientation(fieldInfo);
+            returnInfo.orientationId = returnInfo.orientationInfo.Rows[0]["id"];
+            fieldInfo.orientation = returnInfo.orientationId;
             returnInfo.modelInfo = getModel(fieldInfo);
-            returnInfo.supplyAirOpening = getSupplyAirOpening(fieldInfo);
+            returnInfo.modelId = returnInfo.modelInfo.Rows[0]["id"];
+            fieldInfo.unitModelId = returnInfo.modelId;
+            returnInfo.voltageInfo = getVoltage(fieldInfo);
+            returnInfo.voltageId = returnInfo.voltageInfo.Rows[0]["id"];
+            //returnInfo.supplyAirOpening = getSupplyAirOpening(fieldInfo);
 
             return returnInfo;
         }
@@ -901,18 +927,19 @@ namespace Oxyzen8SelectorServer.Models
 
         public static dynamic txbSummerReturnAirCFM_Changed(dynamic fieldInfo)
         {
-            var Session = HttpContext.Current.Session;
+            if (!ClsNumber.IsNumber(fieldInfo.summerSupplyAirCFM.ToString()) || !ClsNumber.IsNumber(fieldInfo.summerReturnAirCFM.ToString()))
+            {
+                return 0;
+            }
 
             dynamic returnInfo = new ExpandoObject();
 
-
-            int intUAL = Convert.ToInt32(Session["UAL"]);
+            int intUAL = Convert.ToInt32(fieldInfo.UAL);
             int orientationId = Convert.ToInt32(fieldInfo.orientation);
             int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
             int intUnitTypeID = Convert.ToInt32(fieldInfo.unitTypeId);
             String summerReturnAirCFM = fieldInfo.summerReturnAirCFM;
-            String value = fieldInfo.value;
-            String summerSupplyAirCFM = value;
+            String summerSupplyAirCFM = fieldInfo.summerSupplyAirCFM;
             Boolean byPass = fieldInfo.byPass;
 
             if (orientationId == ClsID.intOrientationHorizontalID && Convert.ToInt32(summerSupplyAirCFM) > intNOVA_HORIZONTAL_MAX_CFM)
@@ -1069,11 +1096,16 @@ namespace Oxyzen8SelectorServer.Models
 
         public static dynamic txbSupplyAirESP_Changed(dynamic fieldInfo)
         {
+            if (!ClsNumber.IsNumber(fieldInfo.supplyAirESP.ToString()))
+            {
+                return 0;
+            }
+
             dynamic returnInfo = new ExpandoObject();
 
             int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
             int intUnitModelID = Convert.ToInt32(fieldInfo.unitModeldId);
-            String supplyAirESP = Convert.ToInt32(fieldInfo.supplyAirESP);
+            String supplyAirESP = fieldInfo.supplyAirESP;
 
             if (intProductTypeID == ClsID.intProdTypeNovaID)
             {
@@ -1090,6 +1122,10 @@ namespace Oxyzen8SelectorServer.Models
                 {
                     returnInfo.supplyAirESP = "3.0";
                 }
+                else
+                {
+                    returnInfo.supplyAirESP = supplyAirESP;
+                }
             }
             return returnInfo;
        }
@@ -1097,11 +1133,16 @@ namespace Oxyzen8SelectorServer.Models
 
         public static dynamic txbExhaustAirESP_Changed(dynamic fieldInfo)
         {
+            if (!ClsNumber.IsNumber(fieldInfo.exhaustAirESP.ToString()))
+            {
+                return 0;
+            }
+
             dynamic returnInfo = new ExpandoObject();
 
             int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
             int intUnitModelID = Convert.ToInt32(fieldInfo.unitModeldId);
-            String exhaustAirESP = Convert.ToInt32(fieldInfo.exhaustAirESP);
+            String exhaustAirESP = fieldInfo.exhaustAirESP;
 
             if (intProductTypeID == ClsID.intProdTypeNovaID)
             {
@@ -1118,6 +1159,10 @@ namespace Oxyzen8SelectorServer.Models
                 {
                     returnInfo.exhaustAirESP = "3.0";
                 }
+                else
+                {
+                    returnInfo.exhaustAirESP = exhaustAirESP;
+                }
             }
 
             return returnInfo;
@@ -1125,10 +1170,10 @@ namespace Oxyzen8SelectorServer.Models
 
         private static DataTable getOrientation(dynamic fieldInfo)
         {
-            int productTypeId = Convert.ToInt32(fieldInfo.productType);
-            int unitTypeId = Convert.ToInt32(fieldInfo.unitType);
+            int productTypeId = Convert.ToInt32(fieldInfo.productTypeId);
+            int unitTypeId = Convert.ToInt32(fieldInfo.unitTypeId);
             int locationId = Convert.ToInt32(fieldInfo.location);
-            int orientationId = Convert.ToInt32(fieldInfo.orientationId);
+            int orientationId = Convert.ToInt32(fieldInfo.orientation);
             String summerSupplyAirCFM = fieldInfo.summerSupplyAirCFM.ToString();
             DataTable dtLocOri = ClsDB.get_dtLive(ClsDBT.strSelLocOriLink);
             dtLocOri = dtLocOri.Select("[product_type_id]=" + productTypeId).CopyToDataTable();
@@ -1146,21 +1191,104 @@ namespace Oxyzen8SelectorServer.Models
             return dtOrientation;
         }
 
+         private static dynamic getVoltage(dynamic filedData)
+         {
+            int intProductTypeID = Convert.ToInt32(filedData.productTypeId);
+            int intUnitVoltageID = Convert.ToInt32(filedData.voltageId);
+            int intUnitModelID = Convert.ToInt32(filedData.unitModelId);
+            int intUAL= Convert.ToInt32(filedData.UAL);
+            dynamic returnInfo = new ExpandoObject();
+
+            string strModelVoltageLinkTable = "";
+
+            switch (intProductTypeID)
+            {
+                case ClsID.intProdTypeNovaID:
+                    strModelVoltageLinkTable = ClsDBT.strSelNovaUnitModelVoltageLink;
+                    break;
+                default:
+                    break;
+            }
+
+
+            DataTable dtVoltage = ClsDB.get_dtLiveEnabled(ClsDBT.strSelElectricalVoltage, intUnitVoltageID);
+            DataTable dtLink = ClsDB.get_dtLive(strModelVoltageLinkTable, "unit_model_id", intUnitModelID).Copy();
+
+            if (intProductTypeID == ClsID.intProdTypeNovaID && (intUAL == ClsID.intUAL_External || intUAL == ClsID.intUAL_ExternalSpecial))
+            {
+                if (intUnitModelID == ClsID.intNovaUnitModelID_B20IN || intUnitModelID == ClsID.intNovaUnitModelID_B22OU)
+                {
+                    dtVoltage = dtVoltage.Select("[id] <> '" + ClsID.intElectricVoltage_208V_1Ph_60HzID.ToString() + "'").CopyToDataTable();
+                }
+            }
+            else if (intProductTypeID == ClsID.intProdTypeTerraID && true)
+            {
+                dtVoltage = dtVoltage.Select("[terra_2] = '1'").CopyToDataTable();
+
+            }
+
+            dtVoltage = ClsTS.get_dtSortedASC(dtVoltage, "id");
+            dtLink = ClsTS.get_dtSortedASC(dtLink, "voltage_id");
+            int intID = 0;
+            int intLinkID = 0;
+
+            DataTable dtSelected = new DataTable();
+            dtSelected.Columns.Add("id", typeof(int));
+            dtSelected.Columns.Add("items", typeof(string));
+
+
+            for (int i = 0; i < dtVoltage.Rows.Count; i++)
+            {
+                intID = Convert.ToInt32(dtVoltage.Rows[i]["id"]);
+                for (int j = 0; j < dtLink.Rows.Count; j++)
+                {
+                    intLinkID = Convert.ToInt32(dtLink.Rows[j]["voltage_id"]);
+
+                    if (intID == intLinkID)
+                    {
+                        DataRow dr = dtSelected.NewRow();
+                        dr["id"] = Convert.ToInt32(dtVoltage.Rows[i]["id"]);
+                        dr["items"] = dtVoltage.Rows[i]["items"].ToString();
+
+                        dtSelected.Rows.Add(dr);
+                        break;
+                    }
+
+                    if (intLinkID > intID)
+                    {
+                        break;
+                    }
+                }
+            }
+
+
+            if (intUnitVoltageID != 0)
+            {
+                returnInfo.selectedVoltageId = Convert.ToInt32(intUnitVoltageID);
+            } else
+            {
+                returnInfo.selectedVoltageId = dtSelected.Rows[0]["id"];
+            }
+
+            returnInfo.data = dtSelected;
+
+            return returnInfo;
+        }
+
         private static DataTable getModel(dynamic fieldInfo)
         {
-            var Session = HttpContext.Current.Session;
-
             int locationId = Convert.ToInt32(fieldInfo.location);
             int orientationId = Convert.ToInt32(fieldInfo.orientation);
-            int intUnitModelID = Convert.ToInt32(fieldInfo.unitModelId);
-            int summerSupplyAirCFM = Convert.ToInt32(fieldInfo.cfm);
+            //int intUnitModelID = Convert.ToInt32(fieldInfo.unitModelId);
+            int intUnitModelID = 0;
+            int summerSupplyAirCFM = Convert.ToInt32(fieldInfo.summerSupplyAirCFM);
             Boolean byPass = fieldInfo.byPass;
 
             DataTable dtUnitModel = new DataTable();
 
             if (locationId > -1 && orientationId > -1)
             {
-                int intUAL = Convert.ToInt32(Session["UAL"]);
+                int intUAL = Convert.ToInt32(fieldInfo.UAL);
 
                 int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
                 
@@ -1229,8 +1357,8 @@ namespace Oxyzen8SelectorServer.Models
         }
         private static DataTable getSupplyAirOpening(dynamic fieldInfo)
         {
-            int intUnitTypeId = Convert.ToInt32(fieldInfo.unitType);
-            int intproductTypeId = Convert.ToInt32(fieldInfo.unitType);
+            int intUnitTypeId = Convert.ToInt32(fieldInfo.unitTypeId);
+            int intproductTypeId = Convert.ToInt32(fieldInfo.productTypeId);
             int locationId = Convert.ToInt32(fieldInfo.location);
             int orientationId = Convert.ToInt32(fieldInfo.orientation);
             int coolingCompId = Convert.ToInt32(fieldInfo.coolingComp);
