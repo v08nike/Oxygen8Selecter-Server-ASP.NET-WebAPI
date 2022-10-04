@@ -440,7 +440,7 @@ namespace Oxyzen8SelectorServer.Models
             try
             {
                 Comm.CommandType = CommandType.Text;
-                Comm.CommandText = "SELECT * FROM " + _strTableName + " WHERE enabled = 1 OR " + _strColumn + "='@Value'";
+                Comm.CommandText = "SELECT * FROM " + _strTableName + " WHERE enabled = 1 AND " + _strColumn + "='@Value'";
                 Comm.Parameters.Clear();
                 Comm.Parameters.AddWithValue("@Value", _strValue);
                 Conn.Open();

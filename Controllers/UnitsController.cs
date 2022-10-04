@@ -63,6 +63,26 @@ namespace Oxyzen8SelectorServer.Controllers
         }
 
         [HttpPost]
+        [ActionName("preheatCompChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic preheatCompChanged([FromBody]dynamic fieldInfo)
+        {
+            dynamic returnInfo = new ExpandoObject();
+
+            returnInfo.preheatElecHeater = UnitsModel.GetPreheatElectricHeader(fieldInfo);
+            returnInfo.elecHeaterVoltage = UnitsModel.GetElectricHeaterVoltage(fieldInfo);
+            returnInfo.customInputs = UnitsModel.GetCustomInputs(fieldInfo);
+
+            if (Convert.ToInt32(fieldInfo) == ClsID.intUnitTypeAHU_ID)
+            {
+                returnInfo.preheatSetPoint = UnitsModel.GetPreheatSetpoint(fieldInfo);
+                returnInfo.setPoints = UnitsModel.GetSetpoints(fieldInfo);
+
+            }
+            return returnInfo;
+        }
+
+        [HttpPost]
         [ActionName("AirFlowDataChanged")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public dynamic AirFlowDataChanged([FromBody]dynamic info)

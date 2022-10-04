@@ -477,14 +477,33 @@ namespace Oxyzen8SelectorServer.Models
             initUnitInfo.unitTypeId = initUnitInfo.unitType.Rows[0]["id"];
             initUnitInfo.controlsPreference = ClsDB.get_dtLiveEnabled(ClsDBT.strSelControlsPreference);
             initUnitInfo.controlsPreferenceId = initUnitInfo.controlsPreference.Rows[0]["id"];
-            initUnitInfo.qaFilter = ClsDB.get_dtLiveEnabled(ClsDBT.strSelFilterModel, "outdoor_air", "1");
-            initUnitInfo.raFilter = ClsDB.get_dtLiveEnabled(ClsDBT.strSelFilterModel, "return_air", "1");
+            initUnitInfo.qaFilter = ClsDB.get_dtLiveEnabled(ClsDBT.strSelFilterModel, "outdoor_air", 1, 0);
+            initUnitInfo.qaFilterId = ClsID.intFilterModel_2in_85_MERV_13_ID;
 
-            initUnitInfo.preheatComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating);
-            initUnitInfo.heatExchComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitHeatExchanger);
-            initUnitInfo.coolingComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating);
-            initUnitInfo.heatingComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating);
-            initUnitInfo.reheatComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating);
+            switch (unitModelId)
+            {
+                case ClsID.intUnitTypeERV_ID:
+                case ClsID.intUnitTypeHRV_ID:
+                    initUnitInfo.raFilter = ClsDB.get_dtLiveEnabled(ClsDBT.strSelFilterModel, "return_air", 1, 0);
+                    break;
+                default:
+                    initUnitInfo.raFilter = ClsDB.get_dtLive(ClsDBT.strSelFilterModel, ClsID.intFilterModel_NA_ID).Copy();
+                    break;
+            }
+            initUnitInfo.raFilterId = initUnitInfo.raFilter.Rows[0]["id"];
+
+            DataTable dtHeatExchComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitHeatExchanger, 0);
+            DataTable dtCoolingComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating, 0).Copy();
+            DataTable dtHeatingComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating, 0).Copy();
+            DataTable dtReheatComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating, 0).Copy();
+
+
+            initUnitInfo.preheatComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating, 0, "display_order, id ASC").Copy();
+            initUnitInfo.heatExchComp = ClsTS.get_dtDataFromImportRows(dtHeatExchComp, "erv", 1);
+            initUnitInfo.coolingComp = ClsTS.get_dtDataFromImportRows(dtCoolingComp, "erv_cooling", 1);
+            initUnitInfo.heatingComp = ClsTS.get_dtDataFromImportRows(dtHeatingComp, "erv_heating", 1);
+            initUnitInfo.reheatComp = ClsTS.get_dtDataFromImportRows(dtReheatComp, "erv_reheat", 1);
+
 
 
             initUnitInfo.damperActuator = ClsDB.get_dtLiveEnabled(ClsDBT.strSelDamperActuator);
@@ -620,6 +639,352 @@ namespace Oxyzen8SelectorServer.Models
             initUnitInfo.mainInitData = txbSummerSupplyAirCFM_Changed(initFieldData);
 
             return initUnitInfo;
+        }
+
+        private static dynamic GetElecHeaterVoltage(dynamic fieldInfo)
+        {
+            dynamic elecHeaderVoltageInfo = new ExpandoObject();
+            DataTable dtElecHeaterVoltage = new DataTable();
+            int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
+            int intUnitModelId = Convert.ToInt32(fieldInfo.productTypeId);
+            int preheatComp = Convert.ToInt32(fieldInfo.preheatComp);
+            int heatingComp = Convert.ToInt32(fieldInfo.heatingComp);
+            int reheatComp = Convert.ToInt32(fieldInfo.reheatComp);
+            int intElecHeaterVoltageID = Convert.ToInt32(fieldInfo.elecHeaterVoltageID);
+
+            if (preheatComp == ClsID.intCompElecHeaterID || heatingComp == ClsID.intCompElecHeaterID || reheatComp == ClsID.intCompElecHeaterID)
+            {
+                elecHeaderVoltageInfo.Visible = true;
+
+                bool bol208V_1Ph = false;
+
+
+                if (intProductTypeID == ClsID.intProdTypeNovaID)
+                {
+                    if (intUnitModelId == ClsID.intNovaUnitModelID_A16IN || intUnitModelId == ClsID.intNovaUnitModelID_B20IN ||
+                    intUnitModelId == ClsID.intNovaUnitModelID_A18OU || intUnitModelId == ClsID.intNovaUnitModelID_B22OU)
+                    {
+                        bol208V_1Ph = true;
+                        dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_2", 1, intElecHeaterVoltageID).Copy();
+                    }
+                    else
+                    {
+                        dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater", 1, intElecHeaterVoltageID).Copy();
+                    }
+                }
+                else if (intProductTypeID == ClsID.intProdTypeVentumID)
+                {
+                    if (intUnitModelId == ClsID.intVentumUnitModelID_H05IN_ERV || intUnitModelId == ClsID.intVentumUnitModelID_H10IN_ERV ||
+                        intUnitModelId == ClsID.intVentumUnitModelID_H05IN_HRV || intUnitModelId == ClsID.intVentumUnitModelID_H10IN_HRV)
+                    {
+                        bol208V_1Ph = true;
+                        dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_2", 1, intElecHeaterVoltageID).Copy();
+                    }
+                    else
+                    {
+                        dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater", 1, intElecHeaterVoltageID).Copy();
+                    }
+                }
+                else if (intProductTypeID == ClsID.intProdTypeVentumLiteID)
+                {
+                    bol208V_1Ph = true;
+                    dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_3", 1, intElecHeaterVoltageID).Copy();
+                }
+
+                if (dtElecHeaterVoltage.Rows.Count > 0)
+                {
+                    elecHeaderVoltageInfo.data = dtElecHeaterVoltage;
+
+                    if (bol208V_1Ph)
+                    {
+                        elecHeaderVoltageInfo.id = ClsID.intElectricVoltage_208V_1Ph_60HzID;
+                    }
+                    else
+                    {
+                        elecHeaderVoltageInfo.id = ClsID.intElectricVoltage_208V_3Ph_60HzID;
+                    }
+                }
+            }
+            else
+            {
+                elecHeaderVoltageInfo.visible = false;
+            }
+
+            return elecHeaderVoltageInfo;
+        }
+
+        public static dynamic GetPreheatElectricHeader(dynamic fieldInfo)
+        {
+            dynamic preheatElecticalHeaderInstallation = new ExpandoObject();
+            DataTable dtElecHeaterVoltage = new DataTable();
+            int intProductTypeId = Convert.ToInt32(fieldInfo.productTypeId);
+            int intUnitModelId = Convert.ToInt32(fieldInfo.unitModel);
+            int intLocationId = Convert.ToInt32(fieldInfo.location);
+            int preheatComp = Convert.ToInt32(fieldInfo.preheatComp);
+            int heatingComp = Convert.ToInt32(fieldInfo.heatingComp);
+            int reheatComp = Convert.ToInt32(fieldInfo.reheatComp);
+            int intElecHeaterVoltageID = Convert.ToInt32(fieldInfo.elecHeaterVoltageID);
+            int intPreheatElecHeaterInstallationID = Convert.ToInt32(fieldInfo.elecHeaderInstallation);
+
+            int intSelectedValue = 0;
+
+            if (preheatComp == ClsID.intCompElecHeaterID || preheatComp == ClsID.intCompAutoID)
+            {
+                //if (!bolPreheatRequired)
+                //{
+                DataTable dtPreheatElecHeaterInstallation = ClsDB.get_dtLiveEnabled(ClsDBT.strSelElectricHeaterInstallation, intPreheatElecHeaterInstallationID).Copy();
+                dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id <> 1").CopyToDataTable();
+                preheatElecticalHeaderInstallation.data = dtPreheatElecHeaterInstallation;
+
+                //Outdoor Units - Only Casing Installation (Only Nova Unit can be Indoor or Outdoor, For Ventum and VentumLite Indoor unit is by default and Outdoor not available)
+                if (intUnitModelId == ClsID.intLocationOutdoorID)
+                {
+                    dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id = " + ClsID.intElecHeaterInstallInCasingID).CopyToDataTable();
+                    preheatElecticalHeaderInstallation.data = dtPreheatElecHeaterInstallation;
+                }
+                else //Indoor Units
+                {
+
+                    if (intProductTypeId == ClsID.intProdTypeNovaID || intProductTypeId == ClsID.intProdTypeVentumID)
+                    {
+                        //Casing Installation should be selected by default. Duct Mount option also available
+                        //if (ddlPreheatElecHeaterInstallation.Items.FindByValue(intSelectedValue.ToString()) != null)
+                        //{
+                        preheatElecticalHeaderInstallation.SelectedValue = intSelectedValue > 1 ? intSelectedValue.ToString() : ClsID.intElecHeaterInstallInCasingID.ToString();
+                        //}
+                    }
+                    else if (intProductTypeId == ClsID.intProdTypeVentumLiteID)
+                    {
+                        //Duct Mount is the only option
+                        dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id = " + ClsID.intElecHeaterInstallDuctMountedID).CopyToDataTable();
+                        preheatElecticalHeaderInstallation.data = dtPreheatElecHeaterInstallation;
+                    }
+                }
+            }
+
+            switch (preheatComp)
+            {
+                case ClsID.intCompNA_ID:
+                case ClsID.intCompHWC_ID:
+                case ClsID.intCompAutoID:
+                    preheatElecticalHeaderInstallation.Visible = false;
+                    break;
+                case ClsID.intCompElecHeaterID:
+                    preheatElecticalHeaderInstallation.Visible = true;
+                    break;
+                default:
+                    break;
+            }
+
+            return preheatElecticalHeaderInstallation;
+        }
+
+        public static dynamic GetElectricHeaterVoltage(dynamic fieldInfo)
+        {
+            dynamic electricHeaderVoltageInfo = new ExpandoObject();
+            DataTable dtElecHeaterVoltage = new DataTable();
+            int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
+            int intUnitModelId = Convert.ToInt32(fieldInfo.unitModel);
+            int intLocationId = Convert.ToInt32(fieldInfo.location);
+            int preheatComp = Convert.ToInt32(fieldInfo.preheatComp);
+            int heatingComp = Convert.ToInt32(fieldInfo.heatingComp);
+            int reheatComp = Convert.ToInt32(fieldInfo.reheatComp);
+            int unitVoltage = Convert.ToInt32(fieldInfo.unitVoltage);
+            int intElecHeaterVoltageID = Convert.ToInt32(fieldInfo.elecHeaterVoltageID);
+            int intPreheatElecHeaterInstallationID = Convert.ToInt32(fieldInfo.elecHeaderInstallation);
+
+
+            if (preheatComp == ClsID.intCompElecHeaterID ||
+                heatingComp == ClsID.intCompElecHeaterID ||
+                reheatComp == ClsID.intCompElecHeaterID)
+            {
+                electricHeaderVoltageInfo.Visible = true;
+
+                bool bol208V_1Ph = false;
+
+
+                if (intProductTypeID == ClsID.intProdTypeNovaID)
+                {
+                    if (intUnitModelId == ClsID.intNovaUnitModelID_A16IN || intUnitModelId == ClsID.intNovaUnitModelID_B20IN ||
+                    intUnitModelId == ClsID.intNovaUnitModelID_A18OU || intUnitModelId == ClsID.intNovaUnitModelID_B22OU)
+                    {
+                        bol208V_1Ph = true;
+                        dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_2", 1, intElecHeaterVoltageID).Copy();
+                    }
+                    else
+                    {
+                        dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater", 1, intElecHeaterVoltageID).Copy();
+                    }
+                }
+                else if (intProductTypeID == ClsID.intProdTypeVentumID)
+                {
+                    if (intUnitModelId == ClsID.intVentumUnitModelID_H05IN_ERV || intUnitModelId == ClsID.intVentumUnitModelID_H10IN_ERV ||
+                        intUnitModelId == ClsID.intVentumUnitModelID_H05IN_HRV || intUnitModelId == ClsID.intVentumUnitModelID_H10IN_HRV)
+                    {
+                        bol208V_1Ph = true;
+                        dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_2", 1, intElecHeaterVoltageID).Copy();
+                    }
+                    else
+                    {
+                        dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater", 1, intElecHeaterVoltageID).Copy();
+                    }
+                }
+                else if (intProductTypeID == ClsID.intProdTypeVentumLiteID)
+                {
+                    bol208V_1Ph = true;
+                    dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_3", 1, intElecHeaterVoltageID).Copy();
+                }
+
+
+                if (dtElecHeaterVoltage.Rows.Count > 0)
+                {
+                    electricHeaderVoltageInfo.data = dtElecHeaterVoltage;
+
+                    if (bol208V_1Ph)
+                    {
+                        electricHeaderVoltageInfo.selectedValue = ClsID.intElectricVoltage_208V_1Ph_60HzID;
+                    }
+                    else
+                    {
+                        electricHeaderVoltageInfo.selectedValue = ClsID.intElectricVoltage_208V_3Ph_60HzID;
+                    }
+                }
+            }
+            else
+            {
+                if (intProductTypeID == ClsID.intProdTypeVentumLiteID)
+                {
+                    dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_3", 1, intElecHeaterVoltageID).Copy();
+                    electricHeaderVoltageInfo.data = dtElecHeaterVoltage;
+                    electricHeaderVoltageInfo.selectedValue = unitVoltage;
+                    //ClsWFC.get_ddlLockItem(ddlElecHeaterVoltage, ClsID.intElectricVoltage_208V_1Ph_60HzID);
+                    electricHeaderVoltageInfo.Enabled = false;
+                }
+                else
+                {
+                    //ddlElecHeaterVoltage.Items.Insert(0, new ListItem("NA", "0"));
+                    //ddlElecHeaterVoltage.SelectedIndex = 0;
+                    dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater", 1, intElecHeaterVoltageID).Copy();
+                    electricHeaderVoltageInfo.data = dtElecHeaterVoltage;
+                    electricHeaderVoltageInfo.selectedValue = ClsID.intElectricVoltage_208V_3Ph_60HzID;
+                }
+
+                electricHeaderVoltageInfo.Visible = false;
+            }
+
+            return electricHeaderVoltageInfo;
+        }
+
+        public static dynamic GetCustomInputs(dynamic fieldInfo)
+        {
+            int preheatComp = Convert.ToInt32(fieldInfo.preheatComp);
+            int coolingComp = Convert.ToInt32(fieldInfo.coolingComp);
+            int heatingComp = Convert.ToInt32(fieldInfo.heatingComp);
+            int reheatComp = Convert.ToInt32(fieldInfo.reheatComp);
+            int unitType = Convert.ToInt32(fieldInfo.unitType);
+            dynamic customInputs = new ExpandoObject();
+            if (preheatComp == ClsID.intCompHWC_ID)
+            {
+                customInputs.preheatHWC_UseFlowRateVisible = true;
+                customInputs.preheatHWC_FlowRateVisible = true;
+
+                if (unitType == ClsID.intUnitTypeAHU_ID)
+                {
+                    customInputs.preheatHWC_UseCapVisible = true;
+                    customInputs.preheatHWC_CapVisible = true;
+                }
+                else
+                {
+                    customInputs.preheatHWC_UseCapVisible = false;
+                    customInputs.preheatHWC_CapVisible = false;
+                }
+            }
+            else
+            {
+                customInputs.preheatHWC_UseCap.Visible = false;
+                customInputs.preheatHWC_CapVisible = false;
+                customInputs.preheatHWC_UseFlowRateVisible = false;
+                customInputs.preheatHWC_FlowRateVisible = false;
+            }
+
+
+            if (coolingComp == ClsID.intCompCWC_ID)
+            {
+                customInputs.coolingCWC_UseCapVisible = true;
+                customInputs.coolingCWC_CapVisible = true;
+                customInputs.coolingCWC_UseFlowRateVisible = true;
+                customInputs.coolingCWC_FlowRateVisible = true;
+            }
+            else
+            {
+                customInputs.coolingCWC_UseCapVisible = false;
+                customInputs.coolingCWC_CapVisible = false;
+                customInputs.coolingCWC_UseFlowRateVisible = false;
+                customInputs.coolingCWC_FlowRateVisible = false;
+            }
+
+
+            if (heatingComp == ClsID.intCompHWC_ID)
+            {
+                customInputs.heatingHWC_UseCapVisible = true;
+                customInputs.heatingHWC_CapVisible = true;
+                customInputs.heatingHWC_UseFlowRateVisible = true;
+                customInputs.heatingHWC_FlowRateVisible = true;
+            }
+            else
+            {
+                customInputs.heatingHWC_UseCapVisible = false;
+                customInputs.heatingHWC_CapVisible = false;
+                customInputs.heatingHWC_UseFlowRateVisible = false;
+                customInputs.heatingHWC_FlowRateVisible = false;
+            }
+
+
+            if (reheatComp == ClsID.intCompHWC_ID)
+            {
+                customInputs.reheatHWC_UseCapVisible = true;
+                customInputs.reheatHWC_CapVisible = true;
+                customInputs.reheatHWC_UseFlowRateVisible = true;
+                customInputs.reheatHWC_FlowRateVisible = true;
+            }
+            else
+            {
+                customInputs.reheatHWC_UseCapVisible = false;
+                customInputs.reheatHWC_CapVisible = false;
+                customInputs.reheatHWC_UseFlowRateVisible = false;
+                customInputs.reheatHWC_FlowRateVisible = false;
+            }
+
+            return customInputs;
+        }
+
+        public static bool GetPreheatSetpoint(dynamic fieldInfo)
+        {
+            if (Convert.ToInt32(fieldInfo.unitTypeId )== ClsID.intUnitTypeAHU_ID &&
+                (Convert.ToInt32(fieldInfo.preheatComp) == ClsID.intCompElecHeaterID ||
+                Convert.ToInt32(fieldInfo.preheatComp) == ClsID.intCompHWC_ID))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public static bool GetSetpoints(dynamic fieldInfo)
+        {
+            if (Convert.ToInt32(fieldInfo.unitTypeId) == ClsID.intUnitTypeAHU_ID &&
+                Convert.ToInt32(fieldInfo.preheatComp) > 1 ||
+                    Convert.ToInt32(fieldInfo.coolingComp) > 1 ||
+                    Convert.ToInt32(fieldInfo.heatingComp) > 1 ||
+                    Convert.ToInt32(fieldInfo.reheatComp) > 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public static dynamic GetUnitTypeInfo()
