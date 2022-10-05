@@ -22,18 +22,18 @@ namespace Oxyzen8SelectorServer.Models
         #region MySQL
         private static string get_strConnection()
         {
-            //server = "173.248.135.23";
-            //database = "db_oxygen8_test";
-            //uid = "unitdes_user_remote";
-            //password = "heatAir_03";
-            //string strConnString = "Server=" + server + ";" + "Database=" + database + ";" + "Uid=" + uid + ";" + "Pwd=" + password + ";SslMode=None";
-
-
-            server = "localhost";
+            server = "173.248.135.23";
             database = "db_oxygen8_test";
-            uid = "root";
-            password = "";
-            string strConnString = "Server=" + server + ";" + "Database=" + database + ";" + "Uid=" + uid + ";" + "Pwd=" + password;
+            uid = "unitdes_user_remote";
+            password = "heatAir_03";
+            string strConnString = "Server=" + server + ";" + "Database=" + database + ";" + "Uid=" + uid + ";" + "Pwd=" + password + ";SslMode=None";
+
+
+            //server = "localhost";
+            //database = "db_oxygen8_test";
+            //uid = "root";
+            //password = "";
+            //string strConnString = "Server=" + server + ";" + "Database=" + database + ";" + "Uid=" + uid + ";" + "Pwd=" + password;
 
             return strConnString;
         }
@@ -4898,6 +4898,87 @@ namespace Oxyzen8SelectorServer.Models
         }
         #endregion
 
+        #region Delete Unit
+        public static bool DeleteUnits(int _intJobID, dynamic _unitIds)
+        {
+            DataSet ds = new DataSet();
+            MySqlDataAdapter adp = new MySqlDataAdapter();
+            var Comm = adp.SelectCommand = new MySqlCommand();
+            var Conn = adp.SelectCommand.Connection = new MySqlConnection(get_strConnection());
+
+            int[] temp = new int[_unitIds.Count];
+
+            int i = 0;
+            foreach (int item in _unitIds)
+            {
+                temp[i++] = item;
+            }
+
+            string tempIds = "" + temp[0];
+            for (i = 1; i < temp.Length; i++)
+            {
+                tempIds += (", " + temp[i]);
+            }
+
+            try
+            {
+                Comm.CommandType = CommandType.Text;
+                Comm.Parameters.Clear();
+                Comm.Parameters.AddWithValue("@JobID", _intJobID);
+                Conn.Open();
+
+                Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavAirFlowData + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                Comm.ExecuteNonQuery();
+
+                Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavCompOption + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                Comm.ExecuteNonQuery();
+
+                Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavCompOptionCustom + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                Comm.ExecuteNonQuery();
+
+                Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavLayout + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                Comm.ExecuteNonQuery();
+
+                //Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavLouver + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                //Comm.ExecuteNonQuery();
+
+                //Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavDamper + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                //Comm.ExecuteNonQuery();
+
+                //Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavFilter + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                //Comm.ExecuteNonQuery();
+
+                //Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavFixedPlateCORE + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                //Comm.ExecuteNonQuery();
+
+                //Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavFixedPlateHEATEX + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                //Comm.ExecuteNonQuery();
+
+                //Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavElectricHeaterTHERMOLEC + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                //Comm.ExecuteNonQuery();
+
+                //Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavCoilDIRECT_COIL + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                //Comm.ExecuteNonQuery();
+
+                //Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavFanZIEHL_ABEGG + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                //Comm.ExecuteNonQuery();
+
+                //Delete General Table always last to prevent the unit no not being deleted on above tables if the execution fails on any tables above.
+                Comm.CommandText = "DELETE FROM `" + ClsDBT.strSavGeneral + "` WHERE `job_id`=@JobID AND `unit_no` in (" + tempIds + ")";
+                Comm.ExecuteNonQuery();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        #endregion
 
         #region DeletePricingMisc
         public static bool DeletePricingMisc(int _intJobID, int _intMiscNo)

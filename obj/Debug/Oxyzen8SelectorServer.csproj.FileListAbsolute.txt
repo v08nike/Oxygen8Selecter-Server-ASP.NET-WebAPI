@@ -131,7 +131,6 @@ C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bi
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Net.Http.Formatting.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Numerics.Vectors.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Runtime.CompilerServices.Unsafe.dll
-C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Text.Encodings.Web.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Text.Json.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Threading.Tasks.Extensions.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.ValueTuple.dll
@@ -164,7 +163,6 @@ C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bi
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Net.Http.Formatting.xml
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Numerics.Vectors.xml
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Runtime.CompilerServices.Unsafe.xml
-C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Text.Encodings.Web.xml
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Text.Json.xml
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Threading.Tasks.Extensions.xml
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.ValueTuple.xml
@@ -183,4 +181,18 @@ C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\ob
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.csproj.CopyComplete
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.pdb
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\BouncyCastle.Crypto.dll
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\MailKit.dll
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Microsoft.Extensions.DependencyInjection.dll
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Microsoft.Extensions.Options.dll
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Microsoft.Extensions.Primitives.dll
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\MimeKit.dll
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\NETCore.MailKit.dll
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\MailKit.xml
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Microsoft.Extensions.DependencyInjection.xml
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Microsoft.Extensions.DependencyInjection.Abstractions.xml
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Microsoft.Extensions.Options.xml
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Microsoft.Extensions.Primitives.xml
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\MimeKit.xml
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.csprojAssemblyReference.cache

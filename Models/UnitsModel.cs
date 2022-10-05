@@ -61,29 +61,33 @@ namespace Oxyzen8SelectorServer.Models
             return ClsDB.DeleteUnit(jobId, unitId);
         }
 
+        public static bool DeleteUnitsByIds(int jobId, dynamic unitIds)
+        {
+            return ClsDB.DeleteUnits(jobId, unitIds);
+        }
 
         public static bool SaveUnitInfo(dynamic unitInfo)
         {
             DataTable dt = ClsDB.SaveGeneral(Convert.ToInt32(unitInfo.jobId),
                                             Convert.ToInt32(unitInfo.unitId),
-                                            Convert.ToInt32(unitInfo.tag.ToUpper()),
+                                            unitInfo.tag.ToString().ToUpper(),
                                             Convert.ToInt32(unitInfo.qty),
                                             Convert.ToInt32(unitInfo.productTypeId),
                                             Convert.ToInt32(unitInfo.unitTypeId),
                                             Convert.ToInt32(unitInfo.byPassId),
                                             Convert.ToInt32(unitInfo.unitModelId),
                                             Convert.ToInt32(unitInfo.selectionTypeId),
-                                            Convert.ToInt32(unitInfo.locationId),
-                                            Convert.ToInt32(unitInfo.downshotId),
-                                            Convert.ToInt32(unitInfo.OrientationId),
-                                            Convert.ToInt32(unitInfo.controlsPreferenceId),
+                                            Convert.ToInt32(unitInfo.location),
+                                            Convert.ToInt32(0),
+                                            Convert.ToInt32(unitInfo.orientation),
+                                            Convert.ToInt32(unitInfo.controlPreference),
                                             Convert.ToDouble(unitInfo.unitHeight),
                                             Convert.ToDouble(unitInfo.unitWidth),
                                             Convert.ToDouble(unitInfo.unitLength),
                                             Convert.ToDouble(unitInfo.unitWeight),
-                                            Convert.ToInt32(unitInfo.unitVoltageId),
+                                            Convert.ToInt32(unitInfo.unitVoltage),
                                             Convert.ToInt32(unitInfo.voltageSPPId),
-                                            Convert.ToInt32(unitInfo.attUnitModelSelectedId),
+                                            1,
                                             0d);
 
             unitInfo.unitId = dt.Rows[0]["UnitNo"].ToString();
@@ -95,23 +99,23 @@ namespace Oxyzen8SelectorServer.Models
                                 Convert.ToInt32(unitInfo.summerReturnAirCFM),
                                 Convert.ToInt32(unitInfo.summerSupplyAirCFM),
                                 Convert.ToInt32(unitInfo.summerReturnAirCFM),
-                                Math.Round(Convert.ToDouble(unitInfo.summerOutdoorAirDB), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.summerOutdoorAirWB), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.summerOutdoorAirRH), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.winterOutdoorAirDB), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.winterOutdoorAirWB), 3),
-                                Math.Round(Convert.ToDouble(unitInfo.winterOutdoorAirRH), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.summerReturnAirDB), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.summerReturnAirWB), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.summerReturnAirRH), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.winterReturnAirDB), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.winterReturnAirWB), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.winterReturnAirRH), 1),
-                                Convert.ToDouble(unitInfo.winterPreheatSetpointDB),
-                                Convert.ToDouble(unitInfo.winterHeatingSetpointDB),
-                                Convert.ToDouble(unitInfo.summerCoolingSetpointDB),
-                                Convert.ToDouble(unitInfo.summerCoolingSetpointWB),
-                                Convert.ToDouble(unitInfo.summerReheatSetpointDB),
+                                Math.Round(Convert.ToDouble(unitInfo.summer_air_db), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.summer_air_wb), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.summer_air_rh), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.winter_air_db), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.winter_air_wb), 3),
+                                Math.Round(Convert.ToDouble(unitInfo.winter_air_rh), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.summer_return_db), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.summer_return_wb), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.summer_return_rh), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.winter_return_db), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.winter_return_wb), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.winter_return_rh), 1),
+                                Convert.ToDouble(unitInfo.winter_preheat_setpoint_db),
+                                Convert.ToDouble(unitInfo.winter_heating_setpoint_db),
+                                Convert.ToDouble(unitInfo.summer_cooling_setpoint_db),
+                                Convert.ToDouble(unitInfo.summer_cooling_setpoint_wb),
+                                Convert.ToDouble(unitInfo.summer_reheat_setpoint_db),
                                 Convert.ToDouble(unitInfo.supplyAirESP),
                                 Convert.ToDouble(unitInfo.exhaustAirESP));
 
@@ -123,26 +127,26 @@ namespace Oxyzen8SelectorServer.Models
                 //intUnitModelID = Convert.ToInt32(id_list.Attributes[ClsID.strAttUnitModelID]),
                 //intVoltageID = Convert.ToInt32(id_list.Attributes[ClsID.strAttUnitVoltageID]),
                 intUnitModelID = Convert.ToInt32(unitInfo.unitModelId),
-                intVoltageID = Convert.ToInt32(unitInfo.unitVoltageId),
-                intOA_FilterModelID = Convert.ToInt32(unitInfo.OA_FilterModelId),
+                intVoltageID = Convert.ToInt32(unitInfo.unitVoltage),
+                intOA_FilterModelID = Convert.ToInt32(unitInfo.qa_filter),
                 intSA_FinalFilterModelID = 0,
-                intRA_FilterModelID = Convert.ToInt32(unitInfo.RA_FilterModelId),
-                intHeatExchCompID = Convert.ToInt32(unitInfo.heatExchCompId),
-                intPreheatCompID = Convert.ToInt32(unitInfo.preheatCompId),
-                intCoolingCompID = Convert.ToInt32(unitInfo.coolingCompId),
-                intHeatingCompID = Convert.ToInt32(unitInfo.heatingCompId),
-                intReheatCompID = Convert.ToInt32(unitInfo.reheatCompId),
+                intRA_FilterModelID = Convert.ToInt32(unitInfo.ra_filter),
+                intHeatExchCompID = Convert.ToInt32(unitInfo.heatExch),
+                intPreheatCompID = Convert.ToInt32(unitInfo.preheat),
+                intCoolingCompID = Convert.ToInt32(unitInfo.cooling),
+                intHeatingCompID = Convert.ToInt32(unitInfo.heating),
+                intReheatCompID = Convert.ToInt32(unitInfo.reheat),
                 intIsHeatPump = unitInfo.heatPump,
                 intIsDehumidification = unitInfo.dehumidification,
-                intElecHeaterVoltageID = Convert.ToInt32(unitInfo.elecHeaterVoltageId),
+                intElecHeaterVoltageID = Convert.ToInt32(unitInfo.elecHeaderVoltage),
                 intPreheatElecHeaterInstallationID = Convert.ToInt32(unitInfo.preheatElecHeaterInstallationId),
                 intHeatElecHeaterInstallationID = Convert.ToInt32(unitInfo.heatElecHeaterInstallationId),
-                intDamperAndActuatorID = Convert.ToInt32(unitInfo.damperAndActuatorId),
+                intDamperAndActuatorID = Convert.ToInt32(unitInfo.damperActuator),
                 intIsValveAndActuatorIncluded = unitInfo.valveAndActuator,
                 intValveTypeID = Convert.ToInt32(unitInfo.valveTypeId),
                 intIsDrainPan = unitInfo.drainPan,
-                dblOA_FilterPD = Convert.ToDouble(unitInfo.OA_FilterPD),
-                dblRA_FilterPD = Convert.ToDouble(unitInfo.RA_FilterPD),
+                dblOA_FilterPD = Convert.ToDouble(unitInfo.qa_filter_pd),
+                dblRA_FilterPD = Convert.ToDouble(unitInfo.ra_filter_pd),
                 dblPreheatSetpointDB = Convert.ToDouble(unitInfo.preheatSetpointDB),
                 dblCoolingSetpointDB = Convert.ToDouble(unitInfo.coolingSetpointDB),
                 dblCoolingSetpointWB = Convert.ToDouble(unitInfo.coolingSetpointWB),
@@ -185,7 +189,7 @@ namespace Oxyzen8SelectorServer.Models
 
                 ClsCompOptCustom objCompOptCustom = new ClsCompOptCustom
                 {
-                    intJobID = Convert.ToInt32(unitInfo.uobId),
+                    intJobID = Convert.ToInt32(unitInfo.jobId),
                     intUnitNo = Convert.ToInt32(unitInfo.unitId),
                     intIsPreheatHWC_UseCap = unitInfo.preheatHWC_UseCap,
                     dblPreheatHWC_Cap = Convert.ToDouble(unitInfo.preheatHWC_Cap),
@@ -224,7 +228,7 @@ namespace Oxyzen8SelectorServer.Models
                 strExhaustAirOpening = unitInfo.exhaustAirOpening,
                 intOutdoorAirOpeningID = Convert.ToInt32(unitInfo.outdoorAirOpeningId),
                 strOutdoorAirOpening = unitInfo.outdoorAirOpening,
-                intReturnAirOpeningID = Convert.ToInt32(unitInfo.returnAirOpening),
+                intReturnAirOpeningID = Convert.ToInt32(unitInfo.returnAirOpeningId),
                 strReturnAirOpening = unitInfo.returnAirOpening
             };
 
@@ -499,10 +503,15 @@ namespace Oxyzen8SelectorServer.Models
 
 
             initUnitInfo.preheatComp = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitCoolingHeating, 0, "display_order, id ASC").Copy();
+            initUnitInfo.preheatCompId = initUnitInfo.preheatComp.Rows[0]["id"];
             initUnitInfo.heatExchComp = ClsTS.get_dtDataFromImportRows(dtHeatExchComp, "erv", 1);
+            initUnitInfo.heatExchCompId = initUnitInfo.heatExchComp.Rows[0]["id"];
             initUnitInfo.coolingComp = ClsTS.get_dtDataFromImportRows(dtCoolingComp, "erv_cooling", 1);
+            initUnitInfo.coolingCompId = initUnitInfo.coolingComp.Rows[0]["id"];
             initUnitInfo.heatingComp = ClsTS.get_dtDataFromImportRows(dtHeatingComp, "erv_heating", 1);
+            initUnitInfo.heatingCompId = initUnitInfo.heatingComp.Rows[0]["id"];
             initUnitInfo.reheatComp = ClsTS.get_dtDataFromImportRows(dtReheatComp, "erv_reheat", 1);
+            initUnitInfo.reheatCompId = initUnitInfo.reheatComp.Rows[0]["id"];
 
 
 

@@ -39,11 +39,19 @@ namespace Oxyzen8SelectorServer.Controllers
         }
         [HttpPost]
         [ActionName("Delete")]
-        public bool DeleteUnitById([FromBody]dynamic unitInfo)
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic DeleteUnitById([FromBody]dynamic unitInfo)
         {
-            int jobId = Convert.ToInt32(unitInfo.jobId);
-            int unitId = Convert.ToInt32(unitInfo.unitId);
-            return UnitsModel.DeleteUnitById(jobId, unitId);
+            if (unitInfo.action == "DELETE_ONE")
+            {
+                UnitsModel.DeleteUnitById(Convert.ToInt32(unitInfo.jobId), Convert.ToInt32(unitInfo.unitId));
+                return UnitsModel.GetUnitListByJobId(Convert.ToInt32(unitInfo.jobId)); 
+            } else
+            {
+                UnitsModel.DeleteUnitsByIds(Convert.ToInt32(unitInfo.jobId), unitInfo.unitIds);
+                return UnitsModel.GetUnitListByJobId(Convert.ToInt32(unitInfo.jobId));
+            }
+
         }
 
         [HttpPost]
@@ -66,6 +74,26 @@ namespace Oxyzen8SelectorServer.Controllers
         [ActionName("preheatCompChanged")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public dynamic preheatCompChanged([FromBody]dynamic fieldInfo)
+        {
+            dynamic returnInfo = new ExpandoObject();
+
+            returnInfo.preheatElecHeater = UnitsModel.GetPreheatElectricHeader(fieldInfo);
+            returnInfo.elecHeaterVoltage = UnitsModel.GetElectricHeaterVoltage(fieldInfo);
+            returnInfo.customInputs = UnitsModel.GetCustomInputs(fieldInfo);
+
+            if (Convert.ToInt32(fieldInfo) == ClsID.intUnitTypeAHU_ID)
+            {
+                returnInfo.preheatSetPoint = UnitsModel.GetPreheatSetpoint(fieldInfo);
+                returnInfo.setPoints = UnitsModel.GetSetpoints(fieldInfo);
+
+            }
+            return returnInfo;
+        }
+
+        [HttpPost]
+        [ActionName("coolingCompChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic coolignCompChanged([FromBody]dynamic fieldInfo)
         {
             dynamic returnInfo = new ExpandoObject();
 

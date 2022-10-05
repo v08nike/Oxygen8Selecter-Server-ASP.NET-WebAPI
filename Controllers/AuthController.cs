@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using System.Web.SessionState;
 using Oxyzen8SelectorServer.Models;
+using System.Net.Mail;
+
 
 namespace Oxyzen8SelectorServer.Controllers
 {
@@ -61,6 +59,38 @@ namespace Oxyzen8SelectorServer.Controllers
             {
                 return new { action = "no_user_exist" };
             }
+        }
+
+        [HttpPost]
+        [ActionName("sendrequest")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public bool SendMailEmailVerification([FromBody]dynamic info)
+        {
+            string to = info.email; //To address    
+            string from = "jacklee03817@gmail.com"; //From address    
+            MailMessage message = new MailMessage(from, to);
+
+            string mailbody = "In this article you will learn how to send a email using Asp.Net & C#";
+            message.Subject = "Sending Email Using Asp.Net & C#";
+            message.Body = mailbody;
+            message.BodyEncoding = Encoding.UTF8;
+            message.IsBodyHtml = true;
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587); //Gmail smtp    
+            System.Net.NetworkCredential basicCredential1 = new System.Net.NetworkCredential("jacklee03817@gmail.com", "J*K(U&ILO");
+            client.EnableSsl = true;
+            client.UseDefaultCredentials = false;
+            client.Credentials = basicCredential1;
+
+            try
+            {
+                client.Send(message);
+            }
+
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return true;
         }
 
         public string CalculateMD5Hash(string input)
