@@ -332,7 +332,6 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Controllers\ValuesController1.cs" />
     <Compile Include="JwtManager.cs" />
     <Compile Include="Models\ClsAirFlowData.cs" />
     <Compile Include="Models\ClsComponentItems.cs" />
