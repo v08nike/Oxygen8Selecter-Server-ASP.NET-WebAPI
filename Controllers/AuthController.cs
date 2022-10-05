@@ -67,7 +67,7 @@ namespace Oxyzen8SelectorServer.Controllers
         public bool SendMailEmailVerification([FromBody]dynamic info)
         {
             string to = info.email; //To address    
-            string from = "jacklee03817@gmail.com"; //From address    
+            string from = "teddan817@gmail.com"; //From address    
             MailMessage message = new MailMessage(from, to);
 
             string mailbody = "In this article you will learn how to send a email using Asp.Net & C#";
@@ -76,7 +76,7 @@ namespace Oxyzen8SelectorServer.Controllers
             message.BodyEncoding = Encoding.UTF8;
             message.IsBodyHtml = true;
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587); //Gmail smtp    
-            System.Net.NetworkCredential basicCredential1 = new System.Net.NetworkCredential("jacklee03817@gmail.com", "J*K(U&ILO");
+            System.Net.NetworkCredential basicCredential1 = new System.Net.NetworkCredential("teddan817@gmail.com", "Welcome!0817");
             client.EnableSsl = true;
             client.UseDefaultCredentials = false;
             client.Credentials = basicCredential1;
