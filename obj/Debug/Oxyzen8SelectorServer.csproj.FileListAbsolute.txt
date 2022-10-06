@@ -62,6 +62,7 @@ C:\Studio\FreelancerTasks\Oxygen8\My\Oxyzen8SelectorServer\Oxyzen8SelectorServer
 C:\Studio\FreelancerTasks\Oxygen8\My\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.csproj.CopyComplete
 C:\Studio\FreelancerTasks\Oxygen8\My\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.dll
 C:\Studio\FreelancerTasks\Oxygen8\My\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.pdb
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Web.WebPages.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Oxyzen8SelectorServer.dll.config
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Oxyzen8SelectorServer.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Oxyzen8SelectorServer.pdb
@@ -150,7 +151,6 @@ C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bi
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Web.Mvc.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Web.Razor.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Web.WebPages.Deployment.dll
-C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Web.WebPages.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Web.WebPages.Razor.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Ubiety.Dns.Core.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\WebGrease.dll
@@ -191,6 +191,7 @@ C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bi
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Newtonsoft.Json.xml
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\System.Web.Http.WebHost.xml
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.csprojAssemblyReference.cache
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.csproj.CoreCompileInputs.cache
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.csproj.CopyComplete
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.dll
