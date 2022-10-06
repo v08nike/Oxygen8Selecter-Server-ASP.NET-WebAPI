@@ -69,7 +69,7 @@ namespace Oxyzen8SelectorServer.Controllers
         public bool SendMailEmailVerification([FromBody]dynamic info)
         {
             MailMessage mail = new MailMessage();
-            mail.From = new MailAddress("nike03817@gmail.com");
+            mail.From = new MailAddress("sdfwewrewrwrwerw@gmail.com");
             mail.To.Add(new MailAddress(info.email.ToString()));
             mail.Subject = "Sending Email Using Asp.Net & C#";
             mail.Body = "<h1>In this article you will learn how to send a email using Asp.Net & C#</h1>";
@@ -81,7 +81,7 @@ namespace Oxyzen8SelectorServer.Controllers
                 {
                     smtp.EnableSsl = true;
                     smtp.UseDefaultCredentials = true;
-                    smtp.Credentials = new NetworkCredential("nike03817@gmail.com", "J*K(U&ILO");
+                    smtp.Credentials = new NetworkCredential("sdfwewrewrwrwerw@gmail.com", "J*K(U&ILO");
                     smtp.Send(mail);
                 }
             }
