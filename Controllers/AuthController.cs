@@ -78,8 +78,7 @@ namespace Oxyzen8SelectorServer.Controllers
             {
                 using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
                 {
-                    smtp.UseDefaultCredentials = false;
-                    smtp.Credentials = new NetworkCredential("teddan817@gmail.com", "Welcome!0817", "smtp.gmail.com");
+                    smtp.UseDefaultCredentials = true;
                     smtp.EnableSsl = true;
                     smtp.Send(mail);
                 }
