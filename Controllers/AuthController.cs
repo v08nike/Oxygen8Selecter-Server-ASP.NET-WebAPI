@@ -68,39 +68,35 @@ namespace Oxyzen8SelectorServer.Controllers
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public dynamic SendMailEmailVerification([FromBody]dynamic info)
         {
-            //try
-            //{
-            //    using (MailMessage mail = new MailMessage(new MailAddress("teddan817@gmail.com"), new MailAddress("nike03817@gmail.com")))
-            //    {
-            //        mail.Subject = "Sending Email Using Asp.Net & C#";
+            try
+            {
+                using (MailMessage mail = new MailMessage(new MailAddress("teddan817@gmail.com"), new MailAddress("nike03817@gmail.com")))
+                {
+                    mail.Subject = "Sending Email Using Asp.Net & C#";
 
-            //        long expiredTime = DateTime.Now.Millisecond + 5184000000L;
-            //        JwtManager.GenerateToken(Newtonsoft.Json.JsonConvert.SerializeObject(new { email = info.email, exp = expiredTime }));
+                    long expiredTime = DateTime.Now.Millisecond + 5184000000L;
+                    JwtManager.GenerateToken(Newtonsoft.Json.JsonConvert.SerializeObject(new { email = info.email, exp = expiredTime }));
+                    mail.Body = "<a href='https://oxygen8selector.netlify.app/auth/reset-password?token=" + JwtManager.GenerateToken(Newtonsoft.Json.JsonConvert.SerializeObject(new { email = info.email, exp = expiredTime })) + "'>Reset Password</a>";
+                    mail.IsBodyHtml = true;
 
-            //        mail.Body = "<h1>In this article you will learn how to send a email using Asp.Net & C#</h1>";
-            //        mail.IsBodyHtml = true;
+                    SmtpClient smtp = new SmtpClient();
+                    smtp.UseDefaultCredentials = false;
+                    smtp.Host = "smtp.gmail.com";
+                    smtp.Port = 587;
+                    smtp.EnableSsl = true;
 
-            //        SmtpClient smtp = new SmtpClient();
-            //        smtp.UseDefaultCredentials = false;
-            //        smtp.Host = "smtp.gmail.com";
-            //        smtp.Port = 587;
-            //        smtp.EnableSsl = true;
+                    smtp.Credentials = new NetworkCredential("teddan817@gmail.com", "Welcome!0817");
 
-            //        smtp.Credentials = new NetworkCredential("teddan817@gmail.com", "Welcome!0817");
+                    smtp.Send(mail);
+                }
+            }
 
-            //        smtp.Send(mail);
-            //    }
-            //}
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
-            //catch (Exception ex)
-            //{
-            //    throw ex;
-            //}
-
-            //return true;
-
-            long expiredTime = DateTime.Now.Millisecond + 300000L;
-            return "https://oxygen8selector.netlify.app?key=" + JwtManager.GenerateToken(Newtonsoft.Json.JsonConvert.SerializeObject(new { email = info.email, exp = expiredTime }));
+            return true;
         }
 
         public string CalculateMD5Hash(string input)
