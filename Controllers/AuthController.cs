@@ -66,30 +66,28 @@ namespace Oxyzen8SelectorServer.Controllers
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public bool SendMailEmailVerification([FromBody]dynamic info)
         {
-            string to = info.email; //To address    
-            string from = "teddan817@gmail.com"; //From address    
-            MailMessage message = new MailMessage(from, to);
-
-            string mailbody = "In this article you will learn how to send a email using Asp.Net & C#";
-            message.Subject = "Sending Email Using Asp.Net & C#";
-            message.Body = mailbody;
-            message.BodyEncoding = Encoding.UTF8;
-            message.IsBodyHtml = true;
-            SmtpClient client = new SmtpClient("smtp.gmail.com", 587); //Gmail smtp    
-            System.Net.NetworkCredential basicCredential1 = new System.Net.NetworkCredential("teddan817@gmail.com", "Welcome!0817");
-            client.EnableSsl = true;
-            client.UseDefaultCredentials = false;
-            client.Credentials = basicCredential1;
+            MailMessage mail = new MailMessage();
+            mail.From = new MailAddress("teddan817@gmail.com");
+            mail.To.Add(info.email);
+            mail.Subject = "Sending Email Using Asp.Net & C#";
+            mail.Body = "<h1>In this article you will learn how to send a email using Asp.Net & C#</h1>";
+            mail.IsBodyHtml = true;
 
             try
             {
-                client.Send(message);
+                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.Credentials = new NetworkCredential("teddan817@gmail.com", "Welcome!0817");
+                    smtp.EnableSsl = true;
+                    smtp.Send(mail);
+                }
             }
 
             catch (Exception ex)
             {
                 throw ex;
             }
+
             return true;
         }
 
