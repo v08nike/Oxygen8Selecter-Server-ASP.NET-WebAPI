@@ -68,20 +68,22 @@ namespace Oxyzen8SelectorServer.Controllers
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public bool SendMailEmailVerification([FromBody]dynamic info)
         {
-            MailMessage mail = new MailMessage();
-            mail.From = new MailAddress("sdfwewrewrwrwerw@gmail.com");
-            mail.To.Add(new MailAddress(info.email.ToString()));
-            mail.Subject = "Sending Email Using Asp.Net & C#";
-            mail.Body = "<h1>In this article you will learn how to send a email using Asp.Net & C#</h1>";
-            mail.IsBodyHtml = true;
-
             try
             {
-                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                using (MailMessage mail = new MailMessage("ericj03817@gmail.com", "nike03817@gmail.com"))
                 {
+                    mail.Subject = "Sending Email Using Asp.Net & C#";
+                    mail.Body = "<h1>In this article you will learn how to send a email using Asp.Net & C#</h1>";
+                    mail.IsBodyHtml = false;
+
+                    SmtpClient smtp = new SmtpClient();
+                    smtp.Host = "smtp.gmail.com";
                     smtp.EnableSsl = true;
+
+                    NetworkCredential NetworkCred = new NetworkCredential("ericj03817@gmail.com", "J*K(U&ILO");
                     smtp.UseDefaultCredentials = true;
-                    smtp.Credentials = new NetworkCredential("sdfwewrewrwrwerw@gmail.com", "J*K(U&ILO");
+                    smtp.Credentials = NetworkCred;
+                    smtp.Port = 587;
                     smtp.Send(mail);
                 }
             }
