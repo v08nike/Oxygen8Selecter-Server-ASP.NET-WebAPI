@@ -8,6 +8,7 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using Oxyzen8SelectorServer.Models;
 using System.Net.Mail;
+using System.Net;
 
 
 namespace Oxyzen8SelectorServer.Controllers
@@ -68,7 +69,7 @@ namespace Oxyzen8SelectorServer.Controllers
         {
             MailMessage mail = new MailMessage();
             mail.From = new MailAddress("teddan817@gmail.com");
-            mail.To.Add(info.email);
+            mail.To.Add(new MailAddress(info.email.ToString()));
             mail.Subject = "Sending Email Using Asp.Net & C#";
             mail.Body = "<h1>In this article you will learn how to send a email using Asp.Net & C#</h1>";
             mail.IsBodyHtml = true;
@@ -77,7 +78,8 @@ namespace Oxyzen8SelectorServer.Controllers
             {
                 using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
                 {
-                    smtp.Credentials = new NetworkCredential("teddan817@gmail.com", "Welcome!0817");
+                    smtp.UseDefaultCredentials = false;
+                    smtp.Credentials = new NetworkCredential("teddan817@gmail.com", "Welcome!0817", "smtp.gmail.com");
                     smtp.EnableSsl = true;
                     smtp.Send(mail);
                 }
