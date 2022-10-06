@@ -70,7 +70,7 @@ namespace Oxyzen8SelectorServer.Controllers
         {
             try
             {
-                using (MailMessage mail = new MailMessage("ericj03817@gmail.com", "nike03817@gmail.com"))
+                using (MailMessage mail = new MailMessage("teddan817@gmail.com", "nike03817@gmail.com"))
                 {
                     mail.Subject = "Sending Email Using Asp.Net & C#";
                     mail.Body = "<h1>In this article you will learn how to send a email using Asp.Net & C#</h1>";
@@ -80,7 +80,7 @@ namespace Oxyzen8SelectorServer.Controllers
                     smtp.Host = "smtp.gmail.com";
                     smtp.EnableSsl = true;
 
-                    NetworkCredential NetworkCred = new NetworkCredential("ericj03817@gmail.com", "J*K(U&ILO");
+                    NetworkCredential NetworkCred = new NetworkCredential("teddan817@gmail.com", "Welcome!0817");
                     smtp.UseDefaultCredentials = true;
                     smtp.Credentials = NetworkCred;
                     smtp.Port = 587;
