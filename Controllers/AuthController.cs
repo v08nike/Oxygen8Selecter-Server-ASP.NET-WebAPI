@@ -68,15 +68,16 @@ namespace Oxyzen8SelectorServer.Controllers
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public dynamic SendMailEmailVerification([FromBody]dynamic info)
         {
+            string email = info.email.ToString();
+            string subject = info.subject.ToString();
+            string emailBody = info.emailBody.ToString();
             try
             {
-                using (MailMessage mail = new MailMessage("james03817@gmail.com", info.email.ToString()))
+                using (MailMessage mail = new MailMessage("james03817@gmail.com", email))
                 {
-                    mail.Subject = "Oxygen8selector Reset Password";
 
-                    long expiredTime = DateTime.Now.Millisecond + 5184000000L;
-                    JwtManager.GenerateToken(Newtonsoft.Json.JsonConvert.SerializeObject(new { email = info.email, exp = expiredTime }));
-                    mail.Body = "<a href='https://oxygen8selector.netlify.app/auth/reset-password?token=" + JwtManager.GenerateToken(Newtonsoft.Json.JsonConvert.SerializeObject(new { email = info.email, exp = expiredTime })) + "'>Reset Password</a>";
+                    mail.Subject = subject;
+                    mail.Body = emailBody;
                     mail.IsBodyHtml = true;
 
                     SmtpClient smtp = new SmtpClient();
