@@ -70,7 +70,7 @@ namespace Oxyzen8SelectorServer.Controllers
         {
             try
             {
-                using (MailMessage mail = new MailMessage(new MailAddress("teddan817@gmail.com"), new MailAddress(info.email)))
+                using (MailMessage mail = new MailMessage(new MailAddress("teddan817@gmail.com"), new MailAddress(info.email.ToString())))
                 {
                     mail.Subject = "Sending Email Using Asp.Net & C#";
 
