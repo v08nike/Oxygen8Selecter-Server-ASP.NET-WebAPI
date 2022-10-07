@@ -70,7 +70,7 @@ namespace Oxyzen8SelectorServer.Controllers
         {
             try
             {
-                using (MailMessage mail = new MailMessage(new MailAddress("teddan817@gmail.com"), new MailAddress(info.email.ToString())))
+                using (MailMessage mail = new MailMessage("teddan817@gmail.com", "james03817@gmail.com"))
                 {
                     mail.Subject = "Oxygen8selector Reset Password";
 
