@@ -198,4 +198,3 @@ C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\ob
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.csproj.CopyComplete
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.pdb
-C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\obj\Debug\Oxyzen8SelectorServer.csprojAssemblyReference.cache

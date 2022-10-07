@@ -85,7 +85,7 @@ namespace Oxyzen8SelectorServer.Controllers
                     smtp.Port = 587;
                     smtp.EnableSsl = true;
 
-                    smtp.Credentials = new NetworkCredential("teddan817@gmail.com", "Welcome!0817");
+                    smtp.Credentials = new NetworkCredential("teddan817@gmail.com", "rxvqonggbifqcprx");
 
                     smtp.Send(mail);
                 }
