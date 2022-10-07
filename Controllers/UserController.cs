@@ -27,7 +27,7 @@ namespace Oxyzen8SelectorServer.Controllers
         }
 
         [HttpPost]
-        [ActionName("saveresetpassword")]
+        [ActionName("SaveResetPassword")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public bool IsEmailExist([FromBody]dynamic info)
         {
@@ -44,7 +44,7 @@ namespace Oxyzen8SelectorServer.Controllers
         }
 
         [HttpPost]
-        [ActionName("completeresetpassword")]
+        [ActionName("CompleteResetPassword")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public bool CompleteResetPassword([FromBody]dynamic info)
         {
