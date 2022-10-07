@@ -25,5 +25,11 @@ namespace Oxyzen8SelectorServer.Models
 
             return "success";
         }
+
+        public static bool SaveSetPasswrodRequestInfo(string email, int info)
+        {
+            ClsDB.ExecuteSQL("UPDATE `" + ClsDBT.strSavUsers + "` SET `request_reset_password`= " + info.ToString() + " WHERE `email`=" + email + " ");
+            return true;
+        }
     }
 }

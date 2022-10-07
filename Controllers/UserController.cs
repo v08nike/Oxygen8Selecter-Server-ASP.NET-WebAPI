@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -24,6 +25,33 @@ namespace Oxyzen8SelectorServer.Controllers
         {
             return new string[] { "value1", "value2" };
         }
+
+        [HttpPost]
+        [ActionName("saveresetpassword")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public bool IsEmailExist([FromBody]dynamic info)
+        {
+            DataTable dt = AuthModel.GetUserByEmail(info.email);
+            if (dt.Rows.Count > 0)
+            {
+                UserModel.SaveSetPasswrodRequestInfo(info.email, 1);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("completeresetpassword")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public bool CompleteResetPassword([FromBody]dynamic info)
+        {
+            UserModel.SaveSetPasswrodRequestInfo(info.email, 0);
+            return true;
+        }
+
 
         // GET api/<controller>/5
         public string Get(int id)
