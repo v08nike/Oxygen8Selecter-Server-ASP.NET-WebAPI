@@ -20,6 +20,14 @@ namespace Oxyzen8SelectorServer.Controllers
             return UserModel.UpdatePassword(userInfo);
         }
 
+        [HttpPost]
+        [ActionName("NewPassword")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public string NewPassword([FromBody]dynamic userInfo)
+        {
+            return UserModel.NewPassword(userInfo);
+        }
+
         // GET api/<controller>
         public IEnumerable<string> Get()
         {
@@ -48,8 +56,16 @@ namespace Oxyzen8SelectorServer.Controllers
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public bool CompleteResetPassword([FromBody]dynamic info)
         {
-            UserModel.SaveSetPasswrodRequestInfo(info.email.ToString(), 0);
-            return true;
+            DataTable dt = AuthModel.GetUserByEmail(info.email.ToString());
+            if (dt.Rows.Count > 0 && Convert.ToInt32(dt.Rows[0]["request_reset_password"]) == 1)
+            {
+                UserModel.SaveSetPasswrodRequestInfo(info.email.ToString(), 0);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
 
