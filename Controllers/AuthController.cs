@@ -72,7 +72,7 @@ namespace Oxyzen8SelectorServer.Controllers
             {
                 using (MailMessage mail = new MailMessage(new MailAddress("teddan817@gmail.com"), new MailAddress(info.email.ToString())))
                 {
-                    mail.Subject = "Sending Email Using Asp.Net & C#";
+                    mail.Subject = "Oxygen8selector Reset Password";
 
                     long expiredTime = DateTime.Now.Millisecond + 5184000000L;
                     JwtManager.GenerateToken(Newtonsoft.Json.JsonConvert.SerializeObject(new { email = info.email, exp = expiredTime }));
