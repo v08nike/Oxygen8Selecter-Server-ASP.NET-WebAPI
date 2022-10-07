@@ -31,10 +31,10 @@ namespace Oxyzen8SelectorServer.Controllers
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public bool IsEmailExist([FromBody]dynamic info)
         {
-            DataTable dt = AuthModel.GetUserByEmail(info.email);
+            DataTable dt = AuthModel.GetUserByEmail(info.email.ToString());
             if (dt.Rows.Count > 0)
             {
-                UserModel.SaveSetPasswrodRequestInfo(info.email, 1);
+                UserModel.SaveSetPasswrodRequestInfo(info.email.ToString(), 1);
                 return true;
             }
             else
@@ -48,7 +48,7 @@ namespace Oxyzen8SelectorServer.Controllers
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public bool CompleteResetPassword([FromBody]dynamic info)
         {
-            UserModel.SaveSetPasswrodRequestInfo(info.email, 0);
+            UserModel.SaveSetPasswrodRequestInfo(info.email.ToString(), 0);
             return true;
         }
 
