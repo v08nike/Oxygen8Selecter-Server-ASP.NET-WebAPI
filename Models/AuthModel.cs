@@ -30,5 +30,11 @@ namespace Oxyzen8SelectorServer.Models
             DataTable dt = ClsDB.get_dtByQuery("SELECT * FROM " + ClsDBT.strSavUsers + " WHERE email = '" + id + "'");
             return dt;
         }
+
+        public static bool SaveSetPasswrodRequestInfo(string email, int info)
+        {
+            ClsDB.ExecuteSQL("UPDATE `" + ClsDBT.strSavUsers + "` SET `request_reset_password`= " + info.ToString() + " WHERE `email`=" +  email + " ");
+            return true;
+        }
     }
 }

@@ -99,6 +99,31 @@ namespace Oxyzen8SelectorServer.Controllers
             return true;
         }
 
+        [HttpPost]
+        [ActionName("saveresetpassword")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public bool IsEmailExist([FromBody]dynamic info)
+        {
+            DataTable dt = AuthModel.GetUserByEmail(info.email);
+            if (dt.Rows.Count > 0) {
+                AuthModel.SaveSetPasswrodRequestInfo(info.email, 1);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("completeresetpassword")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public bool CompleteResetPassword([FromBody]dynamic info)
+        {
+            AuthModel.SaveSetPasswrodRequestInfo(info.email, 0);
+            return true;
+        }
+
         public string CalculateMD5Hash(string input)
         {
             // step 1, calculate MD5 hash from input
