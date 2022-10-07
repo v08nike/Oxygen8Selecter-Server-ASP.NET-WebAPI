@@ -23,7 +23,7 @@ namespace Oxyzen8SelectorServer.Controllers
         [HttpPost]
         [ActionName("NewPassword")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public string NewPassword([FromBody]dynamic userInfo)
+        public bool NewPassword([FromBody]dynamic userInfo)
         {
             return UserModel.NewPassword(userInfo);
         }

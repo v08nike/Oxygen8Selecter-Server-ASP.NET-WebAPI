@@ -26,12 +26,11 @@ namespace Oxyzen8SelectorServer.Models
             return "success";
         }
 
-        public static string NewPassword(dynamic userInfo)
+        public static bool NewPassword(dynamic userInfo)
         {
-            int email = userInfo.email;
+            string email = userInfo.email.ToString();
             string newPassword= userInfo.newPassword.ToString();
-            DataTable dtUpdate = ClsDB.UpdateUserPassword(email, ClsGo.CalculateMD5Hash(newPassword));
-            return "success";
+            return ClsDB.UpdateUserPassword(email, ClsGo.CalculateMD5Hash(newPassword));
         }
 
         public static bool SaveSetPasswrodRequestInfo(string email, int info)

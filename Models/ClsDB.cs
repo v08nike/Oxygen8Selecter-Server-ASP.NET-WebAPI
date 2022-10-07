@@ -2509,21 +2509,13 @@ namespace Oxyzen8SelectorServer.Models
         #endregion
 
         #region Update User Password By Email
-        public static DataTable UpdateUserPassword(string email, string _strPassword)
+        public static bool UpdateUserPassword(string email, string _strPassword)
         {
             MySqlDataAdapter adp = new MySqlDataAdapter();
             var Comm = adp.SelectCommand = new MySqlCommand();
             var Conn = adp.SelectCommand.Connection = new MySqlConnection(get_strConnection());
             string strQuery = "";
-
-            DataSet ds = new DataSet();
-            DataTable dt = new DataTable("tblSaveUser");
-            dt.Columns.Add("id", typeof(Int32));
-            dt.Columns.Add("ErrorMsg", typeof(string));
-            DataRow dr;
-
             Comm.Parameters.Clear();
-
             try
             {
                 strQuery = "UPDATE `" + ClsDBT.strSavUsers + "` SET `password`=@Password WHERE `email`=@email";
@@ -2535,26 +2527,17 @@ namespace Oxyzen8SelectorServer.Models
 
                 Conn.Open();
                 Comm.ExecuteNonQuery();
-
-                dr = dt.NewRow();
-                dr["ErrorMsg"] = "";
-                dt.Rows.Add(dr);
-
-                return dt;
             }
             catch (Exception ex)
             {
-                dr = dt.NewRow();
-                dr["id"] = -1;
-                dr["ErrorMsg"] = ex.Message.ToString();
-                dt.Rows.Add(dr);
-
-                return dt;
+                return false;
             }
             finally
             {
                 Conn.Close();
             }
+
+            return true;
         }
         #endregion
 
