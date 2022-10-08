@@ -73,7 +73,7 @@ namespace Oxyzen8SelectorServer.Controllers
             string emailBody = info.emailBody.ToString();
             try
             {
-                using (MailMessage mail = new MailMessage("james03817@gmail.com", email))
+                using (MailMessage mail = new MailMessage("innovdes2016@gmail.com", email))
                 {
 
                     mail.Subject = subject;
@@ -86,7 +86,7 @@ namespace Oxyzen8SelectorServer.Controllers
                     smtp.Port = 587;
                     smtp.EnableSsl = true;
 
-                    smtp.Credentials = new NetworkCredential("james03817@gmail.com", "lgwuzswnhfscnbga");
+                    smtp.Credentials = new NetworkCredential( "innovdes2016@gmail.com", "wemagoeblrayaxjt");
 
                     smtp.Send(mail);
                 }

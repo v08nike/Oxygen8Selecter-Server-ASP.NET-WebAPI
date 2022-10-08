@@ -9,14 +9,7 @@ namespace Oxyzen8SelectorServer.Models
 {
     public class UnitsModel
     {
-        private double dblTempErrorValue = 0.000d;
-        //private bool bolErrorSummerWB = false;
-        //private bool bolErrorSummerRH = false;
-        //private bool bolErrorWinterWB = false;
-        //private bool bolErrorWinterRH = false;
-
         private const int intNOVA_MIN_CFM = 325;
-        //private const int intNOVA_MAX_CFM = 8100;
         private const int intNOVA_MAX_CFM = 9000;
 
         private const int intNOVA_INT_USERS_MIN_CFM = 325;
@@ -215,7 +208,7 @@ namespace Oxyzen8SelectorServer.Models
             ClsLayoutOpt objLayoutOpt = new ClsLayoutOpt
             {
                 intJobID = Convert.ToInt32(unitInfo.jobId),
-                intUnitNo = Convert.ToInt32(unitInfo.unitNo),
+                intUnitNo = Convert.ToInt32(unitInfo.unitId),
                 intProductTypeID = Convert.ToInt32(unitInfo.productTypeId),
                 intUnitTypeID = Convert.ToInt32(unitInfo.unitTypeId),
                 intHandingID = Convert.ToInt32(unitInfo.handing),
