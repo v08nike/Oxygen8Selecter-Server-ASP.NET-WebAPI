@@ -337,6 +337,7 @@
     <Compile Include="Models\ClsComponentItems.cs" />
     <Compile Include="Models\ClsGeneral.cs" />
     <Compile Include="Models\ClsGo.cs" />
+    <Compile Include="Models\ClsGV.cs" />
     <Compile Include="Models\ClsLayout.cs" />
     <Compile Include="Models\ClsRequest.cs" />
     <Compile Include="Models\ClsReturn.cs" />
@@ -358,6 +359,7 @@
     <Compile Include="Models\ClsProjectInfo.cs" />
     <Compile Include="Models\ClsPsyCalc.cs" />
     <Compile Include="Models\ClsTS.cs" />
+    <Compile Include="Models\ClsWFC.cs" />
     <Compile Include="Models\CustomRequireHttpsAttribute.cs" />
     <Compile Include="Models\JobsModel.cs" />
     <Compile Include="Models\ClsNumber.cs" />

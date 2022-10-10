@@ -37,6 +37,7 @@ namespace Oxyzen8SelectorServer.Controllers
         {
             return UnitsModel.SaveUnitInfo(unitInfo);
         }
+
         [HttpPost]
         [ActionName("Delete")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
@@ -54,30 +55,30 @@ namespace Oxyzen8SelectorServer.Controllers
 
         }
 
-        [HttpPost]
-        [ActionName("GetUnitInfo")]
-        [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public dynamic GetUnitInfo([FromBody] ClsJobUnitId requestInfo)
-        {
-            return UnitsModel.GetUnitInfo(requestInfo.jobId, requestInfo.unitId);
-        }
+        //[HttpPost]
+        //[ActionName("GetUnitInfo")]
+        //[EnableCors(origins: "*", headers: "*", methods: "*")]
+        //public dynamic GetUnitInfo([FromBody] ClsJobUnitId requestInfo)
+        //{
+        //    return UnitsModel.GetUnitInfo(requestInfo.jobId, requestInfo.unitId);
+        //}
 
-        [HttpPost]
-        [ActionName("GetInitUnitInfo")]
-        [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public dynamic GetInitUnitInfo([FromBody]dynamic request)
-        {
-            int unitId = Convert.ToInt32(request.unitId);
-            int jobId = Convert.ToInt32(request.jobId);
-            dynamic returnInfo = new ExpandoObject();
+        //[HttpPost]
+        //[ActionName("GetInitUnitInfo")]
+        //[EnableCors(origins: "*", headers: "*", methods: "*")]
+        //public dynamic GetInitUnitInfo([FromBody]dynamic request)
+        //{
+        //    int unitId = Convert.ToInt32(request.unitId);
+        //    int jobId = Convert.ToInt32(request.jobId);
+        //    dynamic returnInfo = new ExpandoObject();
 
-            returnInfo.unitSourceInfo = UnitsModel.GetInitUnitInfo(jobId, Convert.ToInt32(request.unitModelId), Convert.ToInt32(request.productTypeId), Convert.ToInt32(request.UAL));
-            if (unitId != -1) {
-                returnInfo.unitInfo = UnitsModel.GetUnitInfo(jobId, unitId);
-            }
+        //    returnInfo.unitSourceInfo = UnitsModel.GetInitUnitInfo(jobId, Convert.ToInt32(request.unitModelId), Convert.ToInt32(request.productTypeId), Convert.ToInt32(request.UAL));
+        //    if (unitId != -1) {
+        //        returnInfo.unitInfo = UnitsModel.GetUnitInfo(jobId, unitId);
+        //    }
 
-            return returnInfo;
-        }
+        //    return returnInfo;
+        //}
 
         [HttpPost]
         [ActionName("preheatCompChanged")]
@@ -87,7 +88,7 @@ namespace Oxyzen8SelectorServer.Controllers
             dynamic returnInfo = new ExpandoObject();
 
             returnInfo.preheatElecHeater = UnitsModel.GetPreheatElectricHeader(fieldInfo);
-            returnInfo.elecHeaterVoltage = UnitsModel.GetElectricHeaterVoltage(fieldInfo);
+            returnInfo.elecHeaterVoltage = UnitsModel.getElectricHeaterVoltage();
             returnInfo.customInputs = UnitsModel.GetCustomInputs(fieldInfo);
 
             if (Convert.ToInt32(fieldInfo) == ClsID.intUnitTypeAHU_ID)
@@ -107,7 +108,7 @@ namespace Oxyzen8SelectorServer.Controllers
             dynamic returnInfo = new ExpandoObject();
 
             returnInfo.preheatElecHeater = UnitsModel.GetPreheatElectricHeader(fieldInfo);
-            returnInfo.elecHeaterVoltage = UnitsModel.GetElectricHeaterVoltage(fieldInfo);
+            returnInfo.elecHeaterVoltage = UnitsModel.getElectricHeaterVoltage();
             returnInfo.customInputs = UnitsModel.GetCustomInputs(fieldInfo);
 
             if (Convert.ToInt32(fieldInfo) == ClsID.intUnitTypeAHU_ID)
@@ -119,37 +120,87 @@ namespace Oxyzen8SelectorServer.Controllers
             return returnInfo;
         }
 
+        //[HttpPost]
+        //[ActionName("AirFlowDataChanged")]
+        //[EnableCors(origins: "*", headers: "*", methods: "*")]
+        //public dynamic AirFlowDataChanged([FromBody]dynamic info)
+        //{
+
+        //    switch (info.action.ToString())
+        //    {
+        //        case "SummerSupplyAirCFM_Changed":
+        //            {
+        //                return UnitsModel.txbSummerSupplyAirCFM_Changed(info);
+        //            }
+        //        case "SummerReturnAirCFM_Changed":
+        //            {
+        //                return UnitsModel.txbSummerReturnAirCFM_Changed(info);
+        //            }
+        //        case "SupplyAirESP":
+        //            {
+        //                return UnitsModel.txbSupplyAirESP_Changed(info);
+        //            }
+        //        case "ExhaustAirESP":
+        //            {
+        //                return UnitsModel.txbExhaustAirESP_Changed(info);
+        //            }
+        //        default:
+        //            {
+        //                break;
+        //            }
+        //    }
+
+        //    return new DataTable();
+        //}
+
         [HttpPost]
-        [ActionName("AirFlowDataChanged")]
+        [ActionName("GetUnitInfo")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public dynamic AirFlowDataChanged([FromBody]dynamic info)
+        public dynamic GetUnitInfo([FromBody]dynamic info)
         {
+            //hfUserID.Value = dictionary[clsSV._intUserID].ToString();
+            //hfUAL.Value = dictionary[clsSV._intUAL].ToString();
+            //hfJobID.Value = dictionary[clsSV._intJobID].ToString();
+            //hfProductTypeID.Value = dictionary[clsSV._intProductTypeID].ToString();
+            //hfUnitTypeID.Value = dictionary[clsSV._intUnitTypeID].ToString();
+            //hfUnitNo.Value = dictionary[clsSV._intUnitNo].ToString();
+            dynamic returnInfo = new ExpandoObject();
 
-            switch (info.action.ToString())
-            {
-                case "SummerSupplyAirCFM_Changed":
-                    {
-                        return UnitsModel.txbSummerSupplyAirCFM_Changed(info);
-                    }
-                case "SummerReturnAirCFM_Changed":
-                    {
-                        return UnitsModel.txbSummerReturnAirCFM_Changed(info);
-                    }
-                case "SupplyAirESP":
-                    {
-                        return UnitsModel.txbSupplyAirESP_Changed(info);
-                    }
-                case "ExhaustAirESP":
-                    {
-                        return UnitsModel.txbExhaustAirESP_Changed(info);
-                    }
-                default:
-                    {
-                        break;
-                    }
-            }
+            int intUserId = Convert.ToInt32(info.userId);
+            int intUAL = Convert.ToInt32(info.UAL);
+            int intJobId = Convert.ToInt32(info.jobId);
+            int intProductTypeId = Convert.ToInt32(info.productTypeId);
+            int intUnitTypeId = Convert.ToInt32(info.unitTypeId);
+            int intUnitNo = Convert.ToInt32(info.unitNo);
 
-            return new DataTable();
+            DataTable dtUser = ClsDB.GetUser(intUserId);
+            int intCustomerTypeID = Convert.ToInt32(info.customerTypeId);
+
+            dynamic visibleInfo = new ExpandoObject();
+            visibleInfo.divOutdoorAirDesignConditionsVisible = intUAL == ClsID.intUAL_Admin ? true : false;
+            visibleInfo.divReturnAirDesignConditionsVisible = intUAL == ClsID.intUAL_Admin ? true : false;
+            visibleInfo.divSetpoint_1Visible = intUAL == ClsID.intUAL_Admin ? true : false;
+            visibleInfo.divNotesVisible = intUAL == ClsID.intUAL_Admin ? true : false;
+            visibleInfo.divCustomVisible = intUAL == ClsID.intUAL_Admin || intUAL == ClsID.intUAL_IntAdmin || intUAL == ClsID.intUAL_IntLvl_2 || intUAL == ClsID.intUAL_IntLvl_1 ? true : false;
+            visibleInfo.divHeatExchCompVisible = false;
+            visibleInfo.divSubmittalItemsVisible = intUAL == ClsID.intUAL_Admin || intUAL == ClsID.intUAL_IntAdmin || intUAL == ClsID.intUAL_IntLvl_2 || intUAL == ClsID.intUAL_IntLvl_1 ? true : false;
+
+
+            visibleInfo.divUnitOpeningsMsgVisible = intUAL == ClsID.intUAL_Admin || intUAL == ClsID.intUAL_IntAdmin || intUAL == ClsID.intUAL_IntLvl_2 || intUAL == ClsID.intUAL_IntLvl_1 ? true : false;
+            visibleInfo.btnViewModelOptionVisible = false;
+            visibleInfo.btnSubmittalsVisible = (intUAL == ClsID.intUAL_Admin || intUAL == ClsID.intUAL_IntAdmin || intUAL == ClsID.intUAL_IntLvl_2 || intUAL == ClsID.intUAL_IntLvl_1) ? true : false;
+            visibleInfo.btnQuoteVisible = false;
+
+
+            visibleInfo.btnNextVisible = false;
+            visibleInfo.btnOutputVisible = false;
+            visibleInfo.div_hx_fp_hiddenVisible = false;
+
+            returnInfo.unitInfo = UnitsModel.GetUnitInfo(info);
+            returnInfo.controlInfo = UnitsModel.getControlInfo("325", 0);
+            returnInfo.visibleInfo = visibleInfo;
+
+            return returnInfo;
         }
 
         // GET api/<controller>

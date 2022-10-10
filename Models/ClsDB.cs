@@ -22,18 +22,18 @@ namespace Oxyzen8SelectorServer.Models
         #region MySQL
         private static string get_strConnection()
         {
-            server = "173.248.135.23";
-            database = "db_oxygen8_test";
-            uid = "unitdes_user_remote";
-            password = "heatAir_03";
-            string strConnString = "Server=" + server + ";" + "Database=" + database + ";" + "Uid=" + uid + ";" + "Pwd=" + password + ";SslMode=None";
-
-
-            //server = "localhost";
+            //server = "173.248.135.23";
             //database = "db_oxygen8_test";
-            //uid = "root";
-            //password = "";
-            //string strConnString = "Server=" + server + ";" + "Database=" + database + ";" + "Uid=" + uid + ";" + "Pwd=" + password;
+            //uid = "unitdes_user_remote";
+            //password = "heatAir_03";
+            //string strConnString = "Server=" + server + ";" + "Database=" + database + ";" + "Uid=" + uid + ";" + "Pwd=" + password + ";SslMode=None";
+
+
+            server = "localhost";
+            database = "db_oxygen8_test";
+            uid = "root";
+            password = "";
+            string strConnString = "Server=" + server + ";" + "Database=" + database + ";" + "Uid=" + uid + ";" + "Pwd=" + password;
 
             return strConnString;
         }
