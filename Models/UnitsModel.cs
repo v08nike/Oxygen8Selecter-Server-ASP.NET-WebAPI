@@ -534,23 +534,23 @@ namespace Oxyzen8SelectorServer.Models
             if (intJobID > 0)
             {
                 ClsProjectInfo objProjectInfo = new ClsProjectInfo(intJobID);
-                unitInfo.txbAltitudeText = objProjectInfo.intAltitude.ToString();
+                unitInfo.txbAltitudeText = objProjectInfo.intAltitude;
 
-                unitInfo.txbSummerOutdoorAirDBText = objProjectInfo.dblSummerOutdoorAirDB.ToString();
-                unitInfo.txbSummerOutdoorAirWBText = objProjectInfo.dblSummerOutdoorAirWB.ToString();
-                unitInfo.txbSummerOutdoorAirRHText = objProjectInfo.dblSummerOutdoorAirRH.ToString();
+                unitInfo.txbSummerOutdoorAirDBText = objProjectInfo.dblSummerOutdoorAirDB;
+                unitInfo.txbSummerOutdoorAirWBText = objProjectInfo.dblSummerOutdoorAirWB;
+                unitInfo.txbSummerOutdoorAirRHText = objProjectInfo.dblSummerOutdoorAirRH;
 
-                unitInfo.txbWinterOutdoorAirDBText = objProjectInfo.dblWinterOutdoorAirDB.ToString();
-                unitInfo.txbWinterOutdoorAirWBText = objProjectInfo.dblWinterOutdoorAirWB.ToString();
-                unitInfo.txbWinterOutdoorAirRHText = objProjectInfo.dblWinterOutdoorAirRH.ToString();
+                unitInfo.txbWinterOutdoorAirDBText = objProjectInfo.dblWinterOutdoorAirDB;
+                unitInfo.txbWinterOutdoorAirWBText = objProjectInfo.dblWinterOutdoorAirWB;
+                unitInfo.txbWinterOutdoorAirRHText = objProjectInfo.dblWinterOutdoorAirRH;
 
-                unitInfo.txbSummerReturnAirDBText = objProjectInfo.dblSummerReturnAirDB.ToString();
-                unitInfo.txbSummerReturnAirWBText = objProjectInfo.dblSummerReturnAirWB.ToString();
-                unitInfo.txbSummerReturnAirRHText = objProjectInfo.dblSummerReturnAirRH.ToString();
+                unitInfo.txbSummerReturnAirDBText = objProjectInfo.dblSummerReturnAirDB;
+                unitInfo.txbSummerReturnAirWBText = objProjectInfo.dblSummerReturnAirWB;
+                unitInfo.txbSummerReturnAirRHText = objProjectInfo.dblSummerReturnAirRH;
 
-                unitInfo.txbWinterReturnAirDBText = objProjectInfo.dblWinterReturnAirDB.ToString();
-                unitInfo.txbWinterReturnAirWBText = objProjectInfo.dblWinterReturnAirWB.ToString();
-                unitInfo.txbWinterReturnAirRHText = objProjectInfo.dblWinterReturnAirRH.ToString();
+                unitInfo.txbWinterReturnAirDBText = objProjectInfo.dblWinterReturnAirDB;
+                unitInfo.txbWinterReturnAirWBText = objProjectInfo.dblWinterReturnAirWB;
+                unitInfo.txbWinterReturnAirRHText = objProjectInfo.dblWinterReturnAirRH;
             }
 
             if (intJobID > 0 & intUnitNo > 0)
@@ -563,7 +563,7 @@ namespace Oxyzen8SelectorServer.Models
                 if (objGeneral != null)
                 {
                     unitInfo.txbTagText = objGeneral.strTag;
-                    unitInfo.txbQtyText = objGeneral.intQty.ToString();
+                    unitInfo.txbQtyText = objGeneral.intQty;
 
                     unitInfo.productTypeID = objGeneral.intProductTypeID;
                     unitInfo.unitTypeID = objGeneral.intUnitTypeID;
@@ -574,10 +574,10 @@ namespace Oxyzen8SelectorServer.Models
                     unitInfo.unitVoltageID = objGeneral.intUnitVoltageID;
                     unitInfo.controlsPreferenceID = objGeneral.intControlsPreferenceID;
 
-                    unitInfo.txbUnitHeightText = objGeneral.dblUnitHeight.ToString();
-                    unitInfo.txbUnitWidthText = objGeneral.dblUnitWidth.ToString();
-                    unitInfo.txbUnitLengthText = objGeneral.dblUnitLength.ToString();
-                    unitInfo.txbUnitWeightText = objGeneral.dblUnitWeight.ToString();
+                    unitInfo.txbUnitHeightText = objGeneral.dblUnitHeight;
+                    unitInfo.txbUnitWidthText = objGeneral.dblUnitWidth;
+                    unitInfo.txbUnitLengthText = objGeneral.dblUnitLength;
+                    unitInfo.txbUnitWeightText = objGeneral.dblUnitWeight;
 
                     intProductTypeID = objGeneral.intProductTypeID;
                     intUnitTypeID = objGeneral.intUnitTypeID;
@@ -591,24 +591,24 @@ namespace Oxyzen8SelectorServer.Models
 
                 if (objAirFlowData != null)
                 {
-                    unitInfo.txbSummerSupplyAirCFMText = objAirFlowData.get_intSummerSupplyAirCFM().ToString();
+                    unitInfo.txbSummerSupplyAirCFMText = objAirFlowData.get_intSummerSupplyAirCFM();
 
-                    unitInfo.txbSupplyAirESPText = objAirFlowData.get_dblSupplyAirESP().ToString();
-                    unitInfo.txbExhaustAirESPText = objAirFlowData.get_dblExhaustAirESP().ToString();
+                    unitInfo.txbSupplyAirESPText = objAirFlowData.get_dblSupplyAirESP();
+                    unitInfo.txbExhaustAirESPText = objAirFlowData.get_dblExhaustAirESP();
 
-                    unitInfo.txbSummerReturnAirDBText = objAirFlowData.get_dblSummerReturnAirDB().ToString();
-                    unitInfo.txbSummerReturnAirWBText = objAirFlowData.get_dblSummerReturnAirWB().ToString();
-                    unitInfo.txbSummerReturnAirRHText = objAirFlowData.get_dblSummerReturnAirRH().ToString();
+                    unitInfo.txbSummerReturnAirDBText = objAirFlowData.get_dblSummerReturnAirDB();
+                    unitInfo.txbSummerReturnAirWBText = objAirFlowData.get_dblSummerReturnAirWB();
+                    unitInfo.txbSummerReturnAirRHText = objAirFlowData.get_dblSummerReturnAirRH();
 
-                    unitInfo.txbWinterReturnAirDBText = objAirFlowData.get_dblWinterReturnAirDB().ToString();
-                    unitInfo.txbWinterReturnAirWBText = objAirFlowData.get_dblWinterReturnAirWB().ToString();
-                    unitInfo.txbWinterReturnAirRHText = objAirFlowData.get_dblWinterReturnAirRH().ToString();
+                    unitInfo.txbWinterReturnAirDBText = objAirFlowData.get_dblWinterReturnAirDB();
+                    unitInfo.txbWinterReturnAirWBText = objAirFlowData.get_dblWinterReturnAirWB();
+                    unitInfo.txbWinterReturnAirRHText = objAirFlowData.get_dblWinterReturnAirRH();
 
-                    unitInfo.txbWinterPreheatSetpointDBText = objAirFlowData.get_dblWinterPreheatSetpointDB().ToString();
-                    unitInfo.txbWinterHeatingSetpointDBText = objAirFlowData.get_dblWinterHeatingSetpointDB().ToString();
-                    unitInfo.txbSummerCoolingSetpointDBText = objAirFlowData.get_dblSummerCoolingSetpointDB().ToString();
-                    unitInfo.txbSummerCoolingSetpointWBText = objAirFlowData.get_dblSummerCoolingSetpointWB().ToString();
-                    unitInfo.txbSummerReheatSetpointDBText = objAirFlowData.get_dblSummerReheatSetpointDB().ToString();
+                    unitInfo.txbWinterPreheatSetpointDBText = objAirFlowData.get_dblWinterPreheatSetpointDB();
+                    unitInfo.txbWinterHeatingSetpointDBText = objAirFlowData.get_dblWinterHeatingSetpointDB();
+                    unitInfo.txbSummerCoolingSetpointDBText = objAirFlowData.get_dblSummerCoolingSetpointDB();
+                    unitInfo.txbSummerCoolingSetpointWBText = objAirFlowData.get_dblSummerCoolingSetpointWB();
+                    unitInfo.txbSummerReheatSetpointDBText = objAirFlowData.get_dblSummerReheatSetpointDB();
                 }
 
                 if (objCompItems.objCompOpt != null)
@@ -627,27 +627,27 @@ namespace Oxyzen8SelectorServer.Models
                     unitInfo.HeatElecHeaterInstallationID = objCompItems.objCompOpt.intHeatElecHeaterInstallationID;
                     unitInfo.DamperActuatorID = objCompItems.objCompOpt.intDamperAndActuatorID;
                     unitInfo.ValveTypeID = objCompItems.objCompOpt.intValveTypeID;
-                    unitInfo.txbOA_FilterPDText = objCompItems.objCompOpt.dblOA_FilterPD.ToString();
-                    unitInfo.txbRA_FilterPDText = objCompItems.objCompOpt.dblRA_FilterPD.ToString();
-                    unitInfo.txbPreheatSetpointDBText = objCompItems.objCompOpt.dblPreheatSetpointDB.ToString();
-                    unitInfo.txbCoolingSetpointDBText = objCompItems.objCompOpt.dblCoolingSetpointDB.ToString();
-                    unitInfo.txbCoolingSetpointWBText = objCompItems.objCompOpt.dblCoolingSetpointWB.ToString();
-                    unitInfo.txbHeatingSetpointDBText = objCompItems.objCompOpt.dblHeatingSetpointDB.ToString();
-                    unitInfo.txbReheatSetpointDBText = objCompItems.objCompOpt.dblReheatSetpointDB.ToString();
+                    unitInfo.txbOA_FilterPDText = objCompItems.objCompOpt.dblOA_FilterPD;
+                    unitInfo.txbRA_FilterPDText = objCompItems.objCompOpt.dblRA_FilterPD;
+                    unitInfo.txbPreheatSetpointDBText = objCompItems.objCompOpt.dblPreheatSetpointDB;
+                    unitInfo.txbCoolingSetpointDBText = objCompItems.objCompOpt.dblCoolingSetpointDB;
+                    unitInfo.txbCoolingSetpointWBText = objCompItems.objCompOpt.dblCoolingSetpointWB;
+                    unitInfo.txbHeatingSetpointDBText = objCompItems.objCompOpt.dblHeatingSetpointDB;
+                    unitInfo.txbReheatSetpointDBText = objCompItems.objCompOpt.dblReheatSetpointDB;
                     unitInfo.CoolingFluidTypeID = objCompItems.objCompOpt.intCoolingFluidTypeID;
                     unitInfo.CoolingFluidConcentrationID = objCompItems.objCompOpt.intCoolingFluidConcentID;
-                    unitInfo.txbCoolingFluidEntTempText = objCompItems.objCompOpt.dblCoolingFluidEntTemp.ToString();
-                    unitInfo.txbCoolingFluidLvgTempText = objCompItems.objCompOpt.dblCoolingFluidLvgTemp.ToString();
+                    unitInfo.txbCoolingFluidEntTempText = objCompItems.objCompOpt.dblCoolingFluidEntTemp;
+                    unitInfo.txbCoolingFluidLvgTempText = objCompItems.objCompOpt.dblCoolingFluidLvgTemp;
                     unitInfo.HeatingFluidTypeID = objCompItems.objCompOpt.intHeatingFluidTypeID;
                     unitInfo.HeatingFluidConcentrationID = objCompItems.objCompOpt.intHeatingFluidConcentID;
-                    unitInfo.txbHeatingFluidEntTempText = objCompItems.objCompOpt.dblHeatingFluidEntTemp.ToString();
-                    unitInfo.txbHeatingFluidLvgTempText = objCompItems.objCompOpt.dblHeatingFluidLvgTemp.ToString();
-                    unitInfo.txbRefrigSuctionTempText = objCompItems.objCompOpt.dblRefrigSuctionTemp.ToString();
-                    unitInfo.txbRefrigLiquidTempText = objCompItems.objCompOpt.dblRefrigLiquidTemp.ToString();
-                    unitInfo.txbRefrigSuperheatTempText = objCompItems.objCompOpt.dblRefrigSuperheatTemp.ToString();
-                    unitInfo.txbRefrigCondensingTempText = objCompItems.objCompOpt.dblRefrigCondensingTemp.ToString();
-                    unitInfo.txbRefrigVaporTempText = objCompItems.objCompOpt.dblRefrigVaporTemp.ToString();
-                    unitInfo.txbRefrigSubcoolingTempText = objCompItems.objCompOpt.dblRefrigSubcoolingTemp.ToString();
+                    unitInfo.txbHeatingFluidEntTempText = objCompItems.objCompOpt.dblHeatingFluidEntTemp;
+                    unitInfo.txbHeatingFluidLvgTempText = objCompItems.objCompOpt.dblHeatingFluidLvgTemp;
+                    unitInfo.txbRefrigSuctionTempText = objCompItems.objCompOpt.dblRefrigSuctionTemp;
+                    unitInfo.txbRefrigLiquidTempText = objCompItems.objCompOpt.dblRefrigLiquidTemp;
+                    unitInfo.txbRefrigSuperheatTempText = objCompItems.objCompOpt.dblRefrigSuperheatTemp;
+                    unitInfo.txbRefrigCondensingTempText = objCompItems.objCompOpt.dblRefrigCondensingTemp;
+                    unitInfo.txbRefrigVaporTempText = objCompItems.objCompOpt.dblRefrigVaporTemp;
+                    unitInfo.txbRefrigSubcoolingTempText = objCompItems.objCompOpt.dblRefrigSubcoolingTemp;
 
                     intOA_FilterModelID = objCompItems.objCompOpt.intOA_FilterModelID;
                     intFinalFilterModelID = objCompItems.objCompOpt.intSA_FinalFilterModelID;
@@ -676,24 +676,24 @@ namespace Oxyzen8SelectorServer.Models
                 {
                     unitInfo.isCustoms = true;
                     unitInfo.ckbPreheatHWC_UseCapValue = objCompItems.objCompOptCustom.intIsPreheatHWC_UseCap == 0 ? false : true;
-                    unitInfo.txbPreheatHWC_CapText = objCompItems.objCompOptCustom.dblPreheatHWC_Cap.ToString();
+                    unitInfo.txbPreheatHWC_CapText = objCompItems.objCompOptCustom.dblPreheatHWC_Cap;
                     unitInfo.ckbPreheatHWC_UseFlowRateValue = objCompItems.objCompOptCustom.intIsPreheatHWC_UseFlowRate == 0 ? false : true;
-                    unitInfo.txbPreheatHWC_FlowRateText = objCompItems.objCompOptCustom.dblPreheatHWC_FlowRate.ToString();
+                    unitInfo.txbPreheatHWC_FlowRateText = objCompItems.objCompOptCustom.dblPreheatHWC_FlowRate;
 
                     unitInfo.ckbCoolingCWC_UseCapValue = objCompItems.objCompOptCustom.intIsCoolingCWC_UseCap == 0 ? false : true;
-                    unitInfo.txbCoolingCWC_CapText = objCompItems.objCompOptCustom.dblCoolingCWC_Cap.ToString();
+                    unitInfo.txbCoolingCWC_CapText = objCompItems.objCompOptCustom.dblCoolingCWC_Cap;
                     unitInfo.ckbCoolingCWC_UseFlowRateValue = objCompItems.objCompOptCustom.intIsCoolingCWC_UseFlowRate == 0 ? false : true;
-                    unitInfo.txbCoolingCWC_FlowRateText = objCompItems.objCompOptCustom.dblCoolingCWC_FlowRate.ToString();
+                    unitInfo.txbCoolingCWC_FlowRateText = objCompItems.objCompOptCustom.dblCoolingCWC_FlowRate;
 
                     unitInfo.ckbHeatingHWC_UseCapValue = objCompItems.objCompOptCustom.intIsHeatingHWC_UseCap == 0 ? false : true;
-                    unitInfo.txbHeatingHWC_CapText = objCompItems.objCompOptCustom.dblHeatingHWC_Cap.ToString();
+                    unitInfo.txbHeatingHWC_CapText = objCompItems.objCompOptCustom.dblHeatingHWC_Cap;
                     unitInfo.ckbHeatingHWC_UseFlowRateValue = objCompItems.objCompOptCustom.intIsHeatingHWC_UseFlowRate == 0 ? false : true;
-                    unitInfo.txbHeatingHWC_FlowRateText = objCompItems.objCompOptCustom.dblHeatingHWC_FlowRate.ToString();
+                    unitInfo.txbHeatingHWC_FlowRateText = objCompItems.objCompOptCustom.dblHeatingHWC_FlowRate;
 
                     unitInfo.ckbReheatHWC_UseCapValue = objCompItems.objCompOptCustom.intIsReheatHWC_UseCap == 0 ? false : true;
-                    unitInfo.txbReheatHWC_CapText = objCompItems.objCompOptCustom.dblReheatHWC_Cap.ToString();
+                    unitInfo.txbReheatHWC_CapText = objCompItems.objCompOptCustom.dblReheatHWC_Cap;
                     unitInfo.ckbReheatHWC_UseFlowRateValue = objCompItems.objCompOptCustom.intIsReheatHWC_UseFlowRate == 0 ? false : true;
-                    unitInfo.txbReheatHWC_FlowRateText = objCompItems.objCompOptCustom.dblReheatHWC_FlowRate.ToString();
+                    unitInfo.txbReheatHWC_FlowRateText = objCompItems.objCompOptCustom.dblReheatHWC_FlowRate;
                 }
 
                 if (objLayout.objLayoutOpt != null)
@@ -728,8 +728,8 @@ namespace Oxyzen8SelectorServer.Models
                 unitInfo.unitTypeId = intUnitTypeID;
                 unitInfo.ddlControlsPreferenceValue = intControlsPreferenceID;
 
-                unitInfo.txbSummerSupplyAirCFMText = objAirFlowData != null ? objAirFlowData.get_intSummerSupplyAirCFM().ToString() : unitInfo.txbSummerSupplyAirCFMText;
-                unitInfo.txbSummerReturnAirCFMText = objAirFlowData != null ? objAirFlowData.get_intSummerReturnAirCFM().ToString() : unitInfo.txbSummerSupplyAirCFMText;
+                unitInfo.txbSummerSupplyAirCFMText = objAirFlowData != null ? objAirFlowData.get_intSummerSupplyAirCFM() : unitInfo.txbSummerSupplyAirCFMText;
+                unitInfo.txbSummerReturnAirCFMText = objAirFlowData != null ? objAirFlowData.get_intSummerReturnAirCFM() : unitInfo.txbSummerSupplyAirCFMText;
                 unitInfo.ddlLocationValue = intLocationID;
                 unitInfo.divDownshotVisible = getDownshot();
                 unitInfo.ckbDownshot = getDownshot();
@@ -963,11 +963,11 @@ namespace Oxyzen8SelectorServer.Models
                     DataTable dtPreheatComp = ClsDB.get_dtByQuery("SELECT * FROM " + ClsDBT.strSelUnitCoolingHeating + " WHERE id != " + ClsID.intCompNA_ID +
                                          " AND id != " + ClsID.intCompAutoID + " AND (enabled = 1 OR id = " + intPreheatCompID + ") ORDER BY display_order, id ASC").Copy();
 
-                    returnInfo.ddlPreheatCompValue = ClsID.intCompElecHeaterID.ToString();
+                    returnInfo.ddlPreheatCompValue = ClsID.intCompElecHeaterID;
 
                     returnInfo.lblPreheatWarningText = strPreheatRequiredWarning;
                     returnInfo.lblPreheatWarningVisible = true;
-                    returnInfo.txbPreheatSetpointDBText = dblPreheatSetPoint.ToString();
+                    returnInfo.txbPreheatSetpointDBText = dblPreheatSetPoint;
                     returnInfo.txbPreheatSetpointDBEnabled = false;
 
                     returnInfo.preheatElectricHeater = getPreheatElectricHeater(info);
@@ -1003,7 +1003,7 @@ namespace Oxyzen8SelectorServer.Models
 
                     if (intProductTypeID == ClsID.intProdTypeNovaID || intProductTypeID == ClsID.intProdTypeVentumID)
                     {
-                        returnInfo.ddlPreheatElecHeaterInstallationValue = intSelectedValue > 1 ? intSelectedValue.ToString() : ClsID.intElecHeaterInstallInCasingID.ToString();
+                        returnInfo.ddlPreheatElecHeaterInstallationValue = intSelectedValue > 1 ? intSelectedValue : ClsID.intElecHeaterInstallInCasingID;
                     }
                     else if (intProductTypeID == ClsID.intProdTypeVentumLiteID)
                     {
@@ -3071,12 +3071,12 @@ namespace Oxyzen8SelectorServer.Models
             dynamic dehumidificationInf = new ExpandoObject();
             if (intCoolingCompID == ClsID.intCompCWC_ID || intCoolingCompID == ClsID.intCompDX_ID)
             {
-                dehumidificationInf.divDehumidificationVisible = true;
+                dehumidificationInf.divDehumidificationVisible = 1;
             }
             else
             {
                 dehumidificationInf.divDehumidificationVisible = false;
-                dehumidificationInf.ckbDehumidification = false;
+                dehumidificationInf.ckbDehumidification = 0;
                 dehumidificationInf.ckbDehumidificationChecked = 0;
             }
 
