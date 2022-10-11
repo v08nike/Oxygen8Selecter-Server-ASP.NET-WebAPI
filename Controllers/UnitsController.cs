@@ -39,6 +39,14 @@ namespace Oxyzen8SelectorServer.Controllers
         }
 
         [HttpPost]
+        [ActionName("SaveLayout")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public bool SaveLayout([FromBody]dynamic unitInfo)
+        {
+            return UnitsModel.SaveLayout(unitInfo);
+        }
+
+        [HttpPost]
         [ActionName("Delete")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public dynamic DeleteUnitById([FromBody]dynamic unitInfo)
@@ -87,7 +95,7 @@ namespace Oxyzen8SelectorServer.Controllers
         {
             dynamic returnInfo = new ExpandoObject();
 
-            returnInfo.preheatElecHeater = UnitsModel.GetPreheatElectricHeader(fieldInfo);
+            returnInfo.preheatElecHeater = UnitsModel.GetPreheatElectricHeater(fieldInfo);
             returnInfo.elecHeaterVoltage = UnitsModel.getElectricHeaterVoltage();
             returnInfo.customInputs = UnitsModel.GetCustomInputs(fieldInfo);
 
@@ -107,7 +115,7 @@ namespace Oxyzen8SelectorServer.Controllers
         {
             dynamic returnInfo = new ExpandoObject();
 
-            returnInfo.preheatElecHeater = UnitsModel.GetPreheatElectricHeader(fieldInfo);
+            returnInfo.preheatElecHeater = UnitsModel.GetPreheatElectricHeater(fieldInfo);
             returnInfo.elecHeaterVoltage = UnitsModel.getElectricHeaterVoltage();
             returnInfo.customInputs = UnitsModel.GetCustomInputs(fieldInfo);
 
@@ -201,6 +209,14 @@ namespace Oxyzen8SelectorServer.Controllers
             returnInfo.visibleInfo = visibleInfo;
 
             return returnInfo;
+        }
+
+        [HttpPost]
+        [ActionName("locationchanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic ddlLocationChanged([FromBody]dynamic info)
+        {
+            return UnitsModel.ddlLocationChanged(info);
         }
 
         // GET api/<controller>

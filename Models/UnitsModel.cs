@@ -140,104 +140,132 @@ namespace Oxyzen8SelectorServer.Models
 
         public static bool SaveUnitInfo(dynamic unitInfo)
         {
+            int intFaceAreaHeight = 0;
+            int intFaceAreaWidth = 0;
+            string strSelectionType = "";
+            int intSelectionTypeID = 0;
+            int intVelocity = 0;
+
+            int intProductTypeID = unitInfo.intProductTypeID;
+            intSelectionTypeID = ClsID.intSelectionTypeCoupled;
+
+            DataTable dtUnitSizeDeratedFlow = new DataTable();
+            intVelocity = 300;
+            if (intProductTypeID == ClsID.intProdTypeNovaID)
+            {
+                dtUnitSizeDeratedFlow = ClsDB.get_dtLive(ClsDBT.strSelNovaUnitSize, "unit_model_id", intSelectionTypeID);
+                dtUnitSizeDeratedFlow = ClsTS.get_dtDataFromImportRows(dtUnitSizeDeratedFlow, "unit_orientation_id", unitInfo.ddlOrientation.ToString());
+
+
+                DataTable dtUnitSizeDecoupled = dtUnitSizeDeratedFlow.Copy();
+
+                dtUnitSizeDeratedFlow = ClsTS.get_dtDataFromImportRows(dtUnitSizeDeratedFlow, "selection_type_id", ClsID.intSelectionTypeCoupled);      //Derated Flowrate
+                dtUnitSizeDecoupled = ClsTS.get_dtDataFromImportRows(dtUnitSizeDecoupled, "selection_type_id", ClsID.intSelectionTypeDecoupled);          //Decoupled
+
+
+                intFaceAreaHeight = Convert.ToInt32(dtUnitSizeDeratedFlow.Rows[0]["cooling_coil_fin_height"]);
+                intFaceAreaWidth = Convert.ToInt32(dtUnitSizeDeratedFlow.Rows[0]["cooling_coil_fin_length"]);
+                strSelectionType = dtUnitSizeDeratedFlow.Rows[0]["selection_type"].ToString();
+                intSelectionTypeID = Convert.ToInt32(dtUnitSizeDeratedFlow.Rows[0]["selection_type_id"]);
+                intVelocity = Convert.ToInt32(Convert.ToDouble(unitInfo.txbSummerSupplyAirCFM) / ((intFaceAreaHeight * intFaceAreaWidth) / 144d));
+            }
+
             DataTable dt = ClsDB.SaveGeneral(Convert.ToInt32(unitInfo.intJobID),
-                                            Convert.ToInt32(unitInfo.unitId),
-                                            unitInfo.tag.ToString().ToUpper(),
-                                            Convert.ToInt32(unitInfo.qty),
-                                            Convert.ToInt32(unitInfo.productTypeId),
-                                            Convert.ToInt32(unitInfo.unitTypeId),
-                                            Convert.ToInt32(unitInfo.byPassId),
-                                            Convert.ToInt32(unitInfo.unitModelId),
-                                            Convert.ToInt32(unitInfo.selectionTypeId),
-                                            Convert.ToInt32(unitInfo.location),
-                                            Convert.ToInt32(0),
-                                            Convert.ToInt32(unitInfo.orientation),
-                                            Convert.ToInt32(unitInfo.controlPreference),
-                                            Convert.ToDouble(unitInfo.unitHeight),
-                                            Convert.ToDouble(unitInfo.unitWidth),
-                                            Convert.ToDouble(unitInfo.unitLength),
-                                            Convert.ToDouble(unitInfo.unitWeight),
-                                            Convert.ToInt32(unitInfo.unitVoltage),
-                                            Convert.ToInt32(unitInfo.voltageSPPId),
+                                            Convert.ToInt32(unitInfo.intUnitID),
+                                            unitInfo.txtTag.ToString().ToUpper(),
+                                            Convert.ToInt32(unitInfo.txbQty),
+                                            Convert.ToInt32(unitInfo.intProductTypeID),
+                                            Convert.ToInt32(unitInfo.ddlUnitType),
+                                            Convert.ToInt32(unitInfo.ckbBypass),
+                                            Convert.ToInt32(unitInfo.ddlUnitModel),
+                                            Convert.ToInt32(intSelectionTypeID),
+                                            Convert.ToInt32(unitInfo.ddlLocation),
+                                            Convert.ToInt32(unitInfo.ckbDownshot),
+                                            Convert.ToInt32(unitInfo.ddlOrientation),
+                                            Convert.ToInt32(unitInfo.ddlControlsPreference),
+                                            Convert.ToDouble(unitInfo.txbUnitHeightText),
+                                            Convert.ToDouble(unitInfo.txbUnitWidthText),
+                                            Convert.ToDouble(unitInfo.txbUnitLengthText),
+                                            Convert.ToDouble(unitInfo.txbUnitWeightText),
+                                            Convert.ToInt32(unitInfo.ddlUnitVoltage),
+                                            Convert.ToInt32(unitInfo.ckbVoltageSPP),
                                             1,
                                             0d);
 
-            unitInfo.unitId = dt.Rows[0]["UnitNo"].ToString();
+            unitInfo.intUnitID = dt.Rows[0]["UnitNo"].ToString();
 
             ClsDB.SaveAirFlow(Convert.ToInt32(unitInfo.intJobID),
-                                Convert.ToInt32(unitInfo.unitId),
-                                Convert.ToInt32(unitInfo.altitude),
-                                Convert.ToInt32(unitInfo.summerSupplyAirCFM),
-                                Convert.ToInt32(unitInfo.summerReturnAirCFM),
-                                Convert.ToInt32(unitInfo.summerSupplyAirCFM),
-                                Convert.ToInt32(unitInfo.summerReturnAirCFM),
-                                Math.Round(Convert.ToDouble(unitInfo.summer_air_db), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.summer_air_wb), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.summer_air_rh), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.winter_air_db), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.winter_air_wb), 3),
-                                Math.Round(Convert.ToDouble(unitInfo.winter_air_rh), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.summer_return_db), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.summer_return_wb), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.summer_return_rh), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.winter_return_db), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.winter_return_wb), 1),
-                                Math.Round(Convert.ToDouble(unitInfo.winter_return_rh), 1),
-                                Convert.ToDouble(unitInfo.winter_preheat_setpoint_db),
-                                Convert.ToDouble(unitInfo.winter_heating_setpoint_db),
-                                Convert.ToDouble(unitInfo.summer_cooling_setpoint_db),
-                                Convert.ToDouble(unitInfo.summer_cooling_setpoint_wb),
-                                Convert.ToDouble(unitInfo.summer_reheat_setpoint_db),
-                                Convert.ToDouble(unitInfo.supplyAirESP),
-                                Convert.ToDouble(unitInfo.exhaustAirESP));
+                                Convert.ToInt32(unitInfo.intUnitID),
+                                Convert.ToInt32(unitInfo.txbAltitude),
+                                Convert.ToInt32(unitInfo.txbSummerSupplyAirCFM),
+                                Convert.ToInt32(unitInfo.txbSummerReturnAirCFM),
+                                Convert.ToInt32(unitInfo.txbWinterSupplyAirCFM),
+                                Convert.ToInt32(unitInfo.txbWinterReturnAirCFM),
+                                Math.Round(Convert.ToDouble(unitInfo.txbSummerOutdoorAirDB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.txbSummerOutdoorAirWB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.txbSummerOutdoorAirRH), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.txbWinterOutdoorAirDB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.txbWinterOutdoorAirWB), 3),
+                                Math.Round(Convert.ToDouble(unitInfo.txbWinterOutdoorAirRH), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.txbSummerReturnAirDB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.txbSummerReturnAirWB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.txbSummerReturnAirRH), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.txbWinterReturnAirDB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.txbWinterReturnAirWB), 1),
+                                Math.Round(Convert.ToDouble(unitInfo.txbWinterReturnAirRH), 1),
+                                Convert.ToDouble(unitInfo.txbWinterPreheatSetpointDB),
+                                Convert.ToDouble(unitInfo.txbWinterHeatingSetpointDB),
+                                Convert.ToDouble(unitInfo.txbSummerCoolingSetpointDB),
+                                Convert.ToDouble(unitInfo.txbSummerCoolingSetpointWB),
+                                Convert.ToDouble(unitInfo.txbSummerReheatSetpointDB),
+                                Convert.ToDouble(unitInfo.txbSupplyAirESP),
+                                Convert.ToDouble(unitInfo.txbExhaustAirESP));
 
             ClsCompOpt objCompOpt = new ClsCompOpt
             {
                 intJobID = Convert.ToInt32(unitInfo.intJobID),
-                intUnitNo = Convert.ToInt32(unitInfo.unitId),
-                intUnitTypeID = Convert.ToInt32(unitInfo.unitTypeId),
-                //intUnitModelID = Convert.ToInt32(id_list.Attributes[ClsID.strAttUnitModelID]),
-                //intVoltageID = Convert.ToInt32(id_list.Attributes[ClsID.strAttUnitVoltageID]),
-                intUnitModelID = Convert.ToInt32(unitInfo.unitModelId),
-                intVoltageID = Convert.ToInt32(unitInfo.unitVoltage),
-                intOA_FilterModelID = Convert.ToInt32(unitInfo.qa_filter),
+                intUnitNo = Convert.ToInt32(unitInfo.intUnitID),
+                intUnitTypeID = Convert.ToInt32(unitInfo.ddlUnitType),
+                intUnitModelID = Convert.ToInt32(unitInfo.ddlUnitModel),
+                intVoltageID = Convert.ToInt32(unitInfo.ddlUnitVoltage),
+                intOA_FilterModelID = Convert.ToInt32(unitInfo.ddlOA_FilterModel),
                 intSA_FinalFilterModelID = 0,
-                intRA_FilterModelID = Convert.ToInt32(unitInfo.ra_filter),
-                intHeatExchCompID = Convert.ToInt32(unitInfo.heatExch),
-                intPreheatCompID = Convert.ToInt32(unitInfo.preheat),
-                intCoolingCompID = Convert.ToInt32(unitInfo.cooling),
-                intHeatingCompID = Convert.ToInt32(unitInfo.heating),
-                intReheatCompID = Convert.ToInt32(unitInfo.reheat),
-                intIsHeatPump = unitInfo.heatPump,
-                intIsDehumidification = unitInfo.dehumidification,
-                intElecHeaterVoltageID = Convert.ToInt32(unitInfo.elecHeaderVoltage),
-                intPreheatElecHeaterInstallationID = Convert.ToInt32(unitInfo.preheatElecHeaterInstallationId),
-                intHeatElecHeaterInstallationID = Convert.ToInt32(unitInfo.heatElecHeaterInstallationId),
-                intDamperAndActuatorID = Convert.ToInt32(unitInfo.damperActuator),
-                intIsValveAndActuatorIncluded = unitInfo.valveAndActuator,
-                intValveTypeID = Convert.ToInt32(unitInfo.valveTypeId),
-                intIsDrainPan = unitInfo.drainPan,
-                dblOA_FilterPD = Convert.ToDouble(unitInfo.qa_filter_pd),
-                dblRA_FilterPD = Convert.ToDouble(unitInfo.ra_filter_pd),
-                dblPreheatSetpointDB = Convert.ToDouble(unitInfo.preheatSetpointDB),
-                dblCoolingSetpointDB = Convert.ToDouble(unitInfo.coolingSetpointDB),
-                dblCoolingSetpointWB = Convert.ToDouble(unitInfo.coolingSetpointWB),
-                dblHeatingSetpointDB = Convert.ToDouble(unitInfo.heatingSetpointDB),
-                dblReheatSetpointDB = Convert.ToDouble(unitInfo.reheatSetpointDB),
-                intCoolingFluidTypeID = Convert.ToInt32(unitInfo.coolingFluidType),
-                intCoolingFluidConcentID = Convert.ToInt32(unitInfo.coolingFluidConcentration),
-                dblCoolingFluidEntTemp = Convert.ToDouble(unitInfo.coolingFluidEntTemp),
-                dblCoolingFluidLvgTemp = Convert.ToDouble(unitInfo.coolingFluidLvgTemp),
-                intHeatingFluidTypeID = Convert.ToInt32(unitInfo.heatingFluidType),
-                intHeatingFluidConcentID = Convert.ToInt32(unitInfo.heatingFluidConcentration),
-                dblHeatingFluidEntTemp = Convert.ToDouble(unitInfo.heatingFluidEntTemp),
-                dblHeatingFluidLvgTemp = Convert.ToDouble(unitInfo.heatingFluidLvgTemp),
-                dblRefrigSuctionTemp = Convert.ToDouble(unitInfo.refrigSuctionTemp),
-                dblRefrigLiquidTemp = Convert.ToDouble(unitInfo.refrigLiquidTemp),
-                dblRefrigSuperheatTemp = Convert.ToDouble(unitInfo.refrigSuperheatTemp),
-                dblRefrigCondensingTemp = Convert.ToDouble(unitInfo.refrigCondensingTemp),
-                dblRefrigVaporTemp = Convert.ToDouble(unitInfo.refrigVaporTemp),
-                dblRefrigSubcoolingTemp = Convert.ToDouble(unitInfo.refrigSubcoolingTemp),
+                intRA_FilterModelID = Convert.ToInt32(unitInfo.ddlRA_FilterModel),
+                intHeatExchCompID = Convert.ToInt32(unitInfo.ddlHeatExchComp),
+                intPreheatCompID = Convert.ToInt32(unitInfo.ddlPreheatComp),
+                intCoolingCompID = Convert.ToInt32(unitInfo.ddlCoolingComp),
+                intHeatingCompID = Convert.ToInt32(unitInfo.ddlHeatingComp),
+                intReheatCompID = Convert.ToInt32(unitInfo.ddlReheatComp),
+                intIsHeatPump = unitInfo.ckbHeatPump,
+                intIsDehumidification = unitInfo.ckbDehumidification,
+                intElecHeaterVoltageID = Convert.ToInt32(unitInfo.ddlElecHeaterVoltage),
+                intPreheatElecHeaterInstallationID = Convert.ToInt32(unitInfo.ddlPreheatElecHeaterInstallation),
+                intHeatElecHeaterInstallationID = Convert.ToInt32(unitInfo.ddlHeatElecHeaterInstallation),
+                intDamperAndActuatorID = Convert.ToInt32(unitInfo.ddlDamperAndActuator),
+                intIsValveAndActuatorIncluded = unitInfo.ckbValveAndActuator,
+                intValveTypeID = Convert.ToInt32(unitInfo.ddlValveType),
+                intIsDrainPan = unitInfo.ckbDrainPan,
+                dblOA_FilterPD = Convert.ToDouble(unitInfo.txbOA_FilterPD),
+                dblRA_FilterPD = Convert.ToDouble(unitInfo.txbRA_FilterPD),
+                dblPreheatSetpointDB = Convert.ToDouble(unitInfo.txbPreheatSetpointDB),
+                dblCoolingSetpointDB = Convert.ToDouble(unitInfo.txbCoolingSetpointDB),
+                dblCoolingSetpointWB = Convert.ToDouble(unitInfo.txbCoolingSetpointWB),
+                dblHeatingSetpointDB = Convert.ToDouble(unitInfo.txbHeatingSetpointDB),
+                dblReheatSetpointDB = Convert.ToDouble(unitInfo.txbReheatSetpointDB),
+                intCoolingFluidTypeID = Convert.ToInt32(unitInfo.ddlCoolingFluidType),
+                intCoolingFluidConcentID = Convert.ToInt32(unitInfo.ddlCoolingFluidConcentration),
+                dblCoolingFluidEntTemp = Convert.ToDouble(unitInfo.txbCoolingFluidEntTemp),
+                dblCoolingFluidLvgTemp = Convert.ToDouble(unitInfo.txbCoolingFluidLvgTemp),
+                intHeatingFluidTypeID = Convert.ToInt32(unitInfo.ddlHeatingFluidType),
+                intHeatingFluidConcentID = Convert.ToInt32(unitInfo.ddlHeatingFluidConcentration),
+                dblHeatingFluidEntTemp = Convert.ToDouble(unitInfo.txbHeatingFluidEntTemp),
+                dblHeatingFluidLvgTemp = Convert.ToDouble(unitInfo.txbHeatingFluidLvgTemp),
+                dblRefrigSuctionTemp = Convert.ToDouble(unitInfo.txbRefrigSuctionTemp),
+                dblRefrigLiquidTemp = Convert.ToDouble(unitInfo.txbRefrigLiquidTemp),
+                dblRefrigSuperheatTemp = Convert.ToDouble(unitInfo.txbRefrigSuperheatTemp),
+                dblRefrigCondensingTemp = Convert.ToDouble(unitInfo.txbRefrigCondensingTemp),
+                dblRefrigVaporTemp = Convert.ToDouble(unitInfo.txbRefrigVaporTemp),
+                dblRefrigSubcoolingTemp = Convert.ToDouble(unitInfo.txbRefrigSubcoolingTemp),
                 intPreheatValveAndActuatorID = 0,
                 intCoolingValveAndActuatorID = 0,
                 intHeatingValveAndActuatorID = 0,
@@ -262,262 +290,65 @@ namespace Oxyzen8SelectorServer.Models
                 ClsCompOptCustom objCompOptCustom = new ClsCompOptCustom
                 {
                     intJobID = Convert.ToInt32(unitInfo.intJobID),
-                    intUnitNo = Convert.ToInt32(unitInfo.unitId),
-                    intIsPreheatHWC_UseCap = unitInfo.preheatHWC_UseCap,
-                    dblPreheatHWC_Cap = Convert.ToDouble(unitInfo.preheatHWC_Cap),
-                    intIsPreheatHWC_UseFlowRate = unitInfo.preheatHWC_UseFlowRate,
-                    dblPreheatHWC_FlowRate = Convert.ToDouble(unitInfo.preheatHWC_FlowRate),
-                    intIsCoolingCWC_UseCap = unitInfo.coolingCWC_UseCap,
-                    dblCoolingCWC_Cap = Convert.ToDouble(unitInfo.coolingCWC_Cap),
-                    intIsCoolingCWC_UseFlowRate = unitInfo.coolingCWC_UseFlowRate,
-                    dblCoolingCWC_FlowRate = Convert.ToDouble(unitInfo.coolingCWC_FlowRate),
-                    intIsHeatingHWC_UseCap = unitInfo.heatingHWC_UseCap,
-                    dblHeatingHWC_Cap = Convert.ToDouble(unitInfo.heatingHWC_Cap),
-                    intIsHeatingHWC_UseFlowRate = unitInfo.heatingHWC_UseFlowRate,
-                    dblHeatingHWC_FlowRate = Convert.ToDouble(unitInfo.heatingHWC_FlowRate),
-                    intIsReheatHWC_UseCap = unitInfo.reheatHWC_UseCap,
-                    dblReheatHWC_Cap = Convert.ToDouble(unitInfo.reheatHWC_Cap),
-                    intIsReheatHWC_UseFlowRate = unitInfo.reheatHWC_UseFlowRate,
-                    dblReheatHWC_FlowRate = Convert.ToDouble(unitInfo.reheatHWC_FlowRate),
+                    intUnitNo = Convert.ToInt32(unitInfo.unitJobID),
+                    intIsPreheatHWC_UseCap = unitInfo.ckbPreheatHWC_UseCap,
+                    dblPreheatHWC_Cap = Convert.ToDouble(unitInfo.txbPreheatHWC_Cap),
+                    intIsPreheatHWC_UseFlowRate = unitInfo.ckbPreheatHWC_UseFlowRate,
+                    dblPreheatHWC_FlowRate = Convert.ToDouble(unitInfo.txbPreheatHWC_FlowRate),
+                    intIsCoolingCWC_UseCap = unitInfo.ckbCoolingCWC_UseCap,
+                    dblCoolingCWC_Cap = Convert.ToDouble(unitInfo.txbCoolingCWC_Cap),
+                    intIsCoolingCWC_UseFlowRate = unitInfo.ckbCoolingCWC_UseFlowRate,
+                    dblCoolingCWC_FlowRate = Convert.ToDouble(unitInfo.txbCoolingCWC_FlowRate),
+                    intIsHeatingHWC_UseCap = unitInfo.ckbHeatingHWC_UseCap,
+                    dblHeatingHWC_Cap = Convert.ToDouble(unitInfo.txbHeatingHWC_Cap),
+                    intIsHeatingHWC_UseFlowRate = unitInfo.ckbHeatingHWC_UseFlowRate,
+                    dblHeatingHWC_FlowRate = Convert.ToDouble(unitInfo.txbHeatingHWC_FlowRate),
+                    intIsReheatHWC_UseCap = unitInfo.ckbReheatHWC_UseCap,
+                    dblReheatHWC_Cap = Convert.ToDouble(unitInfo.txbReheatHWC_Cap),
+                    intIsReheatHWC_UseFlowRate = unitInfo.ckbReheatHWC_UseFlowRate,
+                    dblReheatHWC_FlowRate = Convert.ToDouble(unitInfo.txbReheatHWC_FlowRate),
                 };
 
                 ClsDB.SaveCompOptCustom(objCompOptCustom);
             }
 
-            ClsLayoutOpt objLayoutOpt = new ClsLayoutOpt
-            {
-                intJobID = Convert.ToInt32(unitInfo.intJobID),
-                intUnitNo = Convert.ToInt32(unitInfo.unitId),
-                intProductTypeID = Convert.ToInt32(unitInfo.productTypeId),
-                intUnitTypeID = Convert.ToInt32(unitInfo.unitTypeId),
-                intHandingID = Convert.ToInt32(unitInfo.handing),
-                intPreheatCoilHandingID = Convert.ToInt32(unitInfo.preheatCoilHandingId),
-                intCoolingCoilHandingID = Convert.ToInt32(unitInfo.coolingCoilHandingId),
-                intHeatingCoilHandingID = Convert.ToInt32(unitInfo.heatingCoilHandingId),
-                intSupplyAirOpeningID = Convert.ToInt32(unitInfo.supplyAirOpeningId),
-                strSupplyAirOpening = unitInfo.supplyAirOpening,
-                intExhaustAirOpeningID = Convert.ToInt32(unitInfo.exhaustAirOpeningId),
-                strExhaustAirOpening = unitInfo.exhaustAirOpening,
-                intOutdoorAirOpeningID = Convert.ToInt32(unitInfo.outdoorAirOpeningId),
-                strOutdoorAirOpening = unitInfo.outdoorAirOpening,
-                intReturnAirOpeningID = Convert.ToInt32(unitInfo.returnAirOpeningId),
-                strReturnAirOpening = unitInfo.returnAirOpening
-            };
-
-            ClsDB.SaveLayout(objLayoutOpt);
+            SaveLayout(unitInfo);
 
             return true;
         }
 
-        //public static dynamic GetUnitInfo(int intJobID, int unitId)
-        //{
-        //    dynamic unitInfo = new ExpandoObject();
-        //    DataTable dtJob = ClsDB.GetSavedJob(intJobID);
-        //    var Session = HttpContext.Current.Session;
+        public static bool SaveLayout(dynamic unitInfo)
+        {
+            try
+            {
+                ClsLayoutOpt objLayoutOpt = new ClsLayoutOpt
+                {
+                    intJobID = Convert.ToInt32(unitInfo.intJobID),
+                    intUnitNo = Convert.ToInt32(unitInfo.intUnitID),
+                    intProductTypeID = Convert.ToInt32(unitInfo.intProductTypeID),
+                    intUnitTypeID = Convert.ToInt32(unitInfo.intUnitTypeID),
+                    intHandingID = Convert.ToInt32(unitInfo.ddlHandingID),
+                    intPreheatCoilHandingID = Convert.ToInt32(unitInfo.ddlPreheatCoilHanding),
+                    intCoolingCoilHandingID = Convert.ToInt32(unitInfo.ddlCoolingCoilHanding),
+                    intHeatingCoilHandingID = Convert.ToInt32(unitInfo.ddlHeatingCoilHanding),
+                    intSupplyAirOpeningID = Convert.ToInt32(unitInfo.ddlSupplyAirOpeningValue),
+                    strSupplyAirOpening = unitInfo.ddlSupplyAirOpeningText,
+                    intExhaustAirOpeningID = Convert.ToInt32(unitInfo.ddlExhaustAirOpeningValue),
+                    strExhaustAirOpening = unitInfo.ddlExhaustAirOpeningText,
+                    intOutdoorAirOpeningID = Convert.ToInt32(unitInfo.ddlOutdoorAirOpeningValue),
+                    strOutdoorAirOpening = unitInfo.ddlOutdoorAirOpeningText,
+                    intReturnAirOpeningID = Convert.ToInt32(unitInfo.ddlReturnAirOpeningValue),
+                    strReturnAirOpening = unitInfo.ddlReturnAirOpeningText
+                };
 
-        //    ClsProjectInfo objProjectInfo = new ClsProjectInfo(intJobID);
-        //    ClsGeneral objGeneral = new ClsGeneral(intJobID, unitId);
-        //    ClsAirFlowData objAirFlowData = new ClsAirFlowData(intJobID, unitId);
-        //    ClsComponentItems objCompItems = new ClsComponentItems(intJobID, unitId);
-        //    ClsLayout objLayout = new ClsLayout(intJobID, unitId);
+                ClsDB.SaveLayout(objLayoutOpt);
+            } catch (Exception e)
+            {
+                return false;
+            }
 
-        //    unitInfo.altitude = objProjectInfo.intAltitude.ToString();
-
-        //    unitInfo.summerOutdoorAirDB = objProjectInfo.dblSummerOutdoorAirDB.ToString();
-        //    unitInfo.summerOutdoorAirWB = objProjectInfo.dblSummerOutdoorAirWB.ToString();
-        //    unitInfo.summerOutdoorAirRH = objProjectInfo.dblSummerOutdoorAirRH.ToString();
-
-        //    unitInfo.winterOutdoorAirDB = objProjectInfo.dblWinterOutdoorAirDB.ToString();
-        //    unitInfo.winterOutdoorAirWB = objProjectInfo.dblWinterOutdoorAirWB.ToString();
-        //    unitInfo.winterOutdoorAirRH = objProjectInfo.dblWinterOutdoorAirRH.ToString();
-
-        //    unitInfo.summerReturnAirDB = objProjectInfo.dblSummerReturnAirDB.ToString();
-        //    unitInfo.summerReturnAirWB = objProjectInfo.dblSummerReturnAirWB.ToString();
-        //    unitInfo.summerReturnAirRH = objProjectInfo.dblSummerReturnAirRH.ToString();
-
-        //    unitInfo.winterReturnAirDB = objProjectInfo.dblWinterReturnAirDB.ToString();
-        //    unitInfo.winterReturnAirWB = objProjectInfo.dblWinterReturnAirWB.ToString();
-        //    unitInfo.winterReturnAirRH = objProjectInfo.dblWinterReturnAirRH.ToString();
-
-
-        //    if (objGeneral != null)
-        //    {
-        //        unitInfo.tag = objGeneral.strTag;
-        //        unitInfo.qty = objGeneral.intQty.ToString();
-
-        //        unitInfo.productTypeId = objGeneral.intProductTypeID;
-        //        unitInfo.unitTypeID = objGeneral.intUnitTypeID;
-        //        unitInfo.unitTypeName = ClsDB.get_dtLiveEnabled(ClsDBT.strSelUnitType, objGeneral.intUnitTypeID);
-        //        unitInfo.locationID = objGeneral.intLocationID;
-        //        unitInfo.orientationID = objGeneral.intOrientationID;
-
-        //        unitInfo.unitModelID = objGeneral.intUnitModelID;
-        //        unitInfo.unitVoltageID = objGeneral.intUnitVoltageID;
-        //        unitInfo.controlsPreferenceID = objGeneral.intControlsPreferenceID;
-
-        //        unitInfo.unitHeight = objGeneral.dblUnitHeight.ToString();
-        //        unitInfo.unitWidth = objGeneral.dblUnitWidth.ToString();
-        //        unitInfo.unitLength = objGeneral.dblUnitLength.ToString();
-        //        unitInfo.unitWeight = objGeneral.dblUnitWeight.ToString();
-        //    }
-
-        //    if (objAirFlowData != null)
-        //    {
-        //        unitInfo.summerSupplyAirCFM = objAirFlowData.get_intSummerSupplyAirCFM().ToString();
-
-        //        unitInfo.supplyAirESP = objAirFlowData.get_dblSupplyAirESP().ToString();
-        //        unitInfo.exhaustAirESP = objAirFlowData.get_dblExhaustAirESP().ToString();
-
-        //        unitInfo.summerReturnAirDB = objAirFlowData.get_dblSummerReturnAirDB().ToString();
-        //        unitInfo.summerReturnAirWB = objAirFlowData.get_dblSummerReturnAirWB().ToString();
-        //        unitInfo.summerReturnAirRH = objAirFlowData.get_dblSummerReturnAirRH().ToString();
-
-        //        unitInfo.winterReturnAirDB = objAirFlowData.get_dblWinterReturnAirDB().ToString();
-        //        unitInfo.winterReturnAirWB = objAirFlowData.get_dblWinterReturnAirWB().ToString();
-        //        unitInfo.winterReturnAirRH = objAirFlowData.get_dblWinterReturnAirRH().ToString();
-
-        //        unitInfo.winterPreheatSetpointDB = objAirFlowData.get_dblWinterPreheatSetpointDB().ToString();
-        //        unitInfo.winterHeatingSetpointDB = objAirFlowData.get_dblWinterHeatingSetpointDB().ToString();
-        //        unitInfo.summerCoolingSetpointDB = objAirFlowData.get_dblSummerCoolingSetpointDB().ToString();
-        //        unitInfo.summerCoolingSetpointWB = objAirFlowData.get_dblSummerCoolingSetpointWB().ToString();
-        //        unitInfo.summerReheatSetpointDB = objAirFlowData.get_dblSummerReheatSetpointDB().ToString();
-        //    }
-
-        //    if (objCompItems.objCompOpt != null)
-        //    {
-        //        //dicValues = objCompOpt.get_dicValues();
-        //        unitInfo.OA_FilterModelID = objCompItems.objCompOpt.intOA_FilterModelID;
-        //        unitInfo.finalFilterModelID = objCompItems.objCompOpt.intSA_FinalFilterModelID;
-        //        unitInfo.RA_FilterModelID = objCompItems.objCompOpt.intRA_FilterModelID;
-        //        unitInfo.heatExchCompID = objCompItems.objCompOpt.intHeatExchCompID;
-        //        unitInfo.preheatCompID = objCompItems.objCompOpt.intPreheatCompID;
-        //        unitInfo.coolingCompID = objCompItems.objCompOpt.intCoolingCompID;
-        //        unitInfo.heatingCompID = objCompItems.objCompOpt.intHeatingCompID;
-        //        unitInfo.reheatCompID = objCompItems.objCompOpt.intReheatCompID;
-
-        //        unitInfo.elecHeaterVoltageID = objCompItems.objCompOpt.intElecHeaterVoltageID;
-        //        unitInfo.preheatElecHeaterInstallationID = objCompItems.objCompOpt.intPreheatElecHeaterInstallationID;
-        //        unitInfo.heatElecHeaterInstallationID = objCompItems.objCompOpt.intHeatElecHeaterInstallationID;
-        //        unitInfo.damperActuatorID = objCompItems.objCompOpt.intDamperAndActuatorID;
-        //        unitInfo.valveTypeID = objCompItems.objCompOpt.intValveTypeID;
-        //        unitInfo.OA_FilterPD = objCompItems.objCompOpt.dblOA_FilterPD.ToString();
-        //        unitInfo.RA_FilterPD = objCompItems.objCompOpt.dblRA_FilterPD.ToString();
-        //        unitInfo.preheatSetpointDB = objCompItems.objCompOpt.dblPreheatSetpointDB.ToString();
-        //        unitInfo.coolingSetpointDB = objCompItems.objCompOpt.dblCoolingSetpointDB.ToString();
-        //        unitInfo.coolingSetpointWB = objCompItems.objCompOpt.dblCoolingSetpointWB.ToString();
-        //        unitInfo.heatingSetpointDB = objCompItems.objCompOpt.dblHeatingSetpointDB.ToString();
-        //        unitInfo.reheatSetpointDB = objCompItems.objCompOpt.dblReheatSetpointDB.ToString();
-        //        unitInfo.coolingFluidTypeID = objCompItems.objCompOpt.intCoolingFluidTypeID;
-        //        unitInfo.coolingFluidConcentrationID = objCompItems.objCompOpt.intCoolingFluidConcentID;
-        //        unitInfo.coolingFluidEntTemp = objCompItems.objCompOpt.dblCoolingFluidEntTemp.ToString();
-        //        unitInfo.coolingFluidLvgTemp = objCompItems.objCompOpt.dblCoolingFluidLvgTemp.ToString();
-        //        unitInfo.heatingFluidTypeID = objCompItems.objCompOpt.intHeatingFluidTypeID;
-        //        unitInfo.heatingFluidConcentrationID = objCompItems.objCompOpt.intHeatingFluidConcentID;
-        //        unitInfo.heatingFluidEntTemp = objCompItems.objCompOpt.dblHeatingFluidEntTemp.ToString();
-        //        unitInfo.heatingFluidLvgTemp = objCompItems.objCompOpt.dblHeatingFluidLvgTemp.ToString();
-        //        unitInfo.refrigSuctionTemp = objCompItems.objCompOpt.dblRefrigSuctionTemp.ToString();
-        //        unitInfo.refrigLiquidTemp = objCompItems.objCompOpt.dblRefrigLiquidTemp.ToString();
-        //        unitInfo.refrigSuperheatTemp = objCompItems.objCompOpt.dblRefrigSuperheatTemp.ToString();
-        //        unitInfo.refrigCondensingTemp = objCompItems.objCompOpt.dblRefrigCondensingTemp.ToString();
-        //        unitInfo.refrigVaporTemp = objCompItems.objCompOpt.dblRefrigVaporTemp.ToString();
-        //        unitInfo.refrigSubcoolingTemp = objCompItems.objCompOpt.dblRefrigSubcoolingTemp.ToString();
-        //    }
-
-        //    if (objCompItems.objCompOptCustom != null)
-        //    {
-        //        unitInfo.preheatHWC_Cap = objCompItems.objCompOptCustom.dblPreheatHWC_Cap.ToString();
-        //        unitInfo.preheatHWC_FlowRate = objCompItems.objCompOptCustom.dblPreheatHWC_FlowRate.ToString();
-
-        //        unitInfo.coolingCWC_Cap = objCompItems.objCompOptCustom.dblCoolingCWC_Cap.ToString();
-        //        unitInfo.coolingCWC_FlowRate = objCompItems.objCompOptCustom.dblCoolingCWC_FlowRate.ToString();
-
-        //        unitInfo.heatingHWC_Cap = objCompItems.objCompOptCustom.dblHeatingHWC_Cap.ToString();
-        //        unitInfo.heatingHWC_FlowRate = objCompItems.objCompOptCustom.dblHeatingHWC_FlowRate.ToString();
-
-        //        unitInfo.reheatHWC_Cap = objCompItems.objCompOptCustom.dblReheatHWC_Cap.ToString();
-        //        unitInfo.reheatHWC_FlowRate = objCompItems.objCompOptCustom.dblReheatHWC_FlowRate.ToString();
-        //    }
-
-        //    if (objLayout.objLayoutOpt != null)
-        //    {
-        //        //dicValues = objCompOpt.get_dicValues();
-        //        unitInfo.handingID = objLayout.objLayoutOpt.intHandingID;
-        //        unitInfo.preheatCoilHandingID = objLayout.objLayoutOpt.intPreheatCoilHandingID;
-        //        unitInfo.coolingCoilHandingID = objLayout.objLayoutOpt.intCoolingCoilHandingID;
-        //        unitInfo.heatingCoilHandingID = objLayout.objLayoutOpt.intHeatingCoilHandingID;
-        //        unitInfo.supplyAirOpeningID = objLayout.objLayoutOpt.intSupplyAirOpeningID;
-        //        unitInfo.supplyAirOpening = objLayout.objLayoutOpt.strSupplyAirOpening;
-        //        unitInfo.exhaustAirOpeningID = objLayout.objLayoutOpt.intExhaustAirOpeningID;
-        //        unitInfo.exhaustAirOpening = objLayout.objLayoutOpt.strExhaustAirOpening;
-        //        unitInfo.outdoorAirOpeningID = objLayout.objLayoutOpt.intOutdoorAirOpeningID;
-        //        unitInfo.outdoorAirOpening = objLayout.objLayoutOpt.strOutdoorAirOpening;
-        //        unitInfo.returnAirOpeningID = objLayout.objLayoutOpt.intReturnAirOpeningID;
-        //        unitInfo.returnAirOpening = objLayout.objLayoutOpt.strReturnAirOpening;
-        //    }
-
-        //    DataTable dtControls = ClsDB.get_dtLiveEnabled(ClsDBT.strSelControlsPreference, unitInfo.controlsPreferenceID);
-
-        //    if (unitInfo.productTypeId == ClsID.intProdTypeVentumLiteID)
-        //    {
-        //        dtControls = dtControls.Select("[id]='" + ClsID.intControlPrefByOthersID.ToString() + "'").CopyToDataTable();
-        //    }
-        //    else if (Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_External || Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_ExternalSpecial)
-        //    {
-        //        dtControls = dtControls.Select("[id]<>'" + ClsID.intControlPrefByOthersID.ToString() + "'").CopyToDataTable();
-        //    }
-
-        //    unitInfo.controlsPreference = dtControls;
-        //    unitInfo.damperAndActuator = ClsDB.get_dtLiveEnabled(ClsDBT.strSelDamperActuator, unitInfo.damperActuatorID);
-
-        //    switch (Convert.ToInt32(unitInfo.productTypeId))
-        //    {
-        //        case ClsID.intProdTypeNovaID:
-        //            //lblHanding = "Fan Placement";
-        //            if (Convert.ToInt32(Session["UAL"]) == ClsID.intUAL_External)
-        //            {
-        //                unitInfo.BypassVisible = false;
-        //                unitInfo.BypassChecked = false;
-        //            }
-        //            else
-        //            {
-        //                unitInfo.BypassVisible = true;
-        //            }
-
-        //            unitInfo.voltageSPPChecked = false;
-        //            unitInfo.voltageSPPVisible = false;
-        //            break;
-        //        case ClsID.intProdTypeVentumID:
-        //            //lblHanding = "Control Panel Placement";
-        //            unitInfo.BypassChecked = true; //Bypass is checked by default for Ventum
-        //            unitInfo.voltageSPPChecked = false;
-        //            unitInfo.voltageSPPVisible = false;
-        //            break;
-        //        case ClsID.intProdTypeVentumLiteID:
-        //            //lblHanding = "Control Panel Placement";
-        //            unitInfo.BypassVisible = false;
-        //            unitInfo.BypassChecked = false;
-        //            unitInfo.voltageSPPChecked = false;
-        //            unitInfo.voltageSPPVisible = false;
-        //            break;
-        //        case ClsID.intProdTypeTerraID:
-        //            //lblHanding = "Control Panel Placement";
-        //            unitInfo.BypassVisible = false;
-        //            unitInfo.BypassChecked = false;
-        //            unitInfo.voltageSPPVisible = true;
-        //            break;
-        //        default:
-        //            break;
-        //    }
-
-        //    unitInfo.handing = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.handingID);
-        //    unitInfo.preheatHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.preheatCoilHandingID);
-        //    unitInfo.coolingCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.coolingCoilHandingID);
-        //    unitInfo.heatingCoilHanding = ClsDB.get_dtLiveEnabled(ClsDBT.strSelHanding, unitInfo.heatingCoilHandingID);
-        //    unitInfo.valueType = ClsDB.get_dtLiveEnabled(ClsDBT.strSelValveType, unitInfo.valveTypeID);
-
-
-        //    return unitInfo;
-        //}
+            return true;
+        }
 
         public static dynamic GetUnitInfo(dynamic info)
         {
@@ -786,17 +617,99 @@ namespace Oxyzen8SelectorServer.Models
                 unitInfo.ddlCoolingCoilHandingValue = intCoolingCoilHandingID;
                 unitInfo.ddlHeatingCoilHandingValue = intHeatingCoilHandingID;
 
+                unitInfo.isLayout = false;
                 if (objLayout != null && objLayout.objLayoutOpt != null)
                 {
-                    unitInfo.ddlSupplyAirOpeningValue = objLayout.objLayoutOpt.strSupplyAirOpening;
+                    unitInfo.isLayout = true;
+                    unitInfo.ddlSupplyAirOpeningText = objLayout.objLayoutOpt.strSupplyAirOpening;
+                    unitInfo.ddlExhaustAirOpeningText = objLayout.objLayoutOpt.strExhaustAirOpening;
+                    unitInfo.ddlOutdoorAirOpeningText = objLayout.objLayoutOpt.strOutdoorAirOpening;
+                    unitInfo.ddlReturnAirOpeningText = objLayout.objLayoutOpt.strReturnAirOpening;
 
-                    unitInfo.ddlExhaustAirOpeningValue = objLayout.objLayoutOpt.strExhaustAirOpening;
-                    unitInfo.ddlOutdoorAirOpeningValue = objLayout.objLayoutOpt.strOutdoorAirOpening;
-                    unitInfo.ddlReturnAirOpeningValue = objLayout.objLayoutOpt.strReturnAirOpening;
+                    unitInfo.ddlSupplyAirOpeningValue = objLayout.objLayoutOpt.intSupplyAirOpeningID;
+                    unitInfo.ddlExhaustAirOpeningValue = objLayout.objLayoutOpt.intExhaustAirOpeningID;
+                    unitInfo.ddlOutdoorAirOpeningValue = objLayout.objLayoutOpt.intOutdoorAirOpeningID;
+                    unitInfo.ddlReturnAirOpeningValue = objLayout.objLayoutOpt.intReturnAirOpeningID;
                 }
             }
 
             return unitInfo;
+        }
+
+        public static dynamic ddlLocationChanged(dynamic unitInfo)
+        {
+            dynamic returnInfo = new ExpandoObject();
+            setAllData(unitInfo);
+
+            if (unitInfo.ddlLocation == ClsID.intLocationOutdoorID)
+            {
+                returnInfo.ddlDamperAndActuatorValue = ClsID.intDamperActuatorNoCasingID;
+                returnInfo.divDamperAndActuatorVisible = false;
+            }
+            else
+            {
+                returnInfo.divDamperAndActuatorVisible = true;
+            }
+
+            returnInfo.downshot = getDownshot();
+            returnInfo.orientation = getOrientation(unitInfo.txbSummerSupplyAirCFM.ToString());
+            dynamic modelAndBypassInfo = getModel(unitInfo.txbSummerSupplyAirCFM.ToString(), Convert.ToInt32(unitInfo.ckbBypass));
+
+            returnInfo.ddlUnitModel = modelAndBypassInfo.ddlUnitModel;
+            returnInfo.ddlUnitModelValue = returnInfo.ddlUnitModel.Rows[0]["id"];
+            intUnitModelID = returnInfo.ddlUnitModelValue;
+            returnInfo.ckbBypass = modelAndBypassInfo.ckbBypass;
+            returnInfo.others = modelAndBypassInfo.others;
+            ckbBypassChecked = modelAndBypassInfo.ckbBypass;
+
+            returnInfo.txbSupplyAirESP = txbSupplyAirESP_Changed(unitInfo.txbSupplyAirESP.ToString());
+            returnInfo.txbExhaustAirESP = txbExhaustAirESP_Changed(unitInfo.txbExhaustAirESP.ToString());
+            returnInfo.electricHeaterVoltage = getElectricHeaterVoltage();
+            returnInfo.preheatElectricHeater = getPreheatElectricHeater();
+            //returnInfo.supplyAirOpening = getSupplyAirOpening();
+
+            return returnInfo;
+        }
+
+        private static void setAllData(dynamic unitInfo)
+        {
+            intUAL = Convert.ToInt32(unitInfo.intUAL);
+            intUserID = Convert.ToInt32(unitInfo.intUserID);
+            intJobID = Convert.ToInt32(unitInfo.intJobID);
+            intUnitNo = Convert.ToInt32(unitInfo.intUnitNo);
+            intProductTypeID = Convert.ToInt32(unitInfo.intProductTypeID);
+            intUnitTypeID = Convert.ToInt32(unitInfo.ddlUnitType);
+            intLocationID = Convert.ToInt32(unitInfo.ddlLocation);
+            intOrientationID = Convert.ToInt32(unitInfo.ddlOrientation);
+            intUnitModelID = Convert.ToInt32(unitInfo.ddlUnitModel);
+            intUnitVoltageID = Convert.ToInt32(unitInfo.ddlUnitVoltage);
+            intPreheatCompID = Convert.ToInt32(unitInfo.ddlPreheatComp);
+            intHeatingCompID = Convert.ToInt32(unitInfo.ddlHeatingComp);
+            intReheatCompID = Convert.ToInt32(unitInfo.ddlReheatComp);
+            ckbVoltageSPPChecked = Convert.ToInt32(unitInfo.ckbVoltageSPP);
+            intElecHeaterVoltageID = Convert.ToInt32(unitInfo.ddlElecHeaterVoltage);
+
+            intConfigurationID = Convert.ToInt32(unitInfo.ddlElecHeaterVoltage);
+            intControlsPreferenceID = Convert.ToInt32(unitInfo.ddlControlsPreference);
+
+            intOA_FilterModelID = Convert.ToInt32(unitInfo.ddlOA_FilterModel);
+            //intFinalFilterModelID = Convert.ToInt32(unitInfo.ddlControlsPreference);
+            intRA_FilterModelID = Convert.ToInt32(unitInfo.ddlRA_FilterModel);
+            intPreheatCompID = Convert.ToInt32(unitInfo.ddlControlsPreference);
+            intHeatExchCompID = Convert.ToInt32(unitInfo.ddlHeatExchComp);
+
+            intCoolingFluidTypeID = Convert.ToInt32(unitInfo.ddlCoolingFluidType);
+            intCoolingFluidConcentrationID = Convert.ToInt32(unitInfo.ddlCoolingFluidConcentration);
+            intHeatingFluidTypeID = Convert.ToInt32(unitInfo.ddlHeatingFluidType);
+            intHeatingFluidConcentrationID = Convert.ToInt32(unitInfo.ddlHeatingFluidConcentration);
+            intPreheatElecHeaterInstallationID = Convert.ToInt32(unitInfo.ddlControlsPreference);
+            intHeatElecHeaterInstallationID = Convert.ToInt32(unitInfo.ddlPreheatElecHeaterInstallation);
+            intDamperActuatorID = Convert.ToInt32(unitInfo.ddlDamperAndActuator);
+
+            intPreheatCoilHandingID = Convert.ToInt32(unitInfo.ddlPreheatCoilHanding);
+            intCoolingCoilHandingID = Convert.ToInt32(unitInfo.ddlCoolingCoilHanding);
+            intHeatingCoilHandingID = Convert.ToInt32(unitInfo.ddlHeatingCoilHanding);
+            intValveTypeID = Convert.ToInt32(unitInfo.ddlValveType);
         }
 
         private static int getDownshot()
@@ -838,6 +751,7 @@ namespace Oxyzen8SelectorServer.Models
             intControlsPreferenceID = controlInfo.ddlControlsPreferenceValue;
             controlInfo.ddlDamperAndActuator = ClsDB.get_dtLiveEnabled(ClsDBT.strSelDamperActuator, intDamperActuatorID);
             controlInfo.ddlDamperAndActuatorValue = controlInfo.ddlDamperAndActuator.Rows[0]["id"];
+            controlInfo.ddlDamperAndActuatorVisible = false;
 
             controlInfo.mainControlData = txbSummerSupplyAirCFM_Changed(txbSummerSupplyAirCFM, ckbBypass);
 
@@ -1309,7 +1223,7 @@ namespace Oxyzen8SelectorServer.Models
             return elecHeaderVoltageInfo;
         }
 
-        public static dynamic GetPreheatElectricHeader(dynamic fieldInfo)
+        public static dynamic GetPreheatElectricHeater(dynamic fieldInfo)
         {
             dynamic preheatElecticalHeaderInstallation = new ExpandoObject();
             DataTable dtElecHeaterVoltage = new DataTable();
@@ -2084,18 +1998,9 @@ namespace Oxyzen8SelectorServer.Models
        }
 
 
-        public static dynamic txbExhaustAirESP_Changed(dynamic fieldInfo)
+        public static dynamic txbExhaustAirESP_Changed(string exhaustAirESP)
         {
-            if (!ClsNumber.IsNumber(fieldInfo.exhaustAirESP.ToString()))
-            {
-                return 0;
-            }
-
             dynamic returnInfo = new ExpandoObject();
-
-            int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
-            int intUnitModelID = Convert.ToInt32(fieldInfo.unitModeldId);
-            String exhaustAirESP = fieldInfo.exhaustAirESP;
 
             if (intProductTypeID == ClsID.intProdTypeNovaID)
             {
@@ -2599,8 +2504,8 @@ namespace Oxyzen8SelectorServer.Models
             componentOptions.divSetpointsVisible = getSetPoints();
             componentOptions.divHeatingFluidDesignConditionsVisible = getHeatingFluidDesignConditions();
             componentOptions.refrigerantInfo = getRefrigerant();
-            componentOptions.preheatElectricHeader = getPreheatElectricHeater();
-            componentOptions.heatElectricHeader = getHeatElectricHeater();
+            componentOptions.preheatElectricHeater = getPreheatElectricHeater();
+            componentOptions.heatElectricHeater = getHeatElectricHeater();
             componentOptions.electricHeaterVoltage = getElectricHeaterVoltage();
             componentOptions.valveAndActuator = getValveAndActuator();
             componentOptions.customInputs = getCustomInputs();
@@ -2708,13 +2613,13 @@ namespace Oxyzen8SelectorServer.Models
 
         private static dynamic getHeatElectricHeater()
         {
-            dynamic heatElectricHeaderInfo = new ExpandoObject();
+            dynamic heatElectricHeaterInfo = new ExpandoObject();
             int intSelectedValue = 0;
 
             if (intHeatingCompID == ClsID.intCompElecHeaterID || intReheatCompID == ClsID.intCompElecHeaterID)
             {
                 //divElecHeaterVoltage.Visible = true;
-                heatElectricHeaderInfo.divHeatElecHeaterInstallationVisible = true;
+                heatElectricHeaterInfo.divHeatElecHeaterInstallationVisible = true;
 
 
                 //if (!bolPreheatRequired)
@@ -2723,41 +2628,41 @@ namespace Oxyzen8SelectorServer.Models
                 dtElecHeaterInstallation = dtElecHeaterInstallation.Select("id <> 1").CopyToDataTable();
                 intSelectedValue = intHeatElecHeaterInstallationID;
 
-                heatElectricHeaderInfo.ddlHeatElecHeaterInstallation = dtElecHeaterInstallation;
+                heatElectricHeaterInfo.ddlHeatElecHeaterInstallation = dtElecHeaterInstallation;
 
                 if (intSelectedValue == ClsID.intElecHeaterInstallDuctMountedID && intHeatingCompID != ClsID.intCompElecHeaterID && intReheatCompID != ClsID.intCompElecHeaterID)
                 {
-                    heatElectricHeaderInfo.ddlHeatElecHeaterInstallationValue = intSelectedValue > 1 ? intSelectedValue : ClsID.intElecHeaterInstallInCasingID;
-                    intHeatElecHeaterInstallationID = heatElectricHeaderInfo.ddlHeatElecHeaterInstallationValue;
+                    heatElectricHeaterInfo.ddlHeatElecHeaterInstallationValue = intSelectedValue > 1 ? intSelectedValue : ClsID.intElecHeaterInstallInCasingID;
+                    intHeatElecHeaterInstallationID = heatElectricHeaterInfo.ddlHeatElecHeaterInstallationValue;
                 }
                 else
                 {
-                    heatElectricHeaderInfo.ddlHeatElecHeaterInstallationValue = intSelectedValue == 1 ? ClsID.intElecHeaterInstallInCasingID : intSelectedValue;
-                    intHeatElecHeaterInstallationID = heatElectricHeaderInfo.ddlHeatElecHeaterInstallationValue;
+                    heatElectricHeaterInfo.ddlHeatElecHeaterInstallationValue = intSelectedValue == 1 ? ClsID.intElecHeaterInstallInCasingID : intSelectedValue;
+                    intHeatElecHeaterInstallationID = heatElectricHeaterInfo.ddlHeatElecHeaterInstallationValue;
                 }
             }
             else
             {
-                heatElectricHeaderInfo.divHeatElecHeaterInstallationVisible = false;
+                heatElectricHeaterInfo.divHeatElecHeaterInstallationVisible = false;
 
                 DataTable dtElecHeaterInstallation = ClsDB.get_dtLiveEnabled(ClsDBT.strSelElectricHeaterInstallation, intHeatElecHeaterInstallationID).Copy();
                 dtElecHeaterInstallation = dtElecHeaterInstallation.Select("id = 1").CopyToDataTable();
 
-                heatElectricHeaderInfo.ddlHeatElecHeaterInstallation = dtElecHeaterInstallation;
+                heatElectricHeaterInfo.ddlHeatElecHeaterInstallation = dtElecHeaterInstallation;
 
                 if (dtElecHeaterInstallation.Rows.Count > 0)
                 {
-                    heatElectricHeaderInfo.ddlHeatElecHeaterInstallationValue = "1";
+                    heatElectricHeaterInfo.ddlHeatElecHeaterInstallationValue = "1";
                 }
             }
 
-            return heatElectricHeaderInfo;
+            return heatElectricHeaterInfo;
         }
 
 
         private static dynamic getPreheatElectricHeater()
         {
-            dynamic preheatElectricHeader = new ExpandoObject();
+            dynamic preheatElectricHeater = new ExpandoObject();
             int intSelectedValue = 0;
 
             if (intPreheatCompID == ClsID.intCompElecHeaterID || intPreheatCompID == ClsID.intCompAutoID)
@@ -2766,26 +2671,26 @@ namespace Oxyzen8SelectorServer.Models
                 //{
                 DataTable dtPreheatElecHeaterInstallation = ClsDB.get_dtLiveEnabled(ClsDBT.strSelElectricHeaterInstallation, intPreheatElecHeaterInstallationID).Copy();
                 dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id <> 1").CopyToDataTable();
-                preheatElectricHeader.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
+                preheatElectricHeater.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
 
                 //Outdoor Units - Only Casing Installation (Only Nova Unit can be Indoor or Outdoor, For Ventum and VentumLite Indoor unit is by default and Outdoor not available)
                 if (intLocationID == ClsID.intLocationOutdoorID)
                 {
                     dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id = " + ClsID.intElecHeaterInstallInCasingID).CopyToDataTable();
-                    preheatElectricHeader.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
+                    preheatElectricHeater.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
                 }
                 else //Indoor Units
                 {
 
                     if (intProductTypeID == ClsID.intProdTypeNovaID || intProductTypeID == ClsID.intProdTypeVentumID)
                     {
-                        preheatElectricHeader.ddlPreheatElecHeaterInstallationValue = intSelectedValue > 1 ? intSelectedValue.ToString() : ClsID.intElecHeaterInstallInCasingID.ToString();
+                        preheatElectricHeater.ddlPreheatElecHeaterInstallationValue = intSelectedValue > 1 ? intSelectedValue.ToString() : ClsID.intElecHeaterInstallInCasingID.ToString();
                     }
                     else if (intProductTypeID == ClsID.intProdTypeVentumLiteID)
                     {
                         //Duct Mount is the only option
                         dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id = " + ClsID.intElecHeaterInstallDuctMountedID).CopyToDataTable();
-                        preheatElectricHeader.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
+                        preheatElectricHeater.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
                     }
                 }
             }
@@ -2795,16 +2700,16 @@ namespace Oxyzen8SelectorServer.Models
                 case ClsID.intCompNA_ID:
                 case ClsID.intCompHWC_ID:
                 case ClsID.intCompAutoID:
-                    preheatElectricHeader.divPreheatElecHeaterInstallationVisible = false;
+                    preheatElectricHeater.divPreheatElecHeaterInstallationVisible = false;
                     break;
                 case ClsID.intCompElecHeaterID:
-                    preheatElectricHeader.divPreheatElecHeaterInstallationVisible = true;
+                    preheatElectricHeater.divPreheatElecHeaterInstallationVisible = true;
                     break;
                 default:
                     break;
             }
 
-            return preheatElectricHeader;
+            return preheatElectricHeater;
         }
 
         public static dynamic getElectricHeaterVoltage()
