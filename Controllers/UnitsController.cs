@@ -33,9 +33,10 @@ namespace Oxyzen8SelectorServer.Controllers
         [HttpPost]
         [ActionName("Save")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public bool SaveUnitInfo([FromBody]dynamic unitInfo)
+        public dynamic SaveUnitInfo([FromBody]dynamic unitInfo)
         {
-            return UnitsModel.SaveUnitInfo(unitInfo);
+            UnitsModel.SaveUnitInfo(unitInfo);
+            return GetUnitInfo(unitInfo);
         }
 
         [HttpPost]
@@ -62,104 +63,6 @@ namespace Oxyzen8SelectorServer.Controllers
             }
 
         }
-
-        //[HttpPost]
-        //[ActionName("GetUnitInfo")]
-        //[EnableCors(origins: "*", headers: "*", methods: "*")]
-        //public dynamic GetUnitInfo([FromBody] ClsJobUnitId requestInfo)
-        //{
-        //    return UnitsModel.GetUnitInfo(requestInfo.jobId, requestInfo.unitId);
-        //}
-
-        //[HttpPost]
-        //[ActionName("GetInitUnitInfo")]
-        //[EnableCors(origins: "*", headers: "*", methods: "*")]
-        //public dynamic GetInitUnitInfo([FromBody]dynamic request)
-        //{
-        //    int unitId = Convert.ToInt32(request.unitId);
-        //    int jobId = Convert.ToInt32(request.jobId);
-        //    dynamic returnInfo = new ExpandoObject();
-
-        //    returnInfo.unitSourceInfo = UnitsModel.GetInitUnitInfo(jobId, Convert.ToInt32(request.unitModelId), Convert.ToInt32(request.productTypeId), Convert.ToInt32(request.UAL));
-        //    if (unitId != -1) {
-        //        returnInfo.unitInfo = UnitsModel.GetUnitInfo(jobId, unitId);
-        //    }
-
-        //    return returnInfo;
-        //}
-
-        [HttpPost]
-        [ActionName("preheatCompChanged")]
-        [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public dynamic preheatCompChanged([FromBody]dynamic fieldInfo)
-        {
-            dynamic returnInfo = new ExpandoObject();
-
-            returnInfo.preheatElecHeater = UnitsModel.GetPreheatElectricHeater(fieldInfo);
-            returnInfo.elecHeaterVoltage = UnitsModel.getElectricHeaterVoltage();
-            returnInfo.customInputs = UnitsModel.GetCustomInputs(fieldInfo);
-
-            if (Convert.ToInt32(fieldInfo) == ClsID.intUnitTypeAHU_ID)
-            {
-                returnInfo.preheatSetPoint = UnitsModel.GetPreheatSetpoint(fieldInfo);
-                returnInfo.setPoints = UnitsModel.GetSetpoints(fieldInfo);
-
-            }
-            return returnInfo;
-        }
-
-        [HttpPost]
-        [ActionName("coolingCompChanged")]
-        [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public dynamic coolignCompChanged([FromBody]dynamic fieldInfo)
-        {
-            dynamic returnInfo = new ExpandoObject();
-
-            returnInfo.preheatElecHeater = UnitsModel.GetPreheatElectricHeater(fieldInfo);
-            returnInfo.elecHeaterVoltage = UnitsModel.getElectricHeaterVoltage();
-            returnInfo.customInputs = UnitsModel.GetCustomInputs(fieldInfo);
-
-            if (Convert.ToInt32(fieldInfo) == ClsID.intUnitTypeAHU_ID)
-            {
-                returnInfo.preheatSetPoint = UnitsModel.GetPreheatSetpoint(fieldInfo);
-                returnInfo.setPoints = UnitsModel.GetSetpoints(fieldInfo);
-
-            }
-            return returnInfo;
-        }
-
-        //[HttpPost]
-        //[ActionName("AirFlowDataChanged")]
-        //[EnableCors(origins: "*", headers: "*", methods: "*")]
-        //public dynamic AirFlowDataChanged([FromBody]dynamic info)
-        //{
-
-        //    switch (info.action.ToString())
-        //    {
-        //        case "SummerSupplyAirCFM_Changed":
-        //            {
-        //                return UnitsModel.txbSummerSupplyAirCFM_Changed(info);
-        //            }
-        //        case "SummerReturnAirCFM_Changed":
-        //            {
-        //                return UnitsModel.txbSummerReturnAirCFM_Changed(info);
-        //            }
-        //        case "SupplyAirESP":
-        //            {
-        //                return UnitsModel.txbSupplyAirESP_Changed(info);
-        //            }
-        //        case "ExhaustAirESP":
-        //            {
-        //                return UnitsModel.txbExhaustAirESP_Changed(info);
-        //            }
-        //        default:
-        //            {
-        //                break;
-        //            }
-        //    }
-
-        //    return new DataTable();
-        //}
 
         [HttpPost]
         [ActionName("GetUnitInfo")]
@@ -217,6 +120,161 @@ namespace Oxyzen8SelectorServer.Controllers
         public dynamic ddlLocationChanged([FromBody]dynamic info)
         {
             return UnitsModel.ddlLocationChanged(info);
+        }
+
+        [HttpPost]
+        [ActionName("orientationchanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic ddlOrientationChanged([FromBody]dynamic info)
+        {
+            return UnitsModel.ddlOrientationChanged(info);
+        }
+
+        [HttpPost]
+        [ActionName("SummerSupplyAirCFMChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic txbSummerSupplyAirCFMChanged([FromBody]dynamic info)
+        {
+            UnitsModel.setAllData(info);
+            return UnitsModel.txbSummerSupplyAirCFM_Changed(info.txbSummerSupplyAirCFM.ToString(), Convert.ToInt32(info.ckbBypass));
+        }
+
+        [HttpPost]
+        [ActionName("SummerReturnAirCFMChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic txbSummerReturnAirCFMChanged([FromBody]dynamic info)
+        {
+            UnitsModel.setAllData(info);
+            return UnitsModel.txbSummerReturnAirCFM_Changed(info.txbSummerReturnAirCFM.ToString(), info.txbSummerSupplyAirCFM.ToString(), Convert.ToInt32(info.ckbBypass));
+        }
+
+        [HttpPost]
+        [ActionName("SupplyAirESPChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic txbSupplyAirESPChanged([FromBody]dynamic info)
+        {
+            UnitsModel.setAllData(info);
+            return UnitsModel.txbSupplyAirESP_Changed(info.txbSupplyAirESP.ToString());
+        }
+
+        [HttpPost]
+        [ActionName("ExhaustAirESPChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic txbExhaustAirESPChanged([FromBody]dynamic info)
+        {
+            UnitsModel.setAllData(info);
+            return UnitsModel.txbExhaustAirESP_Changed(info.txbExhaustAirESP.ToString());
+        }
+
+        [HttpPost]
+        [ActionName("UnitVoltageChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic ddlUnitVoltageChanged([FromBody]dynamic info)
+        {
+            UnitsModel.setAllData(info);
+            return UnitsModel.getElectricHeaterVoltage();
+        }
+
+        [HttpPost]
+        [ActionName("UnitModelChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic ddlUnitModelChanged([FromBody]dynamic info)
+        {
+            UnitsModel.setAllData(info);
+            return UnitsModel.ddlUnitModelIndexChanged(info.txbSummerSupplyAirCFM.ToString());
+        }
+
+        [HttpPost]
+        [ActionName("SummerOutdoorAirWBChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public float txbSummerOutdoorAirWBChanged([FromBody]dynamic info)
+        {
+            string txbSummerOutdoorAirDB = info.txbSummerOutdoorAirDB.ToString();
+            string txbSummerOutdoorAirWB = info.txbSummerOutdoorAirWB.ToString();
+            string txbAltitude = info.txbAltitude.ToString();
+            float result = UnitsModel.txbSummerOutdoorAirWB_TextChanged(txbSummerOutdoorAirDB, txbSummerOutdoorAirWB, txbAltitude);
+            return result;
+        }
+
+        [HttpPost]
+        [ActionName("SummerOutdoorAirRHChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public float txbSummerOutdoorAirRHChanged([FromBody]dynamic info)
+        {
+            return UnitsModel.txbSummerOutdoorAirRH_TextChanged(info);
+        }
+
+        [HttpPost]
+        [ActionName("WinterOutdoorAirWBChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public float txbWinterOutdoorAirWBChanged([FromBody]dynamic info)
+        {
+            return UnitsModel.txbWinterOutdoorAirWB_TextChanged(info);
+        }
+
+        [HttpPost]
+        [ActionName("WinterOutdoorAirRHChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public float txbWinterOutdoorAirRHChanged([FromBody]dynamic info)
+        {
+            return UnitsModel.txbWinterOutdoorAirRH_TextChanged(info);
+        }
+
+        [HttpPost]
+        [ActionName("SummerReturnAirWBChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public float txbSummerReturnAirWBChanged([FromBody]dynamic info)
+        {
+            return UnitsModel.txbSummerReturnAirWB_TextChanged(info);
+        }
+
+
+        [HttpPost]
+        [ActionName("SummerReturnAirRHChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public float txbSummerReturnAirRHChanged([FromBody]dynamic info)
+        {
+            return UnitsModel.txbSummerReturnAirRH_TextChanged(info);
+        }
+
+        [HttpPost]
+        [ActionName("WinterReturnAirWBChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public float txbWinterReturnAirWBChanged([FromBody]dynamic info)
+        {
+            return UnitsModel.txbWinterReturnAirWB_TextChanged(info);
+        }
+
+        [HttpPost]
+        [ActionName("WinterReturnAirRHChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public float txbWinterReturnAirRHChanged([FromBody]dynamic info)
+        {
+            return UnitsModel.txbWinterReturnAirRH_TextChanged(info);
+        }
+
+        [HttpPost]
+        [ActionName("ddlPreheatCompChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic ddlPreheatCompChanged([FromBody]dynamic info)
+        {
+            dynamic returnInfo = new ExpandoObject();
+            UnitsModel.setAllData(info);
+            returnInfo.preheatElectricHeater = UnitsModel.getPreheatElectricHeater();
+            returnInfo.preheatInfomation = UnitsModel.getPreheatRequired();
+            returnInfo.divHeatingFluidDesignConditionsVisible = UnitsModel.getHeatingFluidDesignConditions();
+            returnInfo.valveAndActuator = UnitsModel.getValveAndActuator();
+
+            if (info.ddlUnitType == ClsID.intUnitTypeAHU_ID)
+            {
+                returnInfo.divPreheatSetpointVisible = UnitsModel.getPreheatSetpoint();
+                returnInfo.divSetpointsVisible = UnitsModel.getSetpoints();
+            }
+
+            returnInfo.customInputs = UnitsModel.getCustomInputs();  //Internal users only
+            returnInfo.divPreheatCoilHandingVisible = info.ddlPreheatComp > 1 ? true : false;
+
+            return returnInfo;
         }
 
         // GET api/<controller>

@@ -636,42 +636,7 @@ namespace Oxyzen8SelectorServer.Models
             return unitInfo;
         }
 
-        public static dynamic ddlLocationChanged(dynamic unitInfo)
-        {
-            dynamic returnInfo = new ExpandoObject();
-            setAllData(unitInfo);
-
-            if (unitInfo.ddlLocation == ClsID.intLocationOutdoorID)
-            {
-                returnInfo.ddlDamperAndActuatorValue = ClsID.intDamperActuatorNoCasingID;
-                returnInfo.divDamperAndActuatorVisible = false;
-            }
-            else
-            {
-                returnInfo.divDamperAndActuatorVisible = true;
-            }
-
-            returnInfo.downshot = getDownshot();
-            returnInfo.orientation = getOrientation(unitInfo.txbSummerSupplyAirCFM.ToString());
-            dynamic modelAndBypassInfo = getModel(unitInfo.txbSummerSupplyAirCFM.ToString(), Convert.ToInt32(unitInfo.ckbBypass));
-
-            returnInfo.ddlUnitModel = modelAndBypassInfo.ddlUnitModel;
-            returnInfo.ddlUnitModelValue = returnInfo.ddlUnitModel.Rows[0]["id"];
-            intUnitModelID = returnInfo.ddlUnitModelValue;
-            returnInfo.ckbBypass = modelAndBypassInfo.ckbBypass;
-            returnInfo.others = modelAndBypassInfo.others;
-            ckbBypassChecked = modelAndBypassInfo.ckbBypass;
-
-            returnInfo.txbSupplyAirESP = txbSupplyAirESP_Changed(unitInfo.txbSupplyAirESP.ToString());
-            returnInfo.txbExhaustAirESP = txbExhaustAirESP_Changed(unitInfo.txbExhaustAirESP.ToString());
-            returnInfo.electricHeaterVoltage = getElectricHeaterVoltage();
-            returnInfo.preheatElectricHeater = getPreheatElectricHeater();
-            //returnInfo.supplyAirOpening = getSupplyAirOpening();
-
-            return returnInfo;
-        }
-
-        private static void setAllData(dynamic unitInfo)
+        public static void setAllData(dynamic unitInfo)
         {
             intUAL = Convert.ToInt32(unitInfo.intUAL);
             intUserID = Convert.ToInt32(unitInfo.intUserID);
@@ -760,18 +725,10 @@ namespace Oxyzen8SelectorServer.Models
 
             controlInfo.mainControlData = txbSummerSupplyAirCFM_Changed(txbSummerSupplyAirCFM, ckbBypass);
 
-            dynamic preheatRequiredParameter = new ExpandoObject();
-            preheatRequiredParameter.ddlUnitTypeID = intUnitTypeID;
-            preheatRequiredParameter.ddlCoolingCompID = intCoolingCompID;
-            preheatRequiredParameter.ddlReheatCompID = intReheatCompID;
-            preheatRequiredParameter.ddlPreheatCompID = intPreheatCompID;
-            preheatRequiredParameter.ddlHeatingCompID = intHeatingCompID;
-            preheatRequiredParameter.ddlUnitModelID = intUnitModelID;
-            preheatRequiredParameter.ddlUnitVoltageID = intUnitVoltageID;
-            preheatRequiredParameter.ckbHeatPump = 0;
-            preheatRequiredParameter.ckbVoltageSPP = 0;
+            ckbHeatPumpChecked = 0;
+            ckbVoltageSPPChecked = 0;
 
-            controlInfo.preheatInfomation = setPreheatRequired(preheatRequiredParameter);
+            controlInfo.preheatInfomation = getPreheatRequired();
 
 
             switch (intProductTypeID)
@@ -831,13 +788,8 @@ namespace Oxyzen8SelectorServer.Models
             return controlInfo;
         }
 
-        public static dynamic setPreheatRequired(dynamic info)
+        public static dynamic getPreheatRequired()
         {
-            int ddlUnitTypeID = Convert.ToInt32(info.ddlUnitTypeID);
-            int ddlCoolingCompID = Convert.ToInt32(info.ddlCoolingCompID);
-            int ckbHeatPump = Convert.ToInt32(info.ckbHeatPump);
-            int ddlReheatCompID = Convert.ToInt32(info.ddlReheatCompID);
-
             dynamic returnInfo = new ExpandoObject();
             returnInfo.lblPreheatWarningVisible = false;
             returnInfo.lblPreheatWarningText = "";
@@ -849,7 +801,7 @@ namespace Oxyzen8SelectorServer.Models
 
             if (dtJob.Rows.Count > 0)
             {
-                if (ddlUnitTypeID == ClsID.intUnitTypeERV_ID || ddlUnitTypeID == ClsID.intUnitTypeHRV_ID)
+                if (intUnitTypeID == ClsID.intUnitTypeERV_ID || intUnitTypeID == ClsID.intUnitTypeHRV_ID)
                 {
                     //if (ddlPreheatComp != null)
                     //{
@@ -860,15 +812,15 @@ namespace Oxyzen8SelectorServer.Models
                     }
 
                 }
-                else if (ddlUnitTypeID == ClsID.intUnitTypeAHU_ID)
+                else if (intUnitTypeID == ClsID.intUnitTypeAHU_ID)
                 {
-                    if (ddlCoolingCompID == ClsID.intCompDX_ID && ckbHeatPump == 1 && ddlReheatCompID == ClsID.intCompHGRH_ID && Convert.ToDouble(dtJob.Rows[0]["winter_outdoor_air_db"]) < ClsGV.dblTERRA_PREHEAT_DX_HEATPUMP_HGRH_33DEG)
+                    if (intCoolingCompID == ClsID.intCompDX_ID && ckbHeatPumpChecked == 1 && intReheatCompID == ClsID.intCompHGRH_ID && Convert.ToDouble(dtJob.Rows[0]["winter_outdoor_air_db"]) < ClsGV.dblTERRA_PREHEAT_DX_HEATPUMP_HGRH_33DEG)
                     {
                         bolPreheatRequired = true;
                         strPreheatRequiredWarning = "Preheat required. Winter OA DB is below " + ClsGV.dblTERRA_PREHEAT_DX_HEATPUMP_HGRH_33DEG.ToString() + " degF";
                         dblPreheatSetPoint = ClsGV.dblTERRA_PREHEAT_DX_HEATPUMP_HGRH_33DEG;
                     }
-                    else if (ddlCoolingCompID == ClsID.intCompDX_ID && ckbHeatPump == 1 && Convert.ToDouble(dtJob.Rows[0]["winter_outdoor_air_db"]) < ClsGV.dblTERRA_PREHEAT_DX_HEATPUMP_17DEG)
+                    else if (intCoolingCompID == ClsID.intCompDX_ID && ckbHeatPumpChecked == 1 && Convert.ToDouble(dtJob.Rows[0]["winter_outdoor_air_db"]) < ClsGV.dblTERRA_PREHEAT_DX_HEATPUMP_17DEG)
                     {
                         bolPreheatRequired = true;
                         strPreheatRequiredWarning = "Preheat required. Winter OA DB is below " + ClsGV.dblTERRA_PREHEAT_DX_HEATPUMP_17DEG + " degF";
@@ -889,7 +841,7 @@ namespace Oxyzen8SelectorServer.Models
                     returnInfo.txbPreheatSetpointDBText = dblPreheatSetPoint;
                     returnInfo.txbPreheatSetpointDBEnabled = false;
 
-                    returnInfo.preheatElectricHeater = getPreheatElectricHeater(info);
+                    returnInfo.preheatElectricHeater = getPreheatElectricHeater();
                 }
                 else
                 {
@@ -899,20 +851,18 @@ namespace Oxyzen8SelectorServer.Models
             return returnInfo;
         }
 
-        public static dynamic getPreheatElectricHeater(dynamic info)
+        public static dynamic getPreheatElectricHeater()
         {
-            int ddlPreheatCompID = Convert.ToInt32(info.ddlPreheatCompID);
-            int ddlLocationID = Convert.ToInt32(info.ddlPreheatCompID);
             int intSelectedValue = 0;
             dynamic returnInfo = new ExpandoObject();
 
-            if (ddlPreheatCompID == ClsID.intCompElecHeaterID || ddlPreheatCompID == ClsID.intCompAutoID)
+            if (intPreheatCompID == ClsID.intCompElecHeaterID || intPreheatCompID == ClsID.intCompAutoID)
             {
                 DataTable dtPreheatElecHeaterInstallation = ClsDB.get_dtLiveEnabled(ClsDBT.strSelElectricHeaterInstallation, intPreheatElecHeaterInstallationID).Copy();
                 dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id <> 1").CopyToDataTable();
                 returnInfo.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
 
-                if (ddlLocationID == ClsID.intLocationOutdoorID)
+                if (intLocationID == ClsID.intLocationOutdoorID)
                 {
                     dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id = " + ClsID.intElecHeaterInstallInCasingID).CopyToDataTable();
                     returnInfo.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
@@ -933,7 +883,7 @@ namespace Oxyzen8SelectorServer.Models
                 }
             }
 
-            switch (ddlPreheatCompID)
+            switch (intPreheatCompID)
             {
                 case ClsID.intCompNA_ID:
                 case ClsID.intCompHWC_ID:
@@ -952,336 +902,6 @@ namespace Oxyzen8SelectorServer.Models
             return returnInfo;
         }
 
-        private static dynamic GetElecHeaterVoltage(dynamic fieldInfo)
-        {
-            dynamic elecHeaderVoltageInfo = new ExpandoObject();
-            DataTable dtElecHeaterVoltage = new DataTable();
-            int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
-            int intUnitModelId = Convert.ToInt32(fieldInfo.productTypeId);
-            int preheatComp = Convert.ToInt32(fieldInfo.preheatComp);
-            int heatingComp = Convert.ToInt32(fieldInfo.heatingComp);
-            int reheatComp = Convert.ToInt32(fieldInfo.reheatComp);
-            int intElecHeaterVoltageID = Convert.ToInt32(fieldInfo.elecHeaterVoltageID);
-
-            if (preheatComp == ClsID.intCompElecHeaterID || heatingComp == ClsID.intCompElecHeaterID || reheatComp == ClsID.intCompElecHeaterID)
-            {
-                elecHeaderVoltageInfo.Visible = true;
-
-                bool bol208V_1Ph = false;
-
-
-                if (intProductTypeID == ClsID.intProdTypeNovaID)
-                {
-                    if (intUnitModelId == ClsID.intNovaUnitModelID_A16IN || intUnitModelId == ClsID.intNovaUnitModelID_B20IN ||
-                    intUnitModelId == ClsID.intNovaUnitModelID_A18OU || intUnitModelId == ClsID.intNovaUnitModelID_B22OU)
-                    {
-                        bol208V_1Ph = true;
-                        dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_2", 1, intElecHeaterVoltageID).Copy();
-                    }
-                    else
-                    {
-                        dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater", 1, intElecHeaterVoltageID).Copy();
-                    }
-                }
-                else if (intProductTypeID == ClsID.intProdTypeVentumID)
-                {
-                    if (intUnitModelId == ClsID.intVentumUnitModelID_H05IN_ERV || intUnitModelId == ClsID.intVentumUnitModelID_H10IN_ERV ||
-                        intUnitModelId == ClsID.intVentumUnitModelID_H05IN_HRV || intUnitModelId == ClsID.intVentumUnitModelID_H10IN_HRV)
-                    {
-                        bol208V_1Ph = true;
-                        dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_2", 1, intElecHeaterVoltageID).Copy();
-                    }
-                    else
-                    {
-                        dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater", 1, intElecHeaterVoltageID).Copy();
-                    }
-                }
-                else if (intProductTypeID == ClsID.intProdTypeVentumLiteID)
-                {
-                    bol208V_1Ph = true;
-                    dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_3", 1, intElecHeaterVoltageID).Copy();
-                }
-
-                if (dtElecHeaterVoltage.Rows.Count > 0)
-                {
-                    elecHeaderVoltageInfo.data = dtElecHeaterVoltage;
-
-                    if (bol208V_1Ph)
-                    {
-                        elecHeaderVoltageInfo.id = ClsID.intElectricVoltage_208V_1Ph_60HzID;
-                    }
-                    else
-                    {
-                        elecHeaderVoltageInfo.id = ClsID.intElectricVoltage_208V_3Ph_60HzID;
-                    }
-                }
-            }
-            else
-            {
-                elecHeaderVoltageInfo.visible = false;
-            }
-
-            return elecHeaderVoltageInfo;
-        }
-
-        public static dynamic GetPreheatElectricHeater(dynamic fieldInfo)
-        {
-            dynamic preheatElecticalHeaderInstallation = new ExpandoObject();
-            DataTable dtElecHeaterVoltage = new DataTable();
-            int intProductTypeId = Convert.ToInt32(fieldInfo.productTypeId);
-            int intUnitModelId = Convert.ToInt32(fieldInfo.unitModel);
-            int intLocationId = Convert.ToInt32(fieldInfo.location);
-            int preheatComp = Convert.ToInt32(fieldInfo.preheatComp);
-            int heatingComp = Convert.ToInt32(fieldInfo.heatingComp);
-            int reheatComp = Convert.ToInt32(fieldInfo.reheatComp);
-            int intElecHeaterVoltageID = Convert.ToInt32(fieldInfo.elecHeaterVoltageID);
-            int intPreheatElecHeaterInstallationID = Convert.ToInt32(fieldInfo.elecHeaderInstallation);
-
-            int intSelectedValue = 0;
-
-            if (preheatComp == ClsID.intCompElecHeaterID || preheatComp == ClsID.intCompAutoID)
-            {
-                //if (!bolPreheatRequired)
-                //{
-                DataTable dtPreheatElecHeaterInstallation = ClsDB.get_dtLiveEnabled(ClsDBT.strSelElectricHeaterInstallation, intPreheatElecHeaterInstallationID).Copy();
-                dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id <> 1").CopyToDataTable();
-                preheatElecticalHeaderInstallation.data = dtPreheatElecHeaterInstallation;
-
-                //Outdoor Units - Only Casing Installation (Only Nova Unit can be Indoor or Outdoor, For Ventum and VentumLite Indoor unit is by default and Outdoor not available)
-                if (intUnitModelId == ClsID.intLocationOutdoorID)
-                {
-                    dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id = " + ClsID.intElecHeaterInstallInCasingID).CopyToDataTable();
-                    preheatElecticalHeaderInstallation.data = dtPreheatElecHeaterInstallation;
-                }
-                else //Indoor Units
-                {
-
-                    if (intProductTypeId == ClsID.intProdTypeNovaID || intProductTypeId == ClsID.intProdTypeVentumID)
-                    {
-                        //Casing Installation should be selected by default. Duct Mount option also available
-                        //if (ddlPreheatElecHeaterInstallation.Items.FindByValue(intSelectedValue.ToString()) != null)
-                        //{
-                        preheatElecticalHeaderInstallation.SelectedValue = intSelectedValue > 1 ? intSelectedValue.ToString() : ClsID.intElecHeaterInstallInCasingID.ToString();
-                        //}
-                    }
-                    else if (intProductTypeId == ClsID.intProdTypeVentumLiteID)
-                    {
-                        //Duct Mount is the only option
-                        dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id = " + ClsID.intElecHeaterInstallDuctMountedID).CopyToDataTable();
-                        preheatElecticalHeaderInstallation.data = dtPreheatElecHeaterInstallation;
-                    }
-                }
-            }
-
-            switch (preheatComp)
-            {
-                case ClsID.intCompNA_ID:
-                case ClsID.intCompHWC_ID:
-                case ClsID.intCompAutoID:
-                    preheatElecticalHeaderInstallation.Visible = false;
-                    break;
-                case ClsID.intCompElecHeaterID:
-                    preheatElecticalHeaderInstallation.Visible = true;
-                    break;
-                default:
-                    break;
-            }
-
-            return preheatElecticalHeaderInstallation;
-        }
-
-        //public static dynamic GetElectricHeaterVoltage(dynamic fieldInfo)
-        //{
-        //    dynamic electricHeaderVoltageInfo = new ExpandoObject();
-        //    DataTable dtElecHeaterVoltage = new DataTable();
-        //    int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
-        //    int intUnitModelId = Convert.ToInt32(fieldInfo.unitModel);
-        //    int intLocationId = Convert.ToInt32(fieldInfo.location);
-        //    int preheatComp = Convert.ToInt32(fieldInfo.preheatComp);
-        //    int heatingComp = Convert.ToInt32(fieldInfo.heatingComp);
-        //    int reheatComp = Convert.ToInt32(fieldInfo.reheatComp);
-        //    int unitVoltage = Convert.ToInt32(fieldInfo.unitVoltage);
-        //    int intElecHeaterVoltageID = Convert.ToInt32(fieldInfo.elecHeaterVoltageID);
-        //    int intPreheatElecHeaterInstallationID = Convert.ToInt32(fieldInfo.elecHeaderInstallation);
-
-
-        //    if (preheatComp == ClsID.intCompElecHeaterID ||
-        //        heatingComp == ClsID.intCompElecHeaterID ||
-        //        reheatComp == ClsID.intCompElecHeaterID)
-        //    {
-        //        electricHeaderVoltageInfo.Visible = true;
-
-        //        bool bol208V_1Ph = false;
-
-
-        //        if (intProductTypeID == ClsID.intProdTypeNovaID)
-        //        {
-        //            if (intUnitModelId == ClsID.intNovaUnitModelID_A16IN || intUnitModelId == ClsID.intNovaUnitModelID_B20IN ||
-        //            intUnitModelId == ClsID.intNovaUnitModelID_A18OU || intUnitModelId == ClsID.intNovaUnitModelID_B22OU)
-        //            {
-        //                bol208V_1Ph = true;
-        //                dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_2", 1, intElecHeaterVoltageID).Copy();
-        //            }
-        //            else
-        //            {
-        //                dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater", 1, intElecHeaterVoltageID).Copy();
-        //            }
-        //        }
-        //        else if (intProductTypeID == ClsID.intProdTypeVentumID)
-        //        {
-        //            if (intUnitModelId == ClsID.intVentumUnitModelID_H05IN_ERV || intUnitModelId == ClsID.intVentumUnitModelID_H10IN_ERV ||
-        //                intUnitModelId == ClsID.intVentumUnitModelID_H05IN_HRV || intUnitModelId == ClsID.intVentumUnitModelID_H10IN_HRV)
-        //            {
-        //                bol208V_1Ph = true;
-        //                dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_2", 1, intElecHeaterVoltageID).Copy();
-        //            }
-        //            else
-        //            {
-        //                dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater", 1, intElecHeaterVoltageID).Copy();
-        //            }
-        //        }
-        //        else if (intProductTypeID == ClsID.intProdTypeVentumLiteID)
-        //        {
-        //            bol208V_1Ph = true;
-        //            dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_3", 1, intElecHeaterVoltageID).Copy();
-        //        }
-
-
-        //        if (dtElecHeaterVoltage.Rows.Count > 0)
-        //        {
-        //            electricHeaderVoltageInfo.data = dtElecHeaterVoltage;
-
-        //            if (bol208V_1Ph)
-        //            {
-        //                electricHeaderVoltageInfo.selectedValue = ClsID.intElectricVoltage_208V_1Ph_60HzID;
-        //            }
-        //            else
-        //            {
-        //                electricHeaderVoltageInfo.selectedValue = ClsID.intElectricVoltage_208V_3Ph_60HzID;
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (intProductTypeID == ClsID.intProdTypeVentumLiteID)
-        //        {
-        //            dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater_3", 1, intElecHeaterVoltageID).Copy();
-        //            electricHeaderVoltageInfo.data = dtElecHeaterVoltage;
-        //            electricHeaderVoltageInfo.selectedValue = unitVoltage;
-        //            //ClsWFC.get_ddlLockItem(ddlElecHeaterVoltage, ClsID.intElectricVoltage_208V_1Ph_60HzID);
-        //            electricHeaderVoltageInfo.Enabled = false;
-        //        }
-        //        else
-        //        {
-        //            //ddlElecHeaterVoltage.Items.Insert(0, new ListItem("NA", "0"));
-        //            //ddlElecHeaterVoltage.SelectedIndex = 0;
-        //            dtElecHeaterVoltage = ClsDB.get_dtLive(ClsDBT.strSelElectricalVoltage, "electric_heater", 1, intElecHeaterVoltageID).Copy();
-        //            electricHeaderVoltageInfo.data = dtElecHeaterVoltage;
-        //            electricHeaderVoltageInfo.selectedValue = ClsID.intElectricVoltage_208V_3Ph_60HzID;
-        //        }
-
-        //        electricHeaderVoltageInfo.Visible = false;
-        //    }
-
-        //    return electricHeaderVoltageInfo;
-        //}
-
-        public static dynamic GetCustomInputs(dynamic fieldInfo)
-        {
-            int preheatComp = Convert.ToInt32(fieldInfo.preheatComp);
-            int coolingComp = Convert.ToInt32(fieldInfo.coolingComp);
-            int heatingComp = Convert.ToInt32(fieldInfo.heatingComp);
-            int reheatComp = Convert.ToInt32(fieldInfo.reheatComp);
-            int unitType = Convert.ToInt32(fieldInfo.unitType);
-            dynamic customInputs = new ExpandoObject();
-            if (preheatComp == ClsID.intCompHWC_ID)
-            {
-                customInputs.preheatHWC_UseFlowRateVisible = true;
-                customInputs.preheatHWC_FlowRateVisible = true;
-
-                if (unitType == ClsID.intUnitTypeAHU_ID)
-                {
-                    customInputs.preheatHWC_UseCapVisible = true;
-                    customInputs.preheatHWC_CapVisible = true;
-                }
-                else
-                {
-                    customInputs.preheatHWC_UseCapVisible = false;
-                    customInputs.preheatHWC_CapVisible = false;
-                }
-            }
-            else
-            {
-                customInputs.preheatHWC_UseCap.Visible = false;
-                customInputs.preheatHWC_CapVisible = false;
-                customInputs.preheatHWC_UseFlowRateVisible = false;
-                customInputs.preheatHWC_FlowRateVisible = false;
-            }
-
-
-            if (coolingComp == ClsID.intCompCWC_ID)
-            {
-                customInputs.coolingCWC_UseCapVisible = true;
-                customInputs.coolingCWC_CapVisible = true;
-                customInputs.coolingCWC_UseFlowRateVisible = true;
-                customInputs.coolingCWC_FlowRateVisible = true;
-            }
-            else
-            {
-                customInputs.coolingCWC_UseCapVisible = false;
-                customInputs.coolingCWC_CapVisible = false;
-                customInputs.coolingCWC_UseFlowRateVisible = false;
-                customInputs.coolingCWC_FlowRateVisible = false;
-            }
-
-
-            if (heatingComp == ClsID.intCompHWC_ID)
-            {
-                customInputs.heatingHWC_UseCapVisible = true;
-                customInputs.heatingHWC_CapVisible = true;
-                customInputs.heatingHWC_UseFlowRateVisible = true;
-                customInputs.heatingHWC_FlowRateVisible = true;
-            }
-            else
-            {
-                customInputs.heatingHWC_UseCapVisible = false;
-                customInputs.heatingHWC_CapVisible = false;
-                customInputs.heatingHWC_UseFlowRateVisible = false;
-                customInputs.heatingHWC_FlowRateVisible = false;
-            }
-
-
-            if (reheatComp == ClsID.intCompHWC_ID)
-            {
-                customInputs.reheatHWC_UseCapVisible = true;
-                customInputs.reheatHWC_CapVisible = true;
-                customInputs.reheatHWC_UseFlowRateVisible = true;
-                customInputs.reheatHWC_FlowRateVisible = true;
-            }
-            else
-            {
-                customInputs.reheatHWC_UseCapVisible = false;
-                customInputs.reheatHWC_CapVisible = false;
-                customInputs.reheatHWC_UseFlowRateVisible = false;
-                customInputs.reheatHWC_FlowRateVisible = false;
-            }
-
-            return customInputs;
-        }
-
-        public static bool GetPreheatSetpoint(dynamic fieldInfo)
-        {
-            if (Convert.ToInt32(fieldInfo.unitTypeId )== ClsID.intUnitTypeAHU_ID &&
-                (Convert.ToInt32(fieldInfo.preheatComp) == ClsID.intCompElecHeaterID ||
-                Convert.ToInt32(fieldInfo.preheatComp) == ClsID.intCompHWC_ID))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
 
         public static bool GetSetpoints(dynamic fieldInfo)
         {
@@ -1577,6 +1197,8 @@ namespace Oxyzen8SelectorServer.Models
                 }
             }
 
+            returnInfo.txbSummerSupplyAirCFM = Convert.ToInt32(summerSupplyAirCFM);
+            returnInfo.txbSummerReturnAirCFM = Convert.ToInt32(summerSupplyAirCFM);
             returnInfo.ddlOrientation = getOrientation(summerSupplyAirCFM);
             returnInfo.ddlOrientationValue = returnInfo.ddlOrientation.Rows[0]["id"];
             intOrientationID = returnInfo.ddlOrientationValue;
@@ -1593,44 +1215,40 @@ namespace Oxyzen8SelectorServer.Models
             returnInfo.ckbBypass = modelAndBypassInfo.ckbBypass;
             ckbBypassChecked = modelAndBypassInfo.ckbBypass;
 
-            returnInfo.ddlSupplyAirOpening = getSupplyAirOpening();
-            intSupplyAirOpeningID = returnInfo.ddlSupplyAirOpening.value;
+            dynamic ddlSupplyAirOpeningInfo = getSupplyAirOpening();
+            returnInfo.ddlSupplyAirOpening = ddlSupplyAirOpeningInfo.data;
+            returnInfo.ddlSupplyAirOpeningValue = ddlSupplyAirOpeningInfo.value;
+            returnInfo.ddlSupplyAirOpeningText = ddlSupplyAirOpeningInfo.text;
+            intSupplyAirOpeningID = ddlSupplyAirOpeningInfo.value;
 
             return returnInfo;
         }
 
 
-        public static dynamic txbSummerReturnAirCFM_Changed(dynamic fieldInfo)
+        public static int txbSummerReturnAirCFM_Changed(string txbSummerReturnAirCFMText, string txbSummerSupplyAirCFMText, int ckbBypass)
         {
-            if (!ClsNumber.IsNumber(fieldInfo.summerSupplyAirCFM.ToString()) || !ClsNumber.IsNumber(fieldInfo.summerReturnAirCFM.ToString()))
+            if (!ClsNumber.IsNumber(txbSummerReturnAirCFMText) || !ClsNumber.IsNumber(txbSummerReturnAirCFMText))
             {
                 return 0;
             }
 
-            dynamic returnInfo = new ExpandoObject();
+            string txbSummerReturnAirCFM = txbSummerReturnAirCFMText;
+            Boolean byPass = ckbBypass == 1;
 
-            int intUAL = Convert.ToInt32(fieldInfo.UAL);
-            int orientationId = Convert.ToInt32(fieldInfo.orientation);
-            int intProductTypeID = Convert.ToInt32(fieldInfo.productTypeId);
-            int intUnitTypeID = Convert.ToInt32(fieldInfo.unitTypeId);
-            String summerReturnAirCFM = fieldInfo.summerReturnAirCFM;
-            String summerSupplyAirCFM = fieldInfo.summerSupplyAirCFM;
-            Boolean byPass = fieldInfo.byPass;
-
-            if (orientationId == ClsID.intOrientationHorizontalID && Convert.ToInt32(summerSupplyAirCFM) > intNOVA_HORIZONTAL_MAX_CFM)
+            if (intOrientationID == ClsID.intOrientationHorizontalID && Convert.ToInt32(txbSummerSupplyAirCFMText) > intNOVA_HORIZONTAL_MAX_CFM)
             {
-                returnInfo.summerReturnAirCFM = intNOVA_HORIZONTAL_MAX_CFM.ToString();
+                txbSummerReturnAirCFM = intNOVA_HORIZONTAL_MAX_CFM.ToString();
             }
 
             if (intProductTypeID == ClsID.intProdTypeNovaID)
             {
-                if (Convert.ToInt32(summerReturnAirCFM) < intNOVA_MIN_CFM)
+                if (Convert.ToInt32(txbSummerReturnAirCFM) < intNOVA_MIN_CFM)
                 {
-                    returnInfo.summerReturnAirCFM = intNOVA_MIN_CFM.ToString();
+                    txbSummerReturnAirCFM = intNOVA_MIN_CFM.ToString();
                 }
-                else if (Convert.ToInt32(summerReturnAirCFM) > intNOVA_MAX_CFM)
+                else if (Convert.ToInt32(txbSummerReturnAirCFM) > intNOVA_MAX_CFM)
                 {
-                    returnInfo.summerReturnAirCFM = intNOVA_MAX_CFM.ToString();
+                    txbSummerReturnAirCFM = intNOVA_MAX_CFM.ToString();
                 }
             }
             else if (intProductTypeID == ClsID.intProdTypeVentumID)
@@ -1639,24 +1257,24 @@ namespace Oxyzen8SelectorServer.Models
                 {
                     if (byPass)
                     {
-                        if (Convert.ToInt32(summerReturnAirCFM) < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS)
+                        if (Convert.ToInt32(txbSummerReturnAirCFM) < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS.ToString();
                         }
-                        else if (Convert.ToInt32(summerReturnAirCFM) > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS)
+                        else if (Convert.ToInt32(txbSummerReturnAirCFM) > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVEN_INT_USERS_MAX_CFM_WITH_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVEN_INT_USERS_MAX_CFM_WITH_BYPASS.ToString();
                         }
                     }
                     else
                     {
-                        if (Convert.ToInt32(summerReturnAirCFM) < intVEN_INT_USERS_MIN_CFM_NO_BYPASS)
+                        if (Convert.ToInt32(txbSummerReturnAirCFM) < intVEN_INT_USERS_MIN_CFM_NO_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVEN_INT_USERS_MIN_CFM_NO_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVEN_INT_USERS_MIN_CFM_NO_BYPASS.ToString();
                         }
-                        else if (Convert.ToInt32(summerReturnAirCFM) > intVEN_INT_USERS_MAX_CFM_NO_BYPASS)
+                        else if (Convert.ToInt32(txbSummerReturnAirCFM) > intVEN_INT_USERS_MAX_CFM_NO_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVEN_INT_USERS_MAX_CFM_NO_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVEN_INT_USERS_MAX_CFM_NO_BYPASS.ToString();
                         }
                     }
                 }
@@ -1664,24 +1282,24 @@ namespace Oxyzen8SelectorServer.Models
                 {
                     if (byPass)
                     {
-                        if (Convert.ToInt32(summerReturnAirCFM) < intVEN_MIN_CFM_WITH_BYPASS)
+                        if (Convert.ToInt32(txbSummerReturnAirCFM) < intVEN_MIN_CFM_WITH_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVEN_MIN_CFM_WITH_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVEN_MIN_CFM_WITH_BYPASS.ToString();
                         }
-                        else if (Convert.ToInt32(summerReturnAirCFM) > intVEN_MAX_CFM_WITH_BYPASS)
+                        else if (Convert.ToInt32(txbSummerReturnAirCFM) > intVEN_MAX_CFM_WITH_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVEN_MAX_CFM_WITH_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVEN_MAX_CFM_WITH_BYPASS.ToString();
                         }
                     }
                     else
                     {
-                        if (Convert.ToInt32(summerReturnAirCFM) < intVEN_MIN_CFM_NO_BYPASS)
+                        if (Convert.ToInt32(txbSummerReturnAirCFM) < intVEN_MIN_CFM_NO_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVEN_MIN_CFM_NO_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVEN_MIN_CFM_NO_BYPASS.ToString();
                         }
-                        else if (Convert.ToInt32(summerReturnAirCFM) > intVEN_MAX_CFM_NO_BYPASS)
+                        else if (Convert.ToInt32(txbSummerReturnAirCFM) > intVEN_MAX_CFM_NO_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVEN_MAX_CFM_NO_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVEN_MAX_CFM_NO_BYPASS.ToString();
                         }
                     }
                 }
@@ -1692,24 +1310,24 @@ namespace Oxyzen8SelectorServer.Models
                 {
                     if (byPass)
                     {
-                        if (Convert.ToInt32(summerReturnAirCFM) < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS)
+                        if (Convert.ToInt32(txbSummerReturnAirCFM) < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS.ToString();
                         }
-                        else if (Convert.ToInt32(summerReturnAirCFM) > intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS)
+                        else if (Convert.ToInt32(txbSummerReturnAirCFM) > intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS.ToString();
                         }
                     }
                     else
                     {
-                        if (Convert.ToInt32(summerReturnAirCFM) < intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS)
+                        if (Convert.ToInt32(txbSummerReturnAirCFM) < intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS.ToString();
                         }
-                        else if (Convert.ToInt32(summerReturnAirCFM) > intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS)
+                        else if (Convert.ToInt32(txbSummerReturnAirCFM) > intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS.ToString();
                         }
                     }
                 }
@@ -1717,24 +1335,24 @@ namespace Oxyzen8SelectorServer.Models
                 {
                     if (byPass)
                     {
-                        if (Convert.ToInt32(summerReturnAirCFM) < intVENLITE_MIN_CFM_WITH_BYPASS)
+                        if (Convert.ToInt32(txbSummerReturnAirCFM) < intVENLITE_MIN_CFM_WITH_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVENLITE_MIN_CFM_WITH_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVENLITE_MIN_CFM_WITH_BYPASS.ToString();
                         }
-                        else if (Convert.ToInt32(summerReturnAirCFM) > intVENLITE_MAX_CFM_WITH_BYPASS)
+                        else if (Convert.ToInt32(txbSummerReturnAirCFM) > intVENLITE_MAX_CFM_WITH_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVENLITE_MAX_CFM_WITH_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVENLITE_MAX_CFM_WITH_BYPASS.ToString();
                         }
                     }
                     else
                     {
-                        if (Convert.ToInt32(summerReturnAirCFM) < intVENLITE_MIN_CFM_NO_BYPASS)
+                        if (Convert.ToInt32(txbSummerReturnAirCFM) < intVENLITE_MIN_CFM_NO_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVENLITE_MIN_CFM_NO_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVENLITE_MIN_CFM_NO_BYPASS.ToString();
                         }
-                        else if (Convert.ToInt32(summerReturnAirCFM) > intVENLITE_MAX_CFM_NO_BYPASS)
+                        else if (Convert.ToInt32(txbSummerReturnAirCFM) > intVENLITE_MAX_CFM_NO_BYPASS)
                         {
-                            returnInfo.summerReturnAirCFM = intVENLITE_MAX_CFM_NO_BYPASS.ToString();
+                            txbSummerReturnAirCFM = intVENLITE_MAX_CFM_NO_BYPASS.ToString();
                         }
                     }
                 }
@@ -1744,36 +1362,36 @@ namespace Oxyzen8SelectorServer.Models
             if ((intProductTypeID == ClsID.intProdTypeNovaID && intUnitTypeID == ClsID.intUnitTypeERV_ID) ||
                ((intProductTypeID == ClsID.intProdTypeVentumID || intProductTypeID == ClsID.intProdTypeVentumLiteID) && intUnitTypeID == ClsID.intUnitTypeHRV_ID))
             {
-                if (Convert.ToInt32(summerReturnAirCFM) < (Convert.ToInt32(summerSupplyAirCFM) * 0.5))
+                if (Convert.ToInt32(txbSummerReturnAirCFM) < (Convert.ToInt32(txbSummerSupplyAirCFMText) * 0.5))
                 {
-                    returnInfo.summerReturnAirCFM = Math.Ceiling(Convert.ToDecimal(summerSupplyAirCFM) * 0.5m).ToString();
+                    txbSummerReturnAirCFM = Math.Ceiling(Convert.ToDecimal(txbSummerSupplyAirCFMText) * 0.5m).ToString();
                 }
-                else if (Convert.ToInt32(summerReturnAirCFM) > (Convert.ToInt32(summerSupplyAirCFM) * 1.5m))
+                else if (Convert.ToInt32(txbSummerReturnAirCFM) > (Convert.ToInt32(txbSummerSupplyAirCFMText) * 1.5m))
                 {
-                    returnInfo.summerReturnAirCFM = Math.Ceiling(Convert.ToDecimal(summerSupplyAirCFM) * 1.5m).ToString();
+                    txbSummerReturnAirCFM = Math.Ceiling(Convert.ToDecimal(txbSummerSupplyAirCFMText) * 1.5m).ToString();
                 }
             }
             else if ((intProductTypeID == ClsID.intProdTypeVentumID || intProductTypeID == ClsID.intProdTypeVentumLiteID) && intUnitTypeID == ClsID.intUnitTypeERV_ID)
             {
-                if (Convert.ToInt32(summerReturnAirCFM) < (Convert.ToInt32(summerSupplyAirCFM) * 0.8))
+                if (Convert.ToInt32(txbSummerReturnAirCFM) < (Convert.ToInt32(txbSummerSupplyAirCFMText) * 0.8))
                 {
-                    returnInfo.summerReturnAirCFM = Math.Ceiling(Convert.ToDecimal(summerSupplyAirCFM) * 0.8m).ToString();
+                    txbSummerReturnAirCFM = Math.Ceiling(Convert.ToDecimal(txbSummerSupplyAirCFMText) * 0.8m).ToString();
                 }
-                else if (Convert.ToInt32(summerReturnAirCFM) > (Convert.ToInt32(summerSupplyAirCFM) * 1.2))
+                else if (Convert.ToInt32(txbSummerReturnAirCFM) > (Convert.ToInt32(txbSummerSupplyAirCFMText) * 1.2))
                 {
-                    returnInfo.summerReturnAirCFM = Math.Ceiling(Convert.ToDecimal(summerSupplyAirCFM) * 1.2m).ToString();
+                    txbSummerReturnAirCFM = Math.Ceiling(Convert.ToDecimal(txbSummerSupplyAirCFMText) * 1.2m).ToString();
                 }
             }
 
-            return returnInfo;
+            return Convert.ToInt32(txbSummerReturnAirCFM);
         }
 
 
-        public static string txbSupplyAirESP_Changed(string txbSupplyAirESP)
+        public static dynamic txbSupplyAirESP_Changed(string txbSupplyAirESP)
         {
             if (!ClsNumber.IsNumber(txbSupplyAirESP))
             {
-                return "";
+                return "0";
             }
 
             String supplyAirESP = txbSupplyAirESP;
@@ -1795,13 +1413,13 @@ namespace Oxyzen8SelectorServer.Models
                 }
             }
 
-            return supplyAirESP;
+            return Convert.ToDouble(supplyAirESP);
        }
 
 
-        public static dynamic txbExhaustAirESP_Changed(string exhaustAirESP)
+        public static dynamic txbExhaustAirESP_Changed(string txbExhaustAirESPText)
         {
-            dynamic returnInfo = new ExpandoObject();
+            string exhaustAirESP = txbExhaustAirESPText;
 
             if (intProductTypeID == ClsID.intProdTypeNovaID)
             {
@@ -1810,21 +1428,17 @@ namespace Oxyzen8SelectorServer.Models
                 {
                     if (Convert.ToDouble(exhaustAirESP) > 2.0d)
                     {
-                        returnInfo.exhaustAirESP = "2.0";
+                        exhaustAirESP = "2.0";
                     }
 
                 }
                 else if (Convert.ToDouble(exhaustAirESP) > 3.0d)
                 {
-                    returnInfo.exhaustAirESP = "3.0";
-                }
-                else
-                {
-                    returnInfo.exhaustAirESP = exhaustAirESP;
+                    exhaustAirESP = "3.0";
                 }
             }
 
-            return returnInfo;
+            return Convert.ToDouble(exhaustAirESP);
         }
 
         private static DataTable getOrientation(string txbSummerSupplyAirCFMText)
@@ -1957,16 +1571,16 @@ namespace Oxyzen8SelectorServer.Models
             intUnitModelID = modelInfo.ddlUnitInfoValue;
             modelInfo.ckbBypass = byPass;
 
-            modelInfo.others = ddlUnitModelIndexChanged(new { txbSummerSupplyAirCFM = txbSummerSupplyAirCFMText });
+            modelInfo.others = ddlUnitModelIndexChanged(txbSummerSupplyAirCFMText);
             return modelInfo;
         }
 
-        private static dynamic ddlUnitModelIndexChanged(dynamic fieldInfo)
+        public static dynamic ddlUnitModelIndexChanged(string txbSummerSupplyAirCFM)
         {
             dynamic info = new ExpandoObject();
             info.ddlUnitVoltage = getVoltage();
             info.ddlUnitVoltageValue = intUnitVoltageID;
-            info.txbSupplyAirESP = txbSupplyAirESP_Changed(fieldInfo.txbSummerSupplyAirCFM.ToString());
+            info.txbSupplyAirESP = txbSupplyAirESP_Changed(txbSummerSupplyAirCFM);
             info.elecHeaterVoltage = getElectricHeaterVoltage();
             info.ckbBypass = getBypass();
 
@@ -2035,11 +1649,24 @@ namespace Oxyzen8SelectorServer.Models
                 dtSelectionTable = ClsTS.get_dtDataFromImportRows(dtSelectionTable, "product_type_id", intProductTypeID);
                 supplyAirOpeningInfo.data = ClsWFC.get_ddlItemsAddedOnValue(dtSelectionTable, "openings_sa", dtLink);
                 supplyAirOpeningInfo.value = getSA_OpeningForVerticalUnit();
+                supplyAirOpeningInfo.text = strSupplyAirOpening;
+                if (supplyAirOpeningInfo.value == 0)
+                {
+                    supplyAirOpeningInfo.text = strSupplyAirOpening;
+                }
+                for (int i = 0; i < supplyAirOpeningInfo.data.Rows.Count; i++)
+                {
+                    if (supplyAirOpeningInfo.ddlSupplyAirOpening.Rows[i]["id"] == supplyAirOpeningInfo.value)
+                    {
+                        supplyAirOpeningInfo.text = supplyAirOpeningInfo.ddlSupplyAirOpening.Rows[i]["items"];
+                    }
+                }
             }
             else if (intUnitTypeID == ClsID.intUnitTypeAHU_ID)
             {
                 supplyAirOpeningInfo.data = ClsDB.get_dtLiveEnabled(ClsDBT.strSelOpeningsFC_SA, intSupplyAirOpeningID);
                 supplyAirOpeningInfo.value = supplyAirOpeningInfo.ddlSupplyAirOpening.Rows[0]["id"];
+                supplyAirOpeningInfo.text = supplyAirOpeningInfo.ddlSupplyAirOpening.Rows[0]["items"];
             }
 
             return supplyAirOpeningInfo;
@@ -2314,7 +1941,7 @@ namespace Oxyzen8SelectorServer.Models
             return componentOptions;
         }
 
-        private static dynamic getCustomInputs()
+        public static dynamic getCustomInputs()
         {
             dynamic costomInputs = new ExpandoObject();
             if (intPreheatCompID == ClsID.intCompHWC_ID)
@@ -2393,7 +2020,7 @@ namespace Oxyzen8SelectorServer.Models
             return costomInputs;
         }
 
-        private static dynamic getValveAndActuator()
+        public static dynamic getValveAndActuator()
         {
             dynamic valveAndActuator = new ExpandoObject();
             if (intCoolingCompID == ClsID.intCompCWC_ID || intPreheatCompID == ClsID.intCompHWC_ID || intHeatingCompID == ClsID.intCompHWC_ID || intReheatCompID == ClsID.intCompHWC_ID)
@@ -2458,59 +2085,6 @@ namespace Oxyzen8SelectorServer.Models
             }
 
             return heatElectricHeaterInfo;
-        }
-
-
-        private static dynamic getPreheatElectricHeater()
-        {
-            dynamic preheatElectricHeater = new ExpandoObject();
-            int intSelectedValue = 0;
-
-            if (intPreheatCompID == ClsID.intCompElecHeaterID || intPreheatCompID == ClsID.intCompAutoID)
-            {
-                //if (!bolPreheatRequired)
-                //{
-                DataTable dtPreheatElecHeaterInstallation = ClsDB.get_dtLiveEnabled(ClsDBT.strSelElectricHeaterInstallation, intPreheatElecHeaterInstallationID).Copy();
-                dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id <> 1").CopyToDataTable();
-                preheatElectricHeater.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
-
-                //Outdoor Units - Only Casing Installation (Only Nova Unit can be Indoor or Outdoor, For Ventum and VentumLite Indoor unit is by default and Outdoor not available)
-                if (intLocationID == ClsID.intLocationOutdoorID)
-                {
-                    dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id = " + ClsID.intElecHeaterInstallInCasingID).CopyToDataTable();
-                    preheatElectricHeater.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
-                }
-                else //Indoor Units
-                {
-
-                    if (intProductTypeID == ClsID.intProdTypeNovaID || intProductTypeID == ClsID.intProdTypeVentumID)
-                    {
-                        preheatElectricHeater.ddlPreheatElecHeaterInstallationValue = intSelectedValue > 1 ? intSelectedValue.ToString() : ClsID.intElecHeaterInstallInCasingID.ToString();
-                    }
-                    else if (intProductTypeID == ClsID.intProdTypeVentumLiteID)
-                    {
-                        //Duct Mount is the only option
-                        dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id = " + ClsID.intElecHeaterInstallDuctMountedID).CopyToDataTable();
-                        preheatElectricHeater.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
-                    }
-                }
-            }
-
-            switch (intReheatCompID)
-            {
-                case ClsID.intCompNA_ID:
-                case ClsID.intCompHWC_ID:
-                case ClsID.intCompAutoID:
-                    preheatElectricHeater.divPreheatElecHeaterInstallationVisible = false;
-                    break;
-                case ClsID.intCompElecHeaterID:
-                    preheatElectricHeater.divPreheatElecHeaterInstallationVisible = true;
-                    break;
-                default:
-                    break;
-            }
-
-            return preheatElectricHeater;
         }
 
         public static dynamic getElectricHeaterVoltage()
@@ -2623,7 +2197,7 @@ namespace Oxyzen8SelectorServer.Models
             return refrigerantInfo;
         }
 
-        private static bool getHeatingFluidDesignConditions()
+        public static bool getHeatingFluidDesignConditions()
         {
             return (intPreheatCompID == ClsID.intCompHWC_ID || intHeatingCompID == ClsID.intCompHWC_ID || intReheatCompID == ClsID.intCompHWC_ID) ? true : false;
         }
@@ -2702,9 +2276,21 @@ namespace Oxyzen8SelectorServer.Models
             return coolingSetPointInfo;
         }
 
-        private static bool getPreheatSetpoint()
+        public static bool getPreheatSetpoint()
         {
             if (intUnitTypeID == ClsID.intUnitTypeAHU_ID && intPreheatCompID == ClsID.intCompElecHeaterID || intPreheatCompID == ClsID.intCompHWC_ID)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool getSetpoints()
+        {
+            if (intUnitTypeID == ClsID.intUnitTypeAHU_ID && intPreheatCompID > 1 || intCoolingCompID > 1 || intHeatingCompID > 1 || intReheatCompID > 1)
             {
                 return true;
             }
@@ -2813,5 +2399,262 @@ namespace Oxyzen8SelectorServer.Models
             return coolingInfo;
         }
 
+
+        public static dynamic ddlLocationChanged(dynamic unitInfo)
+        {
+            dynamic returnInfo = new ExpandoObject();
+            setAllData(unitInfo);
+
+            if (unitInfo.ddlLocation == ClsID.intLocationOutdoorID)
+            {
+                returnInfo.ddlDamperAndActuatorValue = ClsID.intDamperActuatorNoCasingID;
+                returnInfo.divDamperAndActuatorVisible = false;
+            }
+            else
+            {
+                returnInfo.divDamperAndActuatorVisible = true;
+            }
+
+            returnInfo.downshot = getDownshot();
+            returnInfo.ddlOrientation = getOrientation(unitInfo.txbSummerSupplyAirCFM.ToString());
+            returnInfo.ddlOrientationValue = returnInfo.ddlOrientation.Rows[0]["id"];
+            dynamic modelAndBypassInfo = getModel(unitInfo.txbSummerSupplyAirCFM.ToString(), Convert.ToInt32(unitInfo.ckbBypass));
+
+            returnInfo.ddlUnitModel = modelAndBypassInfo.ddlUnitModel;
+            returnInfo.ddlUnitModelValue = returnInfo.ddlUnitModel.Rows[0]["id"];
+            intUnitModelID = returnInfo.ddlUnitModelValue;
+            returnInfo.ckbBypass = modelAndBypassInfo.ckbBypass;
+            returnInfo.others = modelAndBypassInfo.others;
+            ckbBypassChecked = modelAndBypassInfo.ckbBypass;
+
+            returnInfo.txbSupplyAirESP = txbSupplyAirESP_Changed(unitInfo.txbSupplyAirESP.ToString());
+            returnInfo.txbExhaustAirESP = txbExhaustAirESP_Changed(unitInfo.txbExhaustAirESP.ToString());
+            returnInfo.electricHeaterVoltage = getElectricHeaterVoltage();
+            returnInfo.preheatElectricHeater = getPreheatElectricHeater();
+            //returnInfo.supplyAirOpening = getSupplyAirOpening();
+
+            return returnInfo;
+        }
+
+
+        public static dynamic ddlOrientationChanged(dynamic info)
+        {
+            dynamic returnInfo = new ExpandoObject();
+
+            setAllData(info);
+            
+            dynamic modelAndBypassInfo = getModel(info.txbSummerSupplyAirCFM.ToString(), Convert.ToInt32(info.ckbBypass));
+
+            returnInfo.ddlUnitModel = modelAndBypassInfo.ddlUnitModel;
+            returnInfo.ddlUnitModelValue = returnInfo.ddlUnitModel.Rows[0]["id"];
+            intUnitModelID = returnInfo.ddlUnitModelValue;
+
+            returnInfo.ckbBypass = modelAndBypassInfo.ckbBypass;
+            returnInfo.others = modelAndBypassInfo.others;
+
+            returnInfo.ckbBypass = modelAndBypassInfo.ckbBypass;
+            ckbBypassChecked = modelAndBypassInfo.ckbBypass;
+
+            dynamic ddlSupplyAirOpeningInfo = getSupplyAirOpening();
+            returnInfo.ddlSupplyAirOpening = ddlSupplyAirOpeningInfo.data;
+            returnInfo.ddlSupplyAirOpeningValue = ddlSupplyAirOpeningInfo.value;
+            returnInfo.ddlSupplyAirOpeningText = ddlSupplyAirOpeningInfo.text;
+            intSupplyAirOpeningID = ddlSupplyAirOpeningInfo.value;
+
+
+            return returnInfo;
+        }
+
+        public static float txbSummerOutdoorAirWB_TextChanged(string txbSummerOutdoorAirDBText, string txbSummerOutdoorAirWBText, string txbAltitudeText)
+        {
+            float fltDB = (float)Convert.ToDouble(txbSummerOutdoorAirDBText);
+            float fltWB = (float)Convert.ToDouble(txbSummerOutdoorAirWBText);
+            float fltRH = (float)Math.Round(ClsPsyCalc.get_fltRH_ByDB_WB(fltDB, fltWB, Convert.ToInt32(txbAltitudeText)), 1);
+
+            float  txbSummerOutdoorAirRHText = 0f;
+            if (fltRH < -100)
+            {
+                txbSummerOutdoorAirRHText = (float)dblTempErrorValue;
+
+                if (fltDB == fltWB)
+                {
+                    //bolErrorSummerRH = false;
+                    txbSummerOutdoorAirRHText = 100;
+                }
+            }
+            else
+            {
+                //bolErrorSummerRH = false;
+                txbSummerOutdoorAirRHText = fltRH;
+            }
+
+            return txbSummerOutdoorAirRHText;
+        }
+
+        public static float txbSummerOutdoorAirRH_TextChanged(dynamic info)
+        {
+            float fltDB = (float)Convert.ToDouble(info.txbSummerOutdoorAirDB);
+            float fltRH = (float)Convert.ToDouble(info.txbSummerOutdoorAirRH);
+            float fltGrain = (float)Math.Round(ClsPsyCalc.get_fltGrains_ByDB_RH(fltDB, fltRH, Convert.ToInt32(info.txbAltitude)), 1);
+            float fltWB = (float)Math.Round(ClsPsyCalc.get_fltWB_ByDB_RH(fltDB, fltRH, Convert.ToInt32(info.txbAltitude)), 1);
+
+            float txbSummerOutdoorAirWB = 0f;
+            if (fltWB < -100)
+            {
+                //bolErrorSummerWB = true;
+                txbSummerOutdoorAirWB = (float)dblTempErrorValue;
+            }
+            else
+            {
+                //bolErrorSummerWB = false;
+                txbSummerOutdoorAirWB = fltWB;
+            }
+
+            return txbSummerOutdoorAirWB;
+        }
+
+        public static float txbWinterOutdoorAirWB_TextChanged(dynamic info)
+        {
+            float fltDB = (float)Convert.ToDouble(info.txbWinterOutdoorAirDB);
+            float fltWB = (float)Convert.ToDouble(info.txbWinterOutdoorAirWB);
+            float fltRH = (float)Math.Round(ClsPsyCalc.get_fltRH_ByDB_WB(fltDB, fltWB, Convert.ToInt32(info.txbAltitude)), 1);
+
+            float txbWinterOutdoorAirRH = 0f;
+            if (fltRH < -100)
+            {
+                txbWinterOutdoorAirRH = (float)dblTempErrorValue;
+
+                if (fltDB == fltWB)
+                {
+                    txbWinterOutdoorAirRH = 100;
+                }
+            }
+            else
+            {
+                txbWinterOutdoorAirRH = fltRH;
+            }
+
+            return txbWinterOutdoorAirRH;
+        }
+
+        public static float txbWinterOutdoorAirRH_TextChanged(dynamic info)
+        {
+            float fltDB = (float)Convert.ToDouble(info.txbWinterOutdoorAirDB);
+            float fltRH = (float)Convert.ToDouble(info.txbWinterOutdoorAirRH);
+            float fltGrain = (float)Math.Round(ClsPsyCalc.get_fltGrains_ByDB_RH(fltDB, fltRH, Convert.ToInt32(info.txbAltitude)), 1);
+            float fltWB = (float)Math.Round(ClsPsyCalc.get_fltWB_ByDB_RH(fltDB, fltRH, Convert.ToInt32(info.txbAltitude)), 1);
+
+            float txbWinterOutdoorAirWB = 0f;
+            if (fltWB < -100)
+            {
+                txbWinterOutdoorAirWB = (float)dblTempErrorValue;
+            }
+            else
+            {
+                //bolErrorWinterWB = false;
+                txbWinterOutdoorAirWB = fltWB;
+            }
+
+            return txbWinterOutdoorAirWB;
+        }
+
+        public static float txbSummerReturnAirWB_TextChanged(dynamic info)
+        {
+            float fltDB = (float)Convert.ToDouble(info.txbSummerReturnAirDB);
+            float fltWB = (float)Convert.ToDouble(info.txbSummerReturnAirWB);
+            float fltRH = (float)Math.Round(ClsPsyCalc.get_fltRH_ByDB_WB(fltDB, fltWB, Convert.ToInt32(info.txbAltitude)), 1);
+
+            float txbSummerReturnAirRH = 0f;
+            if (fltRH < -100)
+            {
+                txbSummerReturnAirRH = (float)dblTempErrorValue;
+
+                if (fltDB == fltWB)
+                {
+                    txbSummerReturnAirRH = 100;
+                }
+            }
+            else
+            {
+                txbSummerReturnAirRH = fltRH;
+            }
+
+            return txbSummerReturnAirRH;
+        }
+
+        public static float txbSummerReturnAirRH_TextChanged(dynamic info)
+        {
+
+            float fltDB = (float)Convert.ToDouble(info.txbSummerReturnAirDB);
+            float fltRH = (float)Convert.ToDouble(info.txbSummerReturnAirRH);
+            float fltGrain = (float)Math.Round(ClsPsyCalc.get_fltGrains_ByDB_RH(fltDB, fltRH, Convert.ToInt32(info.txbAltitude)), 1);
+            float fltWB = (float)Math.Round(ClsPsyCalc.get_fltWB_ByDB_RH(fltDB, fltRH, Convert.ToInt32(info.txbAltitude)), 1);
+
+            float txbSummerReturnAirWB = 0f;
+            if (fltWB < -100)
+            {
+                //bolErrorSummerWB = true;
+                txbSummerReturnAirWB = (float)dblTempErrorValue;
+            }
+            else
+            {
+                //bolErrorSummerWB = false;
+                txbSummerReturnAirWB = fltWB;
+            }
+
+            return txbSummerReturnAirWB;
+        }
+
+        public static float txbWinterReturnAirWB_TextChanged(dynamic info)
+        {
+            float fltDB = (float)Convert.ToDouble(info.txbWinterReturnAirDB);
+            float fltWB = (float)Convert.ToDouble(info.txbWinterReturnAirWB);
+            float fltRH = (float)Math.Round(ClsPsyCalc.get_fltRH_ByDB_WB(fltDB, fltWB, Convert.ToInt32(info.txbAltitude)), 1);
+
+            float txbWinterReturnAirRH = 0f;
+            if (fltRH < -100)
+            {
+                //bolErrorWinterRH = true;
+                txbWinterReturnAirRH = (float)dblTempErrorValue;
+
+                if (fltDB == fltWB)
+                {
+                    //bolErrorWinterRH = false;
+                    txbWinterReturnAirRH = 100;
+                }
+            }
+            else
+            {
+                //bolErrorWinterRH = false;
+                txbWinterReturnAirRH = (float)fltRH;
+            }
+
+
+            return txbWinterReturnAirRH;
+        }
+
+        #region Winter Return Air RH
+        public static float txbWinterReturnAirRH_TextChanged(dynamic info)
+        {
+            float fltDB = (float)Convert.ToDouble(info.txbWinterReturnAirDB);
+            float fltRH = (float)Convert.ToDouble(info.txbWinterReturnAirRH);
+            float fltGrain = (float)Math.Round(ClsPsyCalc.get_fltGrains_ByDB_RH(fltDB, fltRH, Convert.ToInt32(info.txbAltitude)), 1);
+            float fltWB = (float)Math.Round(ClsPsyCalc.get_fltWB_ByDB_RH(fltDB, fltRH, Convert.ToInt32(info.txbAltitude)), 1);
+
+            float txbWinterReturnAirWB = 0f;
+            if (fltWB < -100)
+            {
+                //bolErrorWinterWB = true;
+                txbWinterReturnAirWB = (float)dblTempErrorValue;
+            }
+            else
+            {
+                //bolErrorWinterWB = false;
+                txbWinterReturnAirWB = fltWB;
+            }
+
+            return txbWinterReturnAirWB;
+        }
+        #endregion
     }
 }
