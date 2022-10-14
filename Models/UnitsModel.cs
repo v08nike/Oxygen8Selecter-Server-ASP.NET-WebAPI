@@ -660,7 +660,7 @@ namespace Oxyzen8SelectorServer.Models
             intOA_FilterModelID = Convert.ToInt32(unitInfo.ddlOA_FilterModel);
             //intFinalFilterModelID = Convert.ToInt32(unitInfo.ddlControlsPreference);
             intRA_FilterModelID = Convert.ToInt32(unitInfo.ddlRA_FilterModel);
-            intPreheatCompID = Convert.ToInt32(unitInfo.ddlControlsPreference);
+            intControlsPreferenceID = Convert.ToInt32(unitInfo.ddlControlsPreference);
             intHeatExchCompID = Convert.ToInt32(unitInfo.ddlHeatExchComp);
 
             intCoolingFluidTypeID = Convert.ToInt32(unitInfo.ddlCoolingFluidType);
@@ -1571,16 +1571,17 @@ namespace Oxyzen8SelectorServer.Models
             intUnitModelID = modelInfo.ddlUnitInfoValue;
             modelInfo.ckbBypass = byPass;
 
-            modelInfo.others = ddlUnitModelIndexChanged(txbSummerSupplyAirCFMText);
+            modelInfo.others = ddlUnitModelIndexChanged("0.75", "0.75");
             return modelInfo;
         }
 
-        public static dynamic ddlUnitModelIndexChanged(string txbSummerSupplyAirCFM)
+        public static dynamic ddlUnitModelIndexChanged(string txbSupplyAirESP, string txbExhaustAirESP)
         {
             dynamic info = new ExpandoObject();
             info.ddlUnitVoltage = getVoltage();
             info.ddlUnitVoltageValue = intUnitVoltageID;
-            info.txbSupplyAirESP = txbSupplyAirESP_Changed(txbSummerSupplyAirCFM);
+            info.txbSupplyAirESP = txbSupplyAirESP_Changed(txbSupplyAirESP);
+            info.txbExhaustAirESP = txbExhaustAirESP_Changed(txbExhaustAirESP);
             info.elecHeaterVoltage = getElectricHeaterVoltage();
             info.ckbBypass = getBypass();
 

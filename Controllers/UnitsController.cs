@@ -181,7 +181,7 @@ namespace Oxyzen8SelectorServer.Controllers
         public dynamic ddlUnitModelChanged([FromBody]dynamic info)
         {
             UnitsModel.setAllData(info);
-            return UnitsModel.ddlUnitModelIndexChanged(info.txbSummerSupplyAirCFM.ToString());
+            return UnitsModel.ddlUnitModelIndexChanged(info.txbSupplyAirESP.ToString(), info.txbExhaustAirESP.ToString());
         }
 
         [HttpPost]
@@ -265,10 +265,12 @@ namespace Oxyzen8SelectorServer.Controllers
             returnInfo.divHeatingFluidDesignConditionsVisible = UnitsModel.getHeatingFluidDesignConditions();
             returnInfo.valveAndActuator = UnitsModel.getValveAndActuator();
 
+            returnInfo.isAHUID = false;
             if (info.ddlUnitType == ClsID.intUnitTypeAHU_ID)
             {
                 returnInfo.divPreheatSetpointVisible = UnitsModel.getPreheatSetpoint();
                 returnInfo.divSetpointsVisible = UnitsModel.getSetpoints();
+                returnInfo.isAHUID = true;
             }
 
             returnInfo.customInputs = UnitsModel.getCustomInputs();  //Internal users only
