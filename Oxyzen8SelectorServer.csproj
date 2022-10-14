@@ -54,8 +54,25 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.Crypto.dll.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
+    <Reference Include="EPPlus, Version=6.0.8.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.6.0.8\lib\net35\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.Interfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.Interfaces.6.0.0\lib\net452\EPPlus.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.System.Drawing, Version=6.0.0.0, Culture=neutral, PublicKeyToken=2308d35469c9bac0, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.System.Drawing.6.0.0\lib\net452\EPPlus.System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="ERV Calculator, Version=3.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\ERV Calculator.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Protobuf, Version=3.19.4.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.19.4\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=4.1.6.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\itextsharp.dll</HintPath>
     </Reference>
     <Reference Include="MailKit, Version=1.18.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
       <HintPath>..\packages\MailKit.1.18.1.1\lib\net451\MailKit.dll</HintPath>
@@ -109,6 +126,8 @@
     <Reference Include="NETCore.MailKit, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NETCore.MailKit.2.0.1\lib\netstandard2.0\NETCore.MailKit.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
@@ -333,14 +352,28 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Controllers\SubmittalsController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="JwtManager.cs" />
     <Compile Include="Models\ClsAirFlowData.cs" />
+    <Compile Include="Models\ClsComponent.cs" />
     <Compile Include="Models\ClsComponentItems.cs" />
+    <Compile Include="Models\ClsContainer.cs" />
+    <Compile Include="Models\ClsCutsheetsPDF.cs" />
+    <Compile Include="Models\ClsDrawing.cs" />
+    <Compile Include="Models\ClsElectricHeater.cs" />
+    <Compile Include="Models\ClsFilter.cs" />
     <Compile Include="Models\ClsGeneral.cs" />
     <Compile Include="Models\ClsGo.cs" />
     <Compile Include="Models\ClsGV.cs" />
+    <Compile Include="Models\ClsHeatExchCORE.cs" />
+    <Compile Include="Models\ClsHeatExchCORE_DLL.cs" />
     <Compile Include="Models\ClsLayout.cs" />
+    <Compile Include="Models\ClsOutput.cs" />
+    <Compile Include="Models\ClsOutputExcel.cs" />
+    <Compile Include="Models\ClsPDF_Tools.cs" />
+    <Compile Include="Models\ClsPerformanceERU.cs" />
+    <Compile Include="Models\ClsPricing.cs" />
     <Compile Include="Models\ClsRequest.cs" />
     <Compile Include="Models\ClsReturn.cs" />
     <Compile Include="Controllers\JobController.cs" />
@@ -360,12 +393,19 @@
     <Compile Include="Models\ClsLayoutOpt.cs" />
     <Compile Include="Models\ClsProjectInfo.cs" />
     <Compile Include="Models\ClsPsyCalc.cs" />
+    <Compile Include="Models\ClsSelectionOutputPDF.cs" />
+    <Compile Include="Models\ClsSelectionReportPDF.cs" />
+    <Compile Include="Models\ClsSubmittalOutputPDF.cs" />
+    <Compile Include="Models\ClsSubmittalReportPDF.cs" />
+    <Compile Include="Models\ClsSubmittals.cs" />
     <Compile Include="Models\ClsTS.cs" />
+    <Compile Include="Models\ClsUser.cs" />
     <Compile Include="Models\ClsWFC.cs" />
     <Compile Include="Models\CustomRequireHttpsAttribute.cs" />
     <Compile Include="Models\JobsModel.cs" />
     <Compile Include="Models\ClsNumber.cs" />
     <Compile Include="Models\MailRequest.cs" />
+    <Compile Include="Models\SubmittalsModel.cs" />
     <Compile Include="Models\UnitsModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -117,6 +117,9 @@ C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bi
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Antlr3.Runtime.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\AspNet.ScriptManager.bootstrap.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\BouncyCastle.Crypto.dll
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\EPPlus.dll
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\EPPlus.Interfaces.dll
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\EPPlus.System.Drawing.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Google.Protobuf.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\MailKit.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Microsoft.AspNet.FriendlyUrls.dll
@@ -159,6 +162,7 @@ C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bi
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\WebGrease.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\ZstdNet.dll
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Antlr3.Runtime.pdb
+C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\EPPlus.xml
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Google.Protobuf.pdb
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\Google.Protobuf.xml
 C:\Studio\FreelancerTasks\Oxygen8\Oxyzen8SelectorServer\Oxyzen8SelectorServer\bin\MailKit.xml

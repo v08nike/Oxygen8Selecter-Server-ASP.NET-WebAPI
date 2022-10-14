@@ -35,8 +35,10 @@ namespace Oxyzen8SelectorServer.Controllers
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public dynamic SaveUnitInfo([FromBody]dynamic unitInfo)
         {
-            UnitsModel.SaveUnitInfo(unitInfo);
-            return GetUnitInfo(unitInfo);
+            dynamic returnInfo = new ExpandoObject();
+            returnInfo.intUnitNo = UnitsModel.SaveUnitInfo(unitInfo);
+            returnInfo.unitData = GetUnitInfo(unitInfo);
+            return returnInfo;
         }
 
         [HttpPost]
@@ -77,12 +79,12 @@ namespace Oxyzen8SelectorServer.Controllers
             //hfUnitNo.Value = dictionary[clsSV._intUnitNo].ToString();
             dynamic returnInfo = new ExpandoObject();
 
-            int intUserId = Convert.ToInt32(info.userId);
-            int intUAL = Convert.ToInt32(info.UAL);
-            int intJobId = Convert.ToInt32(info.jobId);
-            int intProductTypeId = Convert.ToInt32(info.productTypeId);
-            int intUnitTypeId = Convert.ToInt32(info.unitTypeId);
-            int intUnitNo = Convert.ToInt32(info.unitNo);
+            int intUserId = Convert.ToInt32(info.intUserID);
+            int intUAL = Convert.ToInt32(info.intUAL);
+            int intJobId = Convert.ToInt32(info.intJobID);
+            int intProductTypeId = Convert.ToInt32(info.intProductTypeID);
+            int intUnitTypeId = Convert.ToInt32(info.intUnitTypeID);
+            int intUnitNo = Convert.ToInt32(info.intUnitNo);
 
             DataTable dtUser = ClsDB.GetUser(intUserId);
             int intCustomerTypeID = Convert.ToInt32(info.customerTypeId);
@@ -277,6 +279,64 @@ namespace Oxyzen8SelectorServer.Controllers
             returnInfo.divPreheatCoilHandingVisible = info.ddlPreheatComp > 1 ? true : false;
 
             return returnInfo;
+        }
+
+        [HttpPost]
+        [ActionName("ddlCoolingCompChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic ddlCoolingCompChanged([FromBody]dynamic info)
+        {
+            dynamic returnInfo = new ExpandoObject();
+
+            returnInfo.cooling = UnitsModel.getCooling();
+            returnInfo.dehumidification = UnitsModel.getDehumidification();
+            returnInfo.reheat = UnitsModel.getReheat();
+            returnInfo.heatElectricHeater = UnitsModel.getHeatElectricHeater();    //Need to show/hide Electric heater
+            returnInfo.divHeatingFluidDesignConditionsVisible = UnitsModel.getHeatingFluidDesignConditions();  //Need to show/hide HWC
+            returnInfo.refrigerantInfo = UnitsModel.getRefrigerant();
+            returnInfo.valveAndActuator = UnitsModel.getValveAndActuator();  //Need to show/hide HWC valve and actuator
+            returnInfo.divCoolingSetpointVisible = UnitsModel.getCoolingSetpoint();
+            returnInfo.divHeatingSetpointVisible = UnitsModel.getHeatingSetpoint(); //Need to show/hide Heating setpoint
+            returnInfo.reheatSetpoints = UnitsModel.getReheatSetpoints();   //Need to show/hide Reheat setpoint
+            returnInfo.divSetpointsVisible = UnitsModel.getSetpoints();
+            returnInfo.customInputs = UnitsModel.getCustomInputs();  //Internal users only
+
+            dynamic ddlSupplyAirOpeningInfo = UnitsModel.getSupplyAirOpening();
+            returnInfo.ddlSupplyAirOpening = ddlSupplyAirOpeningInfo.data;
+            returnInfo.ddlSupplyAirOpeningValue = ddlSupplyAirOpeningInfo.value;
+            returnInfo.ddlSupplyAirOpeningText = ddlSupplyAirOpeningInfo.text;
+
+            return returnInfo;
+        }
+
+        [HttpPost]
+        [ActionName("ddlHeatingCompChanged")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic ddlHeatingCompChanged([FromBody]dynamic info)
+        {
+            dynamic returnInfo = new ExpandoObject();
+
+            returnInfo.heatElectricHeater = UnitsModel.getHeatElectricHeater();
+            returnInfo.divHeatingFluidDesignConditionsVisible = UnitsModel.getHeatingFluidDesignConditions();
+            returnInfo.valveAndActuator = UnitsModel.getValveAndActuator();
+            returnInfo.divHeatingSetpointVisible = UnitsModel.getHeatingSetpoint();
+            returnInfo.divSetpointsVisible = UnitsModel.getSetpoints();
+            returnInfo.customInputs = UnitsModel.getCustomInputs();
+
+            dynamic ddlSupplyAirOpeningInfo = UnitsModel.getSupplyAirOpening();
+            returnInfo.ddlSupplyAirOpening = ddlSupplyAirOpeningInfo.data;
+            returnInfo.ddlSupplyAirOpeningValue = ddlSupplyAirOpeningInfo.value;
+            returnInfo.ddlSupplyAirOpeningText = ddlSupplyAirOpeningInfo.text;
+
+            return returnInfo;
+        }
+
+        [HttpPost]
+        [ActionName("ViewSelection")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public dynamic getViewSelectionInfo([FromBody] dynamic info)
+        {
+            return UnitsModel.ViewSelection(info);
         }
 
         // GET api/<controller>

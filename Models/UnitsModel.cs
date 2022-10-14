@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Data;
 using System.Dynamic;
+using System.Web.UI.WebControls;
+using System.Drawing;
 
 namespace Oxyzen8SelectorServer.Models
 {
@@ -138,15 +140,16 @@ namespace Oxyzen8SelectorServer.Models
             return ClsDB.DeleteUnits(intJobID, unitIds);
         }
 
-        public static bool SaveUnitInfo(dynamic unitInfo)
+        public static int SaveUnitInfo(dynamic unitInfo)
         {
+            setAllData(unitInfo);
             int intFaceAreaHeight = 0;
             int intFaceAreaWidth = 0;
             string strSelectionType = "";
             int intSelectionTypeID = 0;
             int intVelocity = 0;
 
-            int intProductTypeID = unitInfo.intProductTypeID;
+
             intSelectionTypeID = ClsID.intSelectionTypeCoupled;
 
             DataTable dtUnitSizeDeratedFlow = new DataTable();
@@ -171,7 +174,7 @@ namespace Oxyzen8SelectorServer.Models
             }
 
             DataTable dt = ClsDB.SaveGeneral(Convert.ToInt32(unitInfo.intJobID),
-                                            Convert.ToInt32(unitInfo.intUnitID),
+                                            Convert.ToInt32(unitInfo.intUnitNo),
                                             unitInfo.txtTag.ToString().ToUpper(),
                                             Convert.ToInt32(unitInfo.txbQty),
                                             Convert.ToInt32(unitInfo.intProductTypeID),
@@ -192,15 +195,15 @@ namespace Oxyzen8SelectorServer.Models
                                             1,
                                             0d);
 
-            unitInfo.intUnitID = dt.Rows[0]["UnitNo"].ToString();
+            unitInfo.intUnitNo = dt.Rows[0]["UnitNo"].ToString();
 
             ClsDB.SaveAirFlow(Convert.ToInt32(unitInfo.intJobID),
-                                Convert.ToInt32(unitInfo.intUnitID),
+                                Convert.ToInt32(unitInfo.intUnitNo),
                                 Convert.ToInt32(unitInfo.txbAltitude),
                                 Convert.ToInt32(unitInfo.txbSummerSupplyAirCFM),
                                 Convert.ToInt32(unitInfo.txbSummerReturnAirCFM),
-                                Convert.ToInt32(unitInfo.txbWinterSupplyAirCFM),
-                                Convert.ToInt32(unitInfo.txbWinterReturnAirCFM),
+                                Convert.ToInt32(unitInfo.txbSummerSupplyAirCFM),
+                                Convert.ToInt32(unitInfo.txbSummerReturnAirCFM),
                                 Math.Round(Convert.ToDouble(unitInfo.txbSummerOutdoorAirDB), 1),
                                 Math.Round(Convert.ToDouble(unitInfo.txbSummerOutdoorAirWB), 1),
                                 Math.Round(Convert.ToDouble(unitInfo.txbSummerOutdoorAirRH), 1),
@@ -224,7 +227,7 @@ namespace Oxyzen8SelectorServer.Models
             ClsCompOpt objCompOpt = new ClsCompOpt
             {
                 intJobID = Convert.ToInt32(unitInfo.intJobID),
-                intUnitNo = Convert.ToInt32(unitInfo.intUnitID),
+                intUnitNo = Convert.ToInt32(unitInfo.intUnitNo),
                 intUnitTypeID = Convert.ToInt32(unitInfo.ddlUnitType),
                 intUnitModelID = Convert.ToInt32(unitInfo.ddlUnitModel),
                 intVoltageID = Convert.ToInt32(unitInfo.ddlUnitVoltage),
@@ -313,8 +316,8 @@ namespace Oxyzen8SelectorServer.Models
             }
 
             SaveLayout(unitInfo);
-
-            return true;
+            unitInfo.ddlHandingID = 1;
+            return unitInfo.intUnitNo;
         }
 
         public static bool SaveLayout(dynamic unitInfo)
@@ -324,7 +327,7 @@ namespace Oxyzen8SelectorServer.Models
                 ClsLayoutOpt objLayoutOpt = new ClsLayoutOpt
                 {
                     intJobID = Convert.ToInt32(unitInfo.intJobID),
-                    intUnitNo = Convert.ToInt32(unitInfo.intUnitID),
+                    intUnitNo = Convert.ToInt32(unitInfo.intUnitNo),
                     intProductTypeID = Convert.ToInt32(unitInfo.intProductTypeID),
                     intUnitTypeID = Convert.ToInt32(unitInfo.intUnitTypeID),
                     intHandingID = Convert.ToInt32(unitInfo.ddlHandingID),
@@ -352,12 +355,12 @@ namespace Oxyzen8SelectorServer.Models
 
         public static dynamic GetUnitInfo(dynamic info)
         {
-            intUserID = Convert.ToInt32(info.userId);
-            intUAL = Convert.ToInt32(info.UAL);
-            intJobID = Convert.ToInt32(info.jobId);
-            intProductTypeID = Convert.ToInt32(info.productTypeId);
-            intUnitTypeID = Convert.ToInt32(info.unitTypeId);
-            intUnitNo = Convert.ToInt32(info.unitNo);
+            intUserID = Convert.ToInt32(info.intUserID);
+            intUAL = Convert.ToInt32(info.intUAL);
+            intJobID = Convert.ToInt32(info.intJobID);
+            intProductTypeID = Convert.ToInt32(info.intProductTypeID);
+            intUnitTypeID = Convert.ToInt32(info.intUnitTypeID);
+            intUnitNo = Convert.ToInt32(info.intUnitNo);
 
             dynamic unitInfo = new ExpandoObject();
             DataTable dtJob = ClsDB.GetSavedJob(intJobID);
@@ -863,7 +866,7 @@ namespace Oxyzen8SelectorServer.Models
                 returnInfo.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
 
                 if (intLocationID == ClsID.intLocationOutdoorID)
-                {
+                { 
                     dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.Select("id = " + ClsID.intElecHeaterInstallInCasingID).CopyToDataTable();
                     returnInfo.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
                 }
@@ -881,6 +884,7 @@ namespace Oxyzen8SelectorServer.Models
                         returnInfo.ddlPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation;
                     }
                 }
+                returnInfo.ddlPreheatElecHeaterInstallationValue = dtPreheatElecHeaterInstallation.Rows[0]["id"];
             }
 
             switch (intPreheatCompID)
@@ -1635,7 +1639,7 @@ namespace Oxyzen8SelectorServer.Models
             return returnInfo;
         }
 
-        private static dynamic getSupplyAirOpening()
+        public static dynamic getSupplyAirOpening()
         {
             dynamic supplyAirOpeningInfo = new ExpandoObject();
             DataTable dtLink = new DataTable();
@@ -2040,7 +2044,7 @@ namespace Oxyzen8SelectorServer.Models
             return valveAndActuator;
         }
 
-        private static dynamic getHeatElectricHeater()
+        public static dynamic getHeatElectricHeater()
         {
             dynamic heatElectricHeaterInfo = new ExpandoObject();
             int intSelectedValue = 0;
@@ -2186,7 +2190,7 @@ namespace Oxyzen8SelectorServer.Models
             return returnInfo;
         }
 
-        private static dynamic getRefrigerant()
+        public static dynamic getRefrigerant()
         {
             dynamic refrigerantInfo = new ExpandoObject();
             if (intUAL == ClsID.intUAL_Admin || intUAL == ClsID.intUAL_IntAdmin || intUAL == ClsID.intUAL_IntLvl_1 || intUAL == ClsID.intUAL_IntLvl_2)
@@ -2240,7 +2244,7 @@ namespace Oxyzen8SelectorServer.Models
             return drainPanInfo;
         }
 
-        private static dynamic getReheatSetpoints()
+        public static dynamic getReheatSetpoints()
         {
             dynamic reheatSetpointsInfo = new ExpandoObject();
             reheatSetpointsInfo.divReheatSetpointVisible = intReheatCompID > 1 ? true : false;
@@ -2248,7 +2252,7 @@ namespace Oxyzen8SelectorServer.Models
             return reheatSetpointsInfo;
         }
 
-        private static bool getHeatingSetpoint()
+        public static bool getHeatingSetpoint()
         {
             if (intHeatingCompID == ClsID.intCompElecHeaterID || intHeatingCompID == ClsID.intCompHWC_ID || ckbHeatPumpChecked == 1)
             {
@@ -2260,7 +2264,7 @@ namespace Oxyzen8SelectorServer.Models
             }
         }
 
-        private static dynamic getCoolingSetpoint()
+        public static dynamic getCoolingSetpoint()
         {
             dynamic coolingSetPointInfo = new ExpandoObject();
             if (intCoolingCompID == ClsID.intCompCWC_ID || intCoolingCompID == ClsID.intCompDX_ID)
@@ -2301,7 +2305,7 @@ namespace Oxyzen8SelectorServer.Models
             }
         }
 
-        private static dynamic getReheat()
+        public static dynamic getReheat()
         {
             dynamic reheatInfo = new ExpandoObject();
             DataTable dtReheatComp = new DataTable();
@@ -2359,7 +2363,7 @@ namespace Oxyzen8SelectorServer.Models
             return reheatInfo;
         }
 
-        private static dynamic getDehumidification()
+        public static dynamic getDehumidification()
         {
             dynamic dehumidificationInf = new ExpandoObject();
             if (intCoolingCompID == ClsID.intCompCWC_ID || intCoolingCompID == ClsID.intCompDX_ID)
@@ -2376,7 +2380,7 @@ namespace Oxyzen8SelectorServer.Models
             return dehumidificationInf;
         }
 
-        private static dynamic getCooling()
+        public static dynamic getCooling()
         {
             dynamic coolingInfo = new ExpandoObject();
             if (intCoolingCompID == ClsID.intCompCWC_ID)
@@ -2655,6 +2659,320 @@ namespace Oxyzen8SelectorServer.Models
             }
 
             return txbWinterReturnAirWB;
+        }
+        #endregion
+
+        #region ViewSelection
+        public static dynamic ViewSelection(dynamic info)
+        {
+            intUserID = Convert.ToInt32(info.intUserID);
+            intUAL = Convert.ToInt32(info.intUAL);
+            intJobID = Convert.ToInt32(info.intJobID);
+            intProductTypeID = Convert.ToInt32(info.intProductTypeID);
+            intUnitTypeID = Convert.ToInt32(info.intUnitTypeID);
+            intUnitNo = Convert.ToInt32(info.intUnitNo);
+
+            dynamic returnInfo = new ExpandoObject();
+            returnInfo.MultiView1ActiveViewIndex = 3;
+
+            ClsPerformanceERU objPerf = new ClsPerformanceERU(intUserID, intJobID, intUnitNo);
+            objPerf.CalculatePerformance();
+
+            ClsContElements objCont = objPerf.get_objContainers();
+
+            if (objCont.objCPreheatElecHeater != null)
+            {
+                returnInfo.ddlPreheatComp = ClsID.intCompElecHeaterID.ToString();
+                returnInfo.divElecHeaterVoltageVisible = true;
+                returnInfo.divPreheatElecHeaterInstallationVisible = true;
+
+                if (info.ddlPreheatElecHeaterInstallation == ClsID.intElecHeaterInstallNA_ID)
+                {
+                    DataTable dtElecHeaterInstallation = ClsDB.get_dtLiveEnabled(ClsDBT.strSelElectricHeaterInstallation, intPreheatElecHeaterInstallationID).Copy();
+                    dtElecHeaterInstallation = dtElecHeaterInstallation.Select("id <> 1").CopyToDataTable();
+                    returnInfo.ddlPreheatElecHeaterInstallation = dtElecHeaterInstallation;
+                    returnInfo.ddlPreheatElecHeaterInstallationValue = ClsID.intElecHeaterInstallInCasingID.ToString();
+                }
+            }
+
+
+
+            ClsOutput objOut = new ClsOutput(objCont);
+
+            returnInfo.divOutUnitDetailsVisible = false;
+            returnInfo.divOutElecReqUnitDataVisible = false;
+            returnInfo.divOutElecReqPreheatElecHeaterVisible = false;
+            returnInfo.divOutElecReqCoolingDXCVisible = false;
+            returnInfo.divOutElecReqHeatingElecHeaterVisible = false;
+            returnInfo.divOutElecReqReheatElecHeaterVisible = false;
+            returnInfo.divOutPreheatElecHeaterVisible = false;
+
+            returnInfo.divOutPreheatHWCVisible = false;
+            returnInfo.divOutPreheatHWC_ValveActuatorDataVisible = false;
+
+            returnInfo.divOutHX_FPVisible = false;
+            returnInfo.lblHX_FP_CondWarningVisible = false;
+
+            returnInfo.divOutCoolingCWCVisible = false;
+            returnInfo.divOutCoolingCWC_ValveActuatorDataVisible = false;
+
+            returnInfo.divOutCoolingDXC_SelectionVisible = false;
+            returnInfo.divOutCoolingDXCVisible = false;
+            returnInfo.divOutCoolingDXC_PerfOutputsVisible = false;
+            returnInfo.divOutCoolingDXC_EKEXV_KitDataVisible = false;
+            returnInfo.divOutCoolingDXC_CapacityNotMetWarningVisible = false;
+            returnInfo.divOutCoolingDXC_SetpointNotMetWarningVisible = false;
+            returnInfo.divOutCoolingDXC_3TonNotMetWarningVisible = false;
+
+            returnInfo.divOutCoolingDXC_RAE_SelectionVisible = false;
+            returnInfo.divOutCoolingDXC_RAEVisible = false;
+            returnInfo.divOutCoolingDXC_RAE_PerfOutputsVisible = false;
+            returnInfo.divOutCoolingDXC_RAE_EKEXV_KitDataVisible = false;
+            returnInfo.divOutCoolingDXC_RAE_CapacityNotMetWarningVisible = false;
+            returnInfo.divOutCoolingDXC_RAE_SetpointNotMetWarningVisible = false;
+            returnInfo.divOutCoolingDXC_RAE_3TonNotMetWarningVisible = false;
+
+            returnInfo.divOutHeatingElecHeaterVisible = false;
+            returnInfo.divOutHeatingHWCVisible = false;
+            returnInfo.divOutHeatingHWC_ValveActuatorDataVisible = false;
+
+            returnInfo.divOutHeatingCondCoilVisible = false;
+            returnInfo.divOutHeatingCondCoilPerfOutputsVisible = false;
+
+            returnInfo.divOutReheatElecHeaterVisible = false;
+            returnInfo.divOutReheatHWCVisible = false;
+            returnInfo.divOutReheatHWC_ValveActuatorDataVisible = false;
+            returnInfo.divOutReheatHGRCVisible = false;
+
+            returnInfo.divOutSF_ZAVisible = false;
+            returnInfo.divOutSF_SoundDataVisible = false;
+
+            returnInfo.divOutEF_ZAVisible = false;
+            returnInfo.divOutEF_SoundDataVisible = false;
+
+            returnInfo.divOutSoundDataVisible = false;
+            returnInfo.divPricingVisible = false;
+
+            returnInfo.secPreheatElecHeaterNominalDataVisible = false;
+            returnInfo.secHeatingElecHeaterNominalDataVisible = false;
+            returnInfo.secReheatElecHeaterNominalDataVisible = false;
+
+
+            if (objCont != null)
+            {
+                if (objCont.objCGeneral != null)
+                {
+                    returnInfo.outputUnitDetails = getOutputUnitDetails(objOut.objOutputTables);
+                    //setOutputUnitElecData(objOut.objOutputTables);
+                }
+
+
+                returnInfo.outputElecReq = setOutputElecReq(objCont.objCGeneral, objOut.objOutputTables);
+
+
+                if (objCont.objCPreheatElecHeater != null)
+                {
+                    returnInfo.outputPreheatElecHeater = getOutputPreheatElecHeater(objCont.objCGeneral, objOut.objOutputTables);
+                }
+
+
+
+                if (objCont.objCHX_CORE != null)
+                {
+                    returnInfo.outputFixedPlateCORE = getOutputFixedPlateCORE(objOut.objOutputTables);
+                }
+
+
+
+
+                if (objCont.objCHeatingElecHeater != null)
+                {
+                    returnInfo.outputHeatingElecHeater = getOutputHeatingElecHeater(objOut.objOutputTables);
+                }
+
+                if (intUAL == ClsID.intUAL_Admin || intUAL == ClsID.intUAL_IntAdmin || intUAL == ClsID.intUAL_IntLvl_2 || intUAL == ClsID.intUAL_IntLvl_1)
+                {
+                    returnInfo.outputPricing = getOutputPricing(objPerf.objPricing);
+                }
+
+            }
+
+            return returnInfo;
+        }
+        #endregion
+        #region Out Unit Details
+        public static dynamic getOutputUnitDetails(ClsOutputData _objOut)
+        {
+            dynamic returnInfo = new ExpandoObject();
+            if (_objOut.dtUnitDetails_1 != null)
+            {
+                returnInfo.divOutUnitDetailsVisible = true;
+                returnInfo.gvOutUnitDetails_1Visible = true;
+                returnInfo.gvOutUnitDetails_1DataSource = _objOut.dtUnitDetails_1;
+
+                returnInfo.gvOutUnitDetails_2Visible = true;
+                returnInfo.gvOutUnitDetails_2DataSource = _objOut.dtUnitDetails_2;
+            }
+
+            return returnInfo;
+        }
+        #endregion
+
+        #region Out Electrical Requirements
+        public static dynamic setOutputElecReq(ClsGeneral _objGen, ClsOutputData _objOut)
+        {
+            dynamic returnInfo = new ExpandoObject();
+            returnInfo.lblElecReqQtyText = _objOut.strElecReqQty;
+
+
+            returnInfo.lblOutElecReqUnitDataText = _objOut.strOutElecReqUnitData;
+
+            if (_objOut.dtElecReqUnitElecData.Rows.Count > 0)
+            {
+                returnInfo.divOutElecReqUnitDataVisible = true;
+                returnInfo.gvOutElecReqUnitDataVisible = true;
+                returnInfo.gvOutElecReqUnitDataDataSource = _objOut.dtElecReqUnitElecData;
+            }
+
+
+            if (_objGen.intProductTypeID == ClsID.intProdTypeNovaID ||
+                _objGen.intProductTypeID == ClsID.intProdTypeVentumID ||
+                (_objGen.intProductTypeID == ClsID.intProdTypeTerraID && _objGen.intIsVoltageSPP == 0))
+            {
+                if (_objOut.dtElecReqPreheatElecHeater.Rows.Count > 0)
+                {
+                    returnInfo.divOutElecReqPreheatElecHeaterVisible = true;
+                    returnInfo.gvOutElecReqPreheatElecHeaterVisible = true;
+                    returnInfo.gvOutElecReqPreheatElecHeaterDataSource = _objOut.dtElecReqPreheatElecHeater;
+                }
+
+
+                if (_objOut.dtElecReqHeatingElecHeater.Rows.Count > 0)
+                {
+                    returnInfo.divOutElecReqHeatingElecHeaterVisible = true;
+                    returnInfo.gvOutElecReqHeatingElecHeaterVisible = true;
+                    returnInfo.gvOutElecReqHeatingElecHeaterDataSource = _objOut.dtElecReqHeatingElecHeater;
+                }
+            }
+
+            return returnInfo;
+        }
+        #endregion
+
+
+        #region Out Preheat Electric Heater
+        public static dynamic getOutputPreheatElecHeater(ClsGeneral _objGen, ClsOutputData _objOut)
+        {
+            dynamic returnInfo = new ExpandoObject();
+            if (_objOut.dtPreheatElecHeaterData != null)
+            {
+                returnInfo.divOutPreheatElecHeaterVisible = true;
+                returnInfo.gvOutPreheatElecHeaterDataVisible = true;
+                returnInfo.gvOutPreheatElecHeaterDataSource = _objOut.dtPreheatElecHeaterData;
+            }
+
+
+
+            if (_objGen.intProductTypeID == ClsID.intProdTypeVentumLiteID)
+            {
+                returnInfo.divPreheatSeparateElecConnMsgVisible = false;
+
+            }
+
+            //if (_objOut.dtPreheatElecHeaterNominalData != null)
+            //{
+            //    gvOutPreheatElecHeaterNominalData.Visible = true;
+            //    gvOutPreheatElecHeaterNominalData.DataSource = _objOut.dtPreheatElecHeaterNominalData;
+            //    gvOutPreheatElecHeaterNominalData.DataBind();
+            //}
+
+            return returnInfo;
+        }
+        #endregion
+
+        #region Out Fixed Plate CORE
+        public static dynamic getOutputFixedPlateCORE(ClsOutputData _objOut)
+        {
+            dynamic returnInfo = new ExpandoObject();
+
+            if (_objOut.dtHX_FP_CORE_Perf != null)
+            {
+                returnInfo.divOutHX_FPVisible = true;
+                returnInfo.gvOutHX_FP_PerfVisible = true;
+                returnInfo.gvOutHX_FP_PerfDataSource = _objOut.dtHX_FP_CORE_Perf;
+            }
+
+            if (_objOut.dtHX_FP_CORE_EntAir != null)
+            {
+                returnInfo.gvOutHX_FP_EntAirVisible = true;
+                returnInfo.gvOutHX_FP_EntAirDataSource = _objOut.dtHX_FP_CORE_EntAir;
+            }
+
+
+            if (_objOut.dtHX_FP_CORE_LvgAir != null)
+            {
+                returnInfo.gvOutHX_FP_LvgAirVisible = true;
+                returnInfo.gvOutHX_FP_LvgAirDataSource = _objOut.dtHX_FP_CORE_LvgAir;
+            }
+
+
+            if (Convert.ToInt32(_objOut.dtHX_FP_CORE_AHRIWarning.Rows[0]["ShowLogo"]) == 1)
+            {
+                returnInfo.divHX_FP_AHRIWarningVisible = false;
+                returnInfo.divHX_FP_AHRIWarningWithLogoVisible = true;
+                returnInfo.imgAHRI_LogoImageUrl = "Images/img_ahri.png";
+                returnInfo.lblHX_FP_AHRIWarningWithLogoText = _objOut.dtHX_FP_CORE_AHRIWarning.Rows[0]["cValue"].ToString().Replace(Environment.NewLine, "<br />");
+            }
+            else
+            {
+                returnInfo.divHX_FP_AHRIWarningWithLogoVisible = false;
+                returnInfo.divHX_FP_AHRIWarningVisible = true;
+                returnInfo.imgAHRI_LogoImageUrl = null;
+                returnInfo.lblHX_FP_AHRIWarningText = _objOut.dtHX_FP_CORE_AHRIWarning.Rows[0]["cValue"].ToString().Replace(Environment.NewLine, "<br />");
+            }
+
+
+            if (_objOut.dtHX_FP_CORE_CondWarning != null)
+            {
+                if (_objOut.dtHX_FP_CORE_CondWarning.Rows.Count > 0)
+                {
+                    returnInfo.lblHX_FP_CondWarningVisible = true;
+                    returnInfo.lblHX_FP_CondWarningText = _objOut.dtHX_FP_CORE_CondWarning.Rows[0]["cValue"].ToString();
+                }
+            }
+
+
+            return returnInfo;
+        }
+        #endregion
+
+
+        #region Out Heating Electric Heater
+        public static dynamic getOutputHeatingElecHeater(ClsOutputData _objOut)
+        {
+            dynamic returnInfo = new ExpandoObject();
+            if (_objOut.dtHeatingElecHeaterData != null)
+            {
+                returnInfo.divOutHeatingElecHeaterVisible = true;
+                returnInfo.gvOutHeatingElecHeaterDataVisible = true;
+                returnInfo.gvOutHeatingElecHeaterDataDataSource = _objOut.dtHeatingElecHeaterData;
+            }
+            return returnInfo;
+        }
+        #endregion
+
+        #region Out Pricing
+        public static dynamic getOutputPricing(ClsPricing _objPrice)
+        {
+            dynamic returnInfo = new ExpandoObject();
+            if (_objPrice.dtPriceDetail != null)
+            {
+                returnInfo.divPricingVisible = true;
+                returnInfo.gvPricingVisible = true;
+                returnInfo.gvPricingDataSource = _objPrice.dtPriceDetail;
+            }
+
+            return returnInfo;
         }
         #endregion
     }
