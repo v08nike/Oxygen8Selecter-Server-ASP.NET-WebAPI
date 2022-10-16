@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data;
 
-namespace Oxyzen8SelectorServer.Models
+namespace Oxygen8SelectorServer.Models
 {
     public class ClsPricing
     {

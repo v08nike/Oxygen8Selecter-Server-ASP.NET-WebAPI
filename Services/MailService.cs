@@ -6,11 +6,11 @@ using System.Web;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
-using Oxyzen8SelectorServer.Models;
-using Oxyzen8SelectorServer.Settings;
+using Oxygen8SelectorServer.Models;
+using Oxygen8SelectorServer.Settings;
 using Microsoft.Extensions.Options;
 
-namespace Oxyzen8SelectorServer.Services
+namespace Oxygen8SelectorServer.Services
 {
     public class MailService : IMailService
     {

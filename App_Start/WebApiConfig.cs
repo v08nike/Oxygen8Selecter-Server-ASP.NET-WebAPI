@@ -7,9 +7,9 @@ using System.Web.Http.Routing;
 using System.Web.Http.WebHost;
 using System.Web.Routing;
 using System.Web.SessionState;
-using Oxyzen8SelectorServer.App_Start;
+using Oxygen8SelectorServer.App_Start;
 
-namespace Oxyzen8SelectorServer
+namespace Oxygen8SelectorServer
 {
     public static class WebApiConfig
     {

@@ -4,7 +4,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 
 
-namespace Oxyzen8SelectorServer
+namespace Oxygen8SelectorServer
 {
     public class JwtManager
     {

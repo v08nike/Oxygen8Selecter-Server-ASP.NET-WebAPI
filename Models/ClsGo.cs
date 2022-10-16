@@ -8,7 +8,7 @@ using System.IO;
 using System.Collections;
 using System.Text;
 
-namespace Oxyzen8SelectorServer.Models
+namespace Oxygen8SelectorServer.Models
 {
     public class ClsGo
     {

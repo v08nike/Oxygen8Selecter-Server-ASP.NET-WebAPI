@@ -6,7 +6,7 @@ using System.Data;
 using System.Threading;
 using iTextSharp.text.pdf;
 
-namespace Oxyzen8SelectorServer.Models
+namespace Oxygen8SelectorServer.Models
 {
     public class ClsPerformanceERU
     {

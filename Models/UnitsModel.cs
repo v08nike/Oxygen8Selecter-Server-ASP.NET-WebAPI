@@ -7,7 +7,7 @@ using System.Dynamic;
 using System.Web.UI.WebControls;
 using System.Drawing;
 
-namespace Oxyzen8SelectorServer.Models
+namespace Oxygen8SelectorServer.Models
 {
     public class UnitsModel
     {

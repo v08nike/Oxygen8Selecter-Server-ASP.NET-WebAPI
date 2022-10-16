@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Oxyzen8SelectorServer.Models
+namespace Oxygen8SelectorServer.Models
 {
     public class MailRequest
     {

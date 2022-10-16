@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 
-namespace Oxyzen8SelectorServer.App_Start
+namespace Oxygen8SelectorServer.App_Start
 {
     public class CustomRequireHttpsAttribute : AuthorizationFilterAttribute
     {

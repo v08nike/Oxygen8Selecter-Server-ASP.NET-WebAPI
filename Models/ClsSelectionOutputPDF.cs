@@ -8,7 +8,7 @@ using System.Data;
 using System.IO;
 using iTextSharp.text.html;
 
-namespace Oxyzen8SelectorServer.Models
+namespace Oxygen8SelectorServer.Models
 {
     public class ClsSelectionOutputPDF
     {

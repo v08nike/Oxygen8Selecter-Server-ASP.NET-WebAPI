@@ -7,7 +7,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Microsoft.AspNet.FriendlyUrls.Resolvers;
 
-namespace Oxyzen8SelectorServer
+namespace Oxygen8SelectorServer
 {
     public partial class ViewSwitcher : System.Web.UI.UserControl
     {

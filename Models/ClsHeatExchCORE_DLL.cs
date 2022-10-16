@@ -5,7 +5,7 @@ using System.Web;
 using dpoint.dpointSelection;
 
 
-namespace Oxyzen8SelectorServer.Models
+namespace Oxygen8SelectorServer.Models
 {
     public class ClsHeatExchCORE_DLL
     {

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Oxyzen8SelectorServer {
+namespace Oxygen8SelectorServer {
     
     
     public partial class Site_Mobile {

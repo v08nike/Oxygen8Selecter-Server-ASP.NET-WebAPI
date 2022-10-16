@@ -6,7 +6,7 @@ using System.Web.Http;
 using System.Web.Routing;
 using System.Web.SessionState;
 
-namespace Oxyzen8SelectorServer
+namespace Oxygen8SelectorServer
 {
     public class WebApiApplication : System.Web.HttpApplication
     {

@@ -5,7 +5,7 @@ using System.Web.Http;
 using System.Web.Routing;
 using Microsoft.AspNet.FriendlyUrls;
 
-namespace Oxyzen8SelectorServer
+namespace Oxygen8SelectorServer
 {
     public static class RouteConfig
     {

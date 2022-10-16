@@ -7,9 +7,9 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Data;
 using System.Dynamic;
-using Oxyzen8SelectorServer.Models;
+using Oxygen8SelectorServer.Models;
 
-namespace Oxyzen8SelectorServer.Controllers
+namespace Oxygen8SelectorServer.Controllers
 {
     public class JobsController : ApiController
     {

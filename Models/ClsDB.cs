@@ -8,7 +8,7 @@ using System.IO;
 using MySql.Data.MySqlClient;
 using System.Web.UI.WebControls;
 
-namespace Oxyzen8SelectorServer.Models
+namespace Oxygen8SelectorServer.Models
 {
     public class ClsDB  //DB: Database
     {
