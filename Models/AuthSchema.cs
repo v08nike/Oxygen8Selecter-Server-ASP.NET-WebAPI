@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Oxyzen8SelectorServer.Models
+namespace oxygen8selectorServer.Models
 {
     public class AuthSchema
     {
